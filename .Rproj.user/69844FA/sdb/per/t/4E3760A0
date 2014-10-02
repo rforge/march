@@ -1,0 +1,16 @@
+{
+    "contents" : "# \n# Author: SSP24298\n###############################################################################\n\n# create several models from pewee data set.\nmodels <- list()\n\n# independence\nmodels[[length(models)+1]] <- march.indep.construct(pewee,maxOrder=4)\n \n# Homogeneous Markov Chain\nfor( i in 1:3 ) models[[length(models)+1]] <- march.mc.construct(pewee,i,4)\n\n# Mixture Transition Distribution \nfor( i in 2:3 ) models[[length(models)+1]] <- march.mtd.construct(pewee,i,maxOrder=4)\n\n# Mixture Transition Distribution \nfor( i in 2:3 ) models[[length(models)+1]] <- march.mtd.construct(pewee,i,maxOrder=4,mtdg=TRUE)\n# \n# The Double Chain Markov Model\nfor( ohc in 2:3 ){\n  for( ovc in 2:3 ){\n    models[[length(models)+1]] <- march.dcmm.construct(pewee,orderHC=ohc,orderVC=ovc,M=2L,popSize=4L,gen=2L,maxOrder=4L)\n  }\n}\n\n# Optimize the previously constructed dcmm\n# models[[length(models)+1]] <- march.dcmm.construct(y=pewee,seedModel=models[[length(models)]],iterBw=10L,stopBw=0.0001)\n\n# Show performance indicators (ll,BIC and AIC) from all the created models.\nr <- do.call(rbind,lapply(models,march.summary))\nprint(r)\n",
+    "created" : 1394196820300.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3599988716",
+    "id" : "4E3760A0",
+    "lastKnownWriteTime" : 1400310156,
+    "path" : "~/Desktop/Bur/mc-RC3/mc/tests.test/mk.berchtold2002.R",
+    "project_path" : "tests.test/mk.berchtold2002.R",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}
