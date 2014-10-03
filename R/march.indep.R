@@ -3,7 +3,7 @@
 ###############################################################################
 
 
-#' Construct an independence model.
+#' Construct an independence model (zero-order Markov chain).
 #' 
 #' Construct a \code{\link{march.Indep}} model from a given \code{\link{march.Dataset}},
 #' the first \emph{maxOrder} elements of each sequence being truncated in order to return a model
