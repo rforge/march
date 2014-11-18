@@ -46,10 +46,10 @@ If a seedModel is provided, the only step executed is the optimization step, par
 models <- list()
 models[[length(models)+1]] <- march.dcmm.construct(y=pewee,orderHC=2,
                                                    orderVC=3,M=3,popSize=2,gen=2)
-models[[length(models)+1]] <- march.dcmm.construct(y=pewee,seedModel=models[[1]],
-                                                   iterBw=10,stopBw=0.001)
-models[[length(models)+1]] <- march.dcmm.construct(y=pewee,seedModel=models[[2]],
-                                                   iterBw=10,stopBw=0.0001)
+models[[length(models)+1]] <- march.dcmm.construct(y=pewee,seedModel=models[[1]],orderHC=2,
+                                                   orderVC=3,iterBw=10,stopBw=0.001)
+models[[length(models)+1]] <- march.dcmm.construct(y=pewee,seedModel=models[[2]],orderHC=2,
+                                                   orderVC=3,iterBw=10,stopBw=0.0001)
 # Show performance indicators (ll, number of independent parameters, BIC and AIC) for all computed models.
 r <- do.call(rbind,lapply(models,march.summary))
 print(r)
