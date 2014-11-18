@@ -44,13 +44,13 @@ setClass("march.Sequence",representation(y="vector",weight="numeric",N="integer"
 #' This class describe the basic and virtual model, that every model of the package will extend.
 #' This is a virtual class, which is not meant to be handled by user directly.
 #' 
-#' @seealso The classes that inherit from march.Model are : \code{\link{march.Indep}}, \code{\link{march.Mc}}, \code{\link{march.Mtd}}, \code{\link{march.Dcmm}}.
+#' @seealso The classes that inherit from march.Model are : \code{\link{march.Indep-class}}, \code{\link{march.Mc-class}}, \code{\link{march.Mtd-class}}, \code{\link{march.Dcmm-class}}.
 #' 
 #'  @section Slots:
 #'    \describe{
 #'      \item{\code{ll}:}{A \code{\link{numeric}} representing the log-likelihood for this model \emph{w.r.t} its 
 #'      construction dataset.}
-#'      \item{\code{y}:}{The \code{\link{march.DataSet}} used to construct the model.}
+#'      \item{\code{y}:}{The \code{\link{march.DataSet-class}} used to construct the model.}
 #'      \item{\code{dsL}:}{A \code{\link{numeric}} representing the number of sample used to construct the model.}
 #'      \item{\code{nbZeros}:}{A \code{\link{numeric}} representing the number of zeros created during model construction.}
 #'      }
@@ -94,7 +94,7 @@ setClass("march.Mc",contains="march.Model",representation(RC="array",order="inte
 #' A Mixture Transition Distribution (MTD) model.
 #' 
 #' This class describes a Mixture Transition Distribution (MTD) model, represented by its transition matrix Q,
-#' its vector phi of lag parameters and its order. march.Mtd extends \code{\link{march.Model}} class and therefore
+#' its vector phi of lag parameters and its order. march.Mtd extends \code{\link{march.Model-class}} class and therefore
 #' inherits its slots.
 #' march.Mtd extends \code{\link{march.Model-class}} class and therefore inherits its slots.
 #' 

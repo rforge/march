@@ -442,7 +442,7 @@ march.dcmm.bw <- function(d,y){
 #' 
 #' @author Ogier Maitre
 #' @example examples/march.dcmm.construct.example.R
-#' @seealso \code{\link{march.Dcmm}}, \code{\link{march.Model}}, \code{\link{march.Dataset}}.
+#' @seealso \code{\link{march.Dcmm-class}}, \code{\link{march.Model-class}}, \code{\link{march.Dataset-class}}.
 #' 
 #' @export
 march.dcmm.construct <- function(y,orderHC,orderVC,M,gen=5,popSize=4,maxOrder=orderVC,seedModel=NULL,iterBw=2,stopBw=0.1){

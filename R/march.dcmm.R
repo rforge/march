@@ -75,8 +75,8 @@ march.dcmm.h.compactA <- function(d){
 
 #' Viterbi algorithm for a DCMM model.
 #' 
-#' @param d The \code{\link{march.Dcmm}} on which to compute the most likely sequences of hidden states.
-#' @param y The \code{\link{march.Dataset}} to consider.
+#' @param d The \code{\link{march.Dcmm-class}} on which to compute the most likely sequences of hidden states.
+#' @param y The \code{\link{march.Dataset-class}} to consider.
 #' 
 #' @return A list of vectors containing the most likely sequences of hidden states, considering the given model for each sequence of the given dataset.
 #' @author Ogier Maitre
@@ -398,7 +398,7 @@ march.dcmm.bw <- function(d,y){
       }
     }
     
-    # Reestimation of PI
+    # Reestimation of Pi
     Pi[1,1,] <- Pi[1,1,]+gamma[d@orderVC+1,1:d@M]
     
     for( t in march.h.seq(2,d@orderHC) ){
@@ -442,7 +442,7 @@ march.dcmm.bw <- function(d,y){
 #' 
 #' @author Ogier Maitre
 #' @example examples/march.dcmm.construct.example.R
-#' @seealso \code{\link{march.Dcmm}}, \code{\link{march.Model}}, \code{\link{march.Dataset}}.
+#' @seealso \code{\link{march.Dcmm-class}}, \code{\link{march.Model-class}}, \code{\link{march.Dataset-class}}.
 #' 
 #' @export
 march.dcmm.construct <- function(y,orderHC,orderVC,M,gen=5,popSize=4,maxOrder=orderVC,seedModel=NULL,iterBw=2,stopBw=0.1){
@@ -473,10 +473,20 @@ march.dcmm.construct <- function(y,orderHC,orderVC,M,gen=5,popSize=4,maxOrder=or
   }
   
   if( is.null(seedModel)==FALSE ){
+    
+    # AB
+    y <- march.dataset.h.filtrateShortSeq(y,maxOrder+1)
+    y <- march.dataset.h.cut(y,maxOrder-orderVC)
+    # \AB
+    
     op <- new("march.dcmm.ea.OptimizingParameters",fct=march.dcmm.ea.optimizing,ds=y,stopBw=stopBw,iterBw=iterBw)
     m <- march.dcmm.ea.optimizing(seedModel,op)   
     
-    m@dsL <- sum(y@T)
+    # AB
+    m@dsL <- sum(y@T-orderVC)
+    #m@dsL <- sum(y@T)
+    # \AB
+    
     m@y <- y
     #m@ll <- march.dcmm.forward(m,march.dataset.h.extractSequence(y,1))$LL
     m@ll <- march.dcmm.h.computeLL(m,y)
@@ -494,7 +504,10 @@ march.dcmm.construct <- function(y,orderHC,orderVC,M,gen=5,popSize=4,maxOrder=or
              populationSize=popSize,crossoverProb=0.5,generation=gen)
     res<-march.loop(p)
     
-    res$best@dsL <- sum(y@T)
+    # AB
+    res$best@dsL <- sum(y@T-orderVC)
+    #res$best@dsL <- sum(y@T)
+    # \AB
     res$best@y <- y
     res$best@ll <-march.dcmm.h.computeLL(res$best,y)
     res$best

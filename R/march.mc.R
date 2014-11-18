@@ -16,7 +16,7 @@
 #'
 #' @author Ogier Maitre
 #' @example examples/march.mc.construct.example.R
-#' @seealso \code{\link{march.Mc}}, \code{\link{march.Model}}, \code{\link{march.Dataset}}.
+#' @seealso \code{\link{march.Mc-class}}, \code{\link{march.Model-class}}, \code{\link{march.Dataset-class}}.
 #' @export
 march.mc.construct <- function(y,order,maxOrder=order) {
   
@@ -61,7 +61,7 @@ march.mc.construct <- function(y,order,maxOrder=order) {
 		}
 	}
   
-	new("march.Mc",RC=r,order=order,ll=ll,RT=rt,y=y,dsL=sum(y@T[y@T>(maxOrder+1)]-maxOrder),nbZeros=length(which(rt==0)))
+	new("march.Mc",RC=r,order=order,ll=ll,RT=rt,y=y,dsL=sum(rt),nbZeros=length(which(rt==0)))
 }
 
 

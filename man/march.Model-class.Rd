@@ -18,6 +18,6 @@ This is a virtual class, which is not meant to be handled by user directly.
      }
 }
 \seealso{
-The classes that inherit from march.Model are : \code{\link{march.Indep}}, \code{\link{march.Mc}}, \code{\link{march.Mtd}}, \code{\link{march.Dcmm}}.
+The classes that inherit from march.Model are : \code{\link{march.Indep-class}}, \code{\link{march.Mc-class}}, \code{\link{march.Mtd-class}}, \code{\link{march.Dcmm-class}}.
 }
 

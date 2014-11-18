@@ -327,7 +327,7 @@ OptimizeQ <- function(q,j,pd_q,delta,delta_stop,ll,n_i0_il,q_i0_il,phi,i0_il,k,l
 #' 
 #' @author Ogier Maitre
 #' @example examples/march.mtd.construct.example.R
-#' @seealso \code{\link{march.Mtd}}, \code{\link{march.Model}}, \code{\link{march.Dataset}}.
+#' @seealso \code{\link{march.Mtd-class}}, \code{\link{march.Model-class}}, \code{\link{march.Dataset-class}}.
 #' @export
 march.mtd.construct <- function(y,order,maxOrder=order,mtdg=FALSE,init="best", deltaStop=0.0001, llStop=0.01, maxIter=0){
  

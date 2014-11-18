@@ -15,7 +15,7 @@
 #' @return The \code{\link{march.Indep}} constructed using dataset y and maxOrder.
 #' 
 #' 
-#' @seealso \code{\link{march.Indep}}, \code{\link{march.Model}}, \code{\link{march.Dataset}}.
+#' @seealso \code{\link{march.Indep-class}}, \code{\link{march.Model-class}}, \code{\link{march.Dataset-class}}.
 #' @example examples/march.indep.construct.example.R
 #' @author Ogier Maitre
 #' @export

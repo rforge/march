@@ -52,14 +52,14 @@ march.dcmm.ea.initialization <- function(p){
 	d
 }
 
-# Compute fitness value, based on Log likelyhood (minus the invert)
+# Compute fitness value, based on Log likelihood (minus the invert)
 # TODO : handle multi-sequence case
 #
 # Parameters:
 #	  d: dcmm to evaluate
 #	  p: the evaluate parameters, see march.dcmm.ea.EvalParameters in march.AllClasses.R file.
 # Return:
-#	  the opposite of the invert of the log likelyhood
+#	  the opposite of the invert of the log likelihood
 #
 march.dcmm.ea.evaluation <- function(d,p){
 	d@ll <- march.dcmm.h.computeLL(d=d,y=p@ds)

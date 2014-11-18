@@ -16,7 +16,7 @@
 #'
 #' @author Ogier Maitre
 #' @example examples/march.mc.construct.example.R
-#' @seealso \code{\link{march.Mc}}, \code{\link{march.Model}}, \code{\link{march.Dataset}}.
+#' @seealso \code{\link{march.Mc-class}}, \code{\link{march.Model-class}}, \code{\link{march.Dataset-class}}.
 #' @export
 march.mc.construct <- function(y,order,maxOrder=order) {
   
