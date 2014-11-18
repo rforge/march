@@ -420,14 +420,14 @@ march.dcmm.bw <- function(d,y){
 
 #' Construct a double chain Markov model (DCMM).
 #' 
-#' Construct a \code{\link{march.Dcmm}} object, with visible order \emph{orderVC}, hidden order \emph{orderHC} and \emph{M} hidden states, according to a \code{\link{march.Dataset}}. 
+#' Construct a \code{\link{march.Dcmm-class}} object, with visible order \emph{orderVC}, hidden order \emph{orderHC} and \emph{M} hidden states, according to a \code{\link{march.Dataset-class}}. 
 #' The first \emph{maxOrder}-\emph{orderVC} elements of each sequence are truncated in order to return a model
 #' which can be compared with other Markovian model of visible order maxOrder. The construction is performed either by an evolutionary algorithm (EA) or by improving an existing DCMM.
 #' The EA performs \emph{gen} generations on a population of \emph{popSize} individuals. The EA behaves as a Lamarckian evolutionary algorithm, using a Baum-Welch algorithm as 
 #' optimization step, running until log-likelihood improvement is less than \emph{stopBw} or for \emph{iterBw} iterations. Finally only the best individual from the population is returned as solution.
 #' If a seedModel is provided, the only step executed is the optimization step, parameters related to the EA does not apply in this case.
 #' 
-#' @param y the dataset from which the Dcmm will be constructed \code{\link{march.Dataset}}.
+#' @param y the dataset from which the Dcmm will be constructed \code{\link{march.Dataset-class}}.
 #' @param orderHC the order of the hidden chain of the constructed Dcmm.
 #' @param orderVC the order of the visible chain of the constructed Dcmm (0 for a HMM).
 #' @param M the number of hidden state of the Dcmm.
