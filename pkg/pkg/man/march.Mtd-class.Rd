@@ -5,7 +5,7 @@
 \title{A Mixture Transition Distribution (MTD) model.}
 \description{
 This class describes a Mixture Transition Distribution (MTD) model, represented by its transition matrix Q,
-its vector phi of lag parameters and its order. march.Mtd extends \code{\link{march.Model}} class and therefore
+its vector phi of lag parameters and its order. march.Mtd extends \code{\link{march.Model-class}} class and therefore
 inherits its slots.
 march.Mtd extends \code{\link{march.Model-class}} class and therefore inherits its slots.
 }

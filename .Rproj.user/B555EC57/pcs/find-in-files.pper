@@ -1,0 +1,10 @@
+{
+    "dialog-state" : {
+        "caseSensitive" : false,
+        "filePatterns" : [
+        ],
+        "path" : "D:/AB/Projets/Projet Markov dans R/Code/march_dev",
+        "query" : "march.Model",
+        "regex" : false
+    }
+}

@@ -12,12 +12,12 @@ This is a virtual class, which is not meant to be handled by user directly.
    \describe{
      \item{\code{ll}:}{A \code{\link{numeric}} representing the log-likelihood for this model \emph{w.r.t} its
      construction dataset.}
-     \item{\code{y}:}{The \code{\link{march.DataSet}} used to construct the model.}
+     \item{\code{y}:}{The \code{\link{march.DataSet-class}} used to construct the model.}
      \item{\code{dsL}:}{A \code{\link{numeric}} representing the number of sample used to construct the model.}
      \item{\code{nbZeros}:}{A \code{\link{numeric}} representing the number of zeros created during model construction.}
      }
 }
 \seealso{
-The classes that inherit from march.Model are : \code{\link{march.Indep}}, \code{\link{march.Mc}}, \code{\link{march.Mtd}}, \code{\link{march.Dcmm}}.
+The classes that inherit from march.Model are : \code{\link{march.Indep-class}}, \code{\link{march.Mc-class}}, \code{\link{march.Mtd-class}}, \code{\link{march.Dcmm-class}}.
 }
 

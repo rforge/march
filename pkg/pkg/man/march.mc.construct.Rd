@@ -31,6 +31,6 @@ print(model@RC)
 Ogier Maitre
 }
 \seealso{
-\code{\link{march.Mc}}, \code{\link{march.Model}}, \code{\link{march.Dataset}}.
+\code{\link{march.Mc-class}}, \code{\link{march.Model-class}}, \code{\link{march.Dataset-class}}.
 }
 

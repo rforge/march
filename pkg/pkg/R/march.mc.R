@@ -61,7 +61,7 @@ march.mc.construct <- function(y,order,maxOrder=order) {
 		}
 	}
   
-	new("march.Mc",RC=r,order=order,ll=ll,RT=rt,y=y,dsL=sum(y@T[y@T>(maxOrder+1)]-maxOrder),nbZeros=length(which(rt==0)))
+	new("march.Mc",RC=r,order=order,ll=ll,RT=rt,y=y,dsL=sum(rt),nbZeros=length(which(rt==0)))
 }
 
 

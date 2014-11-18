@@ -6,9 +6,9 @@
 march.dcmm.viterbi(d, y)
 }
 \arguments{
-\item{d}{The \code{\link{march.Dcmm}} on which to compute the most likely sequences of hidden states.}
+\item{d}{The \code{\link{march.Dcmm-class}} on which to compute the most likely sequences of hidden states.}
 
-\item{y}{The \code{\link{march.Dataset}} to consider.}
+\item{y}{The \code{\link{march.Dataset-class}} to consider.}
 }
 \value{
 A list of vectors containing the most likely sequences of hidden states, considering the given model for each sequence of the given dataset.

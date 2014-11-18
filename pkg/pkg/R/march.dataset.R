@@ -41,7 +41,7 @@ march.dataset.loadFromFile <- function( filename, MARGIN=2,sep=",",weights=NA){
 #' @param MARGIN The dimension of the matrix/data.frame that contains the sequences (resp 1 for the column, 2 for the rows).
 #' @param weights If specified, contains the weight of each sequence.
 #' @param missingDataRep If specified, the symbol representing a missing data.
-#' @return A \code{\link{march.Dataset}} object containing the data contructed from the matrix or data.frame.
+#' @return A \code{\link{march.Dataset-class}} object containing the data contructed from the matrix or data.frame.
 #' @example examples/march.dataset.loadFromDataFrame.example.R
 #' @author Ogier Maitre
 #'

@@ -67,6 +67,6 @@ print(HS[1:10])
 Ogier Maitre
 }
 \seealso{
-\code{\link{march.Dcmm}}, \code{\link{march.Model}}, \code{\link{march.Dataset}}.
+\code{\link{march.Dcmm-class}}, \code{\link{march.Model-class}}, \code{\link{march.Dataset-class}}.
 }
 
