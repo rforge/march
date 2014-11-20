@@ -358,56 +358,97 @@ march.dcmm.bw <- function(d,y){
     epsilon <- march.dcmm.epsilon(d,s,a$alpha,b$beta,a$l,b$l,a$LL)
     gamma <- march.dcmm.gamma(d,s,a$alpha,b$beta,a$l,b$l,a$LL,epsilon)
     
-    # Reestimation of the RA
+    # Reestimation of RA
     #print(RA)
     for( t in march.h.seq(d@orderVC+d@orderHC,s@N-1)){
-      RA <- RA+epsilon[t,,]
+      # AB
+      RA <- RA+y@weights[n]*epsilon[t,,]
+      #RA <- RA+epsilon[t,,]
+      # \AB
     }
     
-    tot <- rowSums(RA)
-    #print(d)
-    for( i in 1:d@M^d@orderHC ){
-      if( tot[i]>0 ){
-        RA[i,] <- RA[i,]/tot[i]	
-      }
-    }
-    
+    # AB: code moved after the loop on independent sequences
+    #tot <- rowSums(RA)
+    ##print(d)
+    #for( i in 1:d@M^d@orderHC ){
+    #  if( tot[i]>0 ){
+    #    RA[i,] <- RA[i,]/tot[i]	
+    #  }
+    #}
+    # \AB
     
     # Reestimation of RB
     for( t in march.h.seq((d@orderVC+1),(d@orderHC+d@orderVC-1))){
       rowC <- march.dcmm.h.encodeOutput(s,t,d)
       for( m in 1:d@M){
-        RB[m,rowC,s@y[t]] <- RB[m,rowC,s@y[t]]+sum(gamma[t,((m-1)*d@M^(t-d@orderVC)+1):(m*d@M^(t-d@orderVC))]) 			
+        # AB
+        RB[m,rowC,s@y[t]] <- RB[m,rowC,s@y[t]]+y@weights[n]*sum(gamma[t,((m-1)*d@M^(t-d@orderVC)+1):(m*d@M^(t-d@orderVC))]) 
+        #RB[m,rowC,s@y[t]] <- RB[m,rowC,s@y[t]]+sum(gamma[t,((m-1)*d@M^(t-d@orderVC)+1):(m*d@M^(t-d@orderVC))]) 	
+        # \AB
       }
     }
     
     for( t in (d@orderHC+d@orderVC):s@N){
       rowC <- march.dcmm.h.encodeOutput(s,t,d)
       for( m in 1:d@M){
-        RB[m,rowC,s@y[t]] <- RB[m,rowC,s@y[t]]+sum(gamma[t,((m-1)*d@M^(d@orderHC-1)+1):(m*d@M^(d@orderHC-1))]) 	
+        # AB
+        RB[m,rowC,s@y[t]] <- RB[m,rowC,s@y[t]]+y@weights[n]*sum(gamma[t,((m-1)*d@M^(d@orderHC-1)+1):(m*d@M^(d@orderHC-1))])
+        #RB[m,rowC,s@y[t]] <- RB[m,rowC,s@y[t]]+sum(gamma[t,((m-1)*d@M^(d@orderHC-1)+1):(m*d@M^(d@orderHC-1))]) 	
+        # \AB
       }
     }
     
-    for( m in 1:d@M ){
-      tot <- RB[m,,]%*%march.h.ones(d@y@K,1)
-      
-      for( j in 1:(d@y@K^d@orderVC )){
-        if( tot[j] ){
-          RB[m,j,] <- RB[m,j,]/tot[j]
-        }
-      }
-    }
+    # AB: code moved after the loop on independent sequences
+    #for( m in 1:d@M ){
+    #  tot <- RB[m,,]%*%march.h.ones(d@y@K,1)      
+    #  for( j in 1:(d@y@K^d@orderVC )){
+    #    if( tot[j] ){
+    #      RB[m,j,] <- RB[m,j,]/tot[j]
+    #    }
+    #  }
+    #}
+    # \AB
     
     # Reestimation of Pi
-    Pi[1,1,] <- Pi[1,1,]+gamma[d@orderVC+1,1:d@M]
+    # AB
+    Pi[1,1,] <- Pi[1,1,]+y@weights[n]*gamma[d@orderVC+1,1:d@M]
+    #Pi[1,1,] <- Pi[1,1,]+gamma[d@orderVC+1,1:d@M]
+    # \AB
     
     for( t in march.h.seq(2,d@orderHC) ){
       for( i in 1:(d@M^(t-1))){
-        if( gamma[d@orderVC+t-1,i]>0 )
-          Pi[t,i,] <- Pi[t,i,]+epsilon[d@orderVC+t-1,i,]/gamma[d@orderVC+t-1,i]				
+        if( gamma[d@orderVC+t-1,i]>0 ){
+          # AB
+          Pi[t,i,] <- Pi[t,i,]+y@weights[n]*epsilon[d@orderVC+t-1,i,]/gamma[d@orderVC+t-1,i]	
+          #Pi[t,i,] <- Pi[t,i,]+epsilon[d@orderVC+t-1,i,]/gamma[d@orderVC+t-1,i]
+          # \AB
+        }
       }
     }	
   }
+  
+  # AB
+  # Adjustement on RA
+  tot <- rowSums(RA)
+  for( i in 1:d@M^d@orderHC ){
+    if( tot[i]>0 ){
+      RA[i,] <- RA[i,]/tot[i]  
+    }
+  }
+  # \AB
+  
+  # AB
+  # Adjustement on RB
+  for( m in 1:d@M ){
+    tot <- RB[m,,]%*%march.h.ones(d@y@K,1)      
+    for( j in 1:(d@y@K^d@orderVC )){
+      if( tot[j] ){
+        RB[m,j,] <- RB[m,j,]/tot[j]
+      }
+    }
+  }
+  # \AB
+  
   Pi <- Pi/y@N
   
   # Expansion of RA into A
@@ -505,7 +546,7 @@ march.dcmm.construct <- function(y,orderHC,orderVC,M,gen=5,popSize=4,maxOrder=or
     res<-march.loop(p)
     
     # AB
-    res$best@dsL <- sum(y@T-orderVC)
+    res$best@dsL <- sum(y@T*y@weights-orderVC)
     #res$best@dsL <- sum(y@T)
     # \AB
     res$best@y <- y

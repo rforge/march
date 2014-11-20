@@ -2,6 +2,8 @@
 \alias{march}
 \title{Computation of Markovian models for categorical data}
 \description{
+Package march 1.02
+
 This package is dedicated to the computation of various Markovian models for categorical data including the independence model, homogeneous Markov chains of any order, the Mixture Transition Distribution (MTD) model for the approximation of high-order homogeneous Markov chains, Hidden Markov Models (HMMs) and Double Chain Markov Models (DCMMs).
 }
 \author{Ogier Maitre & Andre Berchtold}

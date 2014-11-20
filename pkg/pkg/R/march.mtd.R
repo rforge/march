@@ -6,7 +6,7 @@ march.mtd.h.constructEmptyMtd <- function(order,k){
   new("march.Mtd",Q=Q,phi=phi,K=k,order=order)
 }
 
-# Construct nt vector, holding the number of data items per sequence (lenght of data series)
+# Construct nt vector, holding the number of data items per sequence (length of data series)
 BuildArrayNumberOfDataItems <- function(x){
   n_rows_data <- dim(x)[1] # number of rows (number of data sequences)
   n_cols_data <- dim(x)[2] # number of rows (number of data sequences)
@@ -134,7 +134,10 @@ BuildArrayNumberOfSequences <- function(y,order){
   for(i in 1:y@N){
     for(t in march.h.seq(1,y@T[i]-order)){
       ind <- y@y[[i]][t:(t+order)]
-      n_i0_il[rbind(ind)] <- n_i0_il[rbind(ind)] + 1
+      # AB
+      n_i0_il[rbind(ind)] <- n_i0_il[rbind(ind)] + y@weights[i]
+      #n_i0_il[rbind(ind)] <- n_i0_il[rbind(ind)] + 1
+      # \AB
     }
     
   }
@@ -421,5 +424,8 @@ march.mtd.construct <- function(y,order,maxOrder=order,mtdg=FALSE,init="best", d
   nbZeros <- length(which(q==0))+length(which(phi==0))
   
   # construct and return the final object.
-  new("march.Mtd",order=order,Q=q,phi=phi,ll=ll,y=ySave,dsL=sum(y@T-order),nbZeros=nbZeros)
+  # AB
+  new("march.Mtd",order=order,Q=q,phi=phi,ll=ll,y=ySave,dsL=sum(y@T*y@weights-order),nbZeros=nbZeros)
+  #new("march.Mtd",order=order,Q=q,phi=phi,ll=ll,y=ySave,dsL=sum(y@T-order),nbZeros=nbZeros)
+  # \AB
 }
