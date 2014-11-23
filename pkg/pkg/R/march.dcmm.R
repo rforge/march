@@ -509,14 +509,19 @@ march.dcmm.construct <- function(y,orderHC,orderVC,M,gen=5,popSize=4,maxOrder=or
   
   #
   if( is.null(seedModel) ){
-    y <- march.dataset.h.filtrateShortSeq(y,maxOrder+1)
+    # AB
+    # The choice of orderHC instead of 1 has to be checked!!
+    y <- march.dataset.h.filtrateShortSeq(y,maxOrder+orderHC)
+    #y <- march.dataset.h.filtrateShortSeq(y,maxOrder+1)
+    # \AB
     y <- march.dataset.h.cut(y,maxOrder-orderVC)
   }
   
   if( is.null(seedModel)==FALSE ){
     
     # AB
-    y <- march.dataset.h.filtrateShortSeq(y,maxOrder+1)
+    # Idem!!
+    y <- march.dataset.h.filtrateShortSeq(y,maxOrder+orderHC)
     y <- march.dataset.h.cut(y,maxOrder-orderVC)
     # \AB
     
