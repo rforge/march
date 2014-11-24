@@ -9,7 +9,7 @@ its length and weights.
 }
 \details{
 The internal representation uses factor-like representation. The integer values correspond to the words stored
-into the dictionary vector. Therefor, they are in the interval [1,K].
+into the dictionary vector. Therefore, they are in the interval [1,K].
 }
 \section{Slots}{
 
@@ -23,7 +23,7 @@ into the dictionary vector. Therefor, they are in the interval [1,K].
    \item{\code{K}:}{A \code{\link{integer}} value representing the number of possible ouput and the number
    of words stored into the dictionary.}
    \item{\code{N}:}{A \code{\link{integer}} value representing the number of sequence.}
-   \item{\code{Dictionary}:}{A vector of \code{\link{character}} string representing the translation between
+   \item{\code{dictionary}:}{A vector of \code{\link{character}} string representing the translation between
    the yRaw and y data. Each character string is stored according to the integer which represents it into y.}
  }
 }

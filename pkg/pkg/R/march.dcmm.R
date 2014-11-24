@@ -39,11 +39,12 @@ march.dcmm.h.scaleAlpha <- function(j,alphat){
   list(scaled=alphat,scale=l)
 }
 
-
+#'@export
 march.dcmm.h.expandRA <- function(d,RA){
   march.dcmm.h.expandRAInternal(RA,d@M,d@orderHC)
 }
 
+#'@export
 march.dcmm.h.expandRAInternal <- function(RA,M,orderHC){
   A <- array(0,c(M^orderHC,M^orderHC))
   
