@@ -1,4 +1,4 @@
-# 
+### 
 # march.nbLLData <- function(rt,k,order){
 # 	ones(1,k^order)%*%rt%*%ones(k,1);
 # }
