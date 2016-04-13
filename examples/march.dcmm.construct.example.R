@@ -9,7 +9,8 @@ models[[length(models)+1]] <- march.dcmm.construct(y=pewee,seedModel=models[[1]]
                                                    iterBw=10,stopBw=0.001)
 models[[length(models)+1]] <- march.dcmm.construct(y=pewee,seedModel=models[[2]],
                                                    iterBw=10,stopBw=0.0001)
-# Show performance indicators (ll, number of independent parameters, BIC and AIC) for all computed models.
+# Show performance indicators (ll, number of independent parameters,
+# BIC and AIC) for all computed models.
 r <- do.call(rbind,lapply(models,march.summary))
 print(r)
 
