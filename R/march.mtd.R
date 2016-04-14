@@ -197,7 +197,7 @@ PartialDerivativesQ <- function(n_i0_il,i0_il,q_i0_il,m,phi,order){
   return(pd_q)
 }
 
-OptimizePhi <- function(phi,pd_phi,delta,is_constrained,delta_stop,ll,n_i0_il,q_i0_il){
+OptimizePhi <- function(phi,pd_phi,delta,is_constrained,delta_stop,ll,n_i0_il,q_i0_il,k){
 
   delta_it <- delta[1]
 
