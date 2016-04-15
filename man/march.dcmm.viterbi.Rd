@@ -6,9 +6,9 @@
 march.dcmm.viterbi(d, y)
 }
 \arguments{
-\item{d}{The \code{\link{march.Dcmm}} on which to compute the most likely sequences of hidden states.}
+\item{d}{The \code{\link[=march.Dcmm-class]{march.Dcmm}} on which to compute the most likely sequences of hidden states.}
 
-\item{y}{The \code{\link{march.Dataset}} to consider.}
+\item{y}{The \code{\link[=march.Dataset-class]{march.Dataset}} to consider.}
 }
 \value{
 A list of vectors containing the most likely sequences of hidden states, considering the given model for each sequence of the given dataset.
@@ -17,7 +17,7 @@ A list of vectors containing the most likely sequences of hidden states, conside
 Viterbi algorithm for a DCMM model.
 }
 \examples{
-# Estimation of a DCMM  
+# Estimation of a DCMM
 model <- march.dcmm.construct(y=pewee,orderHC=2,orderVC=3,M=4,popSize=2,gen=2)
 # Extraction of the best sequence of hidden states using the Viterbi algorithm.
 bestSeq <- march.dcmm.viterbi(model,pewee)

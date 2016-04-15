@@ -16,10 +16,11 @@ march.dataset.loadFromDataFrame(dataframe, MARGIN = 2, weights = NA,
 \item{missingDataRep}{If specified, the symbol representing a missing data.}
 }
 \value{
-A \code{\link{march.Dataset-class}} object containing the data contructed from the matrix or data.frame.
+A \code{\link[=march.Dataset-class]{march.Dataset}} object containing the data contructed from the matrix or data.frame.
 }
+
 \description{
-The function creates a \code{\link{march.Dataset}} from a \emph{dataframe} or a \emph{matrix}, where each row (resp. column) represents
+The function creates a \code{\link[=march.Dataset-class]{march.Dataset}} from a \emph{dataframe} or a \emph{matrix}, where each row (resp. column) represents
 an independent data series when \emph{MARGIN} is 2 (resp. 1).
 }
 \examples{

@@ -7,7 +7,7 @@ march.dcmm.construct(y, orderHC, orderVC, M, gen = 5, popSize = 4,
   maxOrder = orderVC, seedModel = NULL, iterBw = 2, stopBw = 0.1)
 }
 \arguments{
-\item{y}{the dataset from which the Dcmm will be constructed \code{\link{march.Dataset}}.}
+\item{y}{the dataset from which the Dcmm will be constructed \code{\link[=march.Dataset-class]{march.Dataset}}.}
 
 \item{orderHC}{the order of the hidden chain of the constructed Dcmm.}
 
@@ -28,10 +28,10 @@ march.dcmm.construct(y, orderHC, orderVC, M, gen = 5, popSize = 4,
 \item{stopBw}{the minimum increase in quality (log-likelihood) authorized in the Baum-Welch algorithm.}
 }
 \value{
-the best \code{\link{march.Dcmm}} constructed by the EA or the result of the Baum-Welch algorithm on \emph{seedModel}.
+the best \code{\link[=march.Dcmm-class]{march.Dcmm}} constructed by the EA or the result of the Baum-Welch algorithm on \emph{seedModel}.
 }
 \description{
-Construct a \code{\link{march.Dcmm}} object, with visible order \emph{orderVC}, hidden order \emph{orderHC} and \emph{M} hidden states, according to a \code{\link{march.Dataset}}.
+Construct a \code{\link[=march.Dcmm-class]{march.Dcmm}} object, with visible order \emph{orderVC}, hidden order \emph{orderHC} and \emph{M} hidden states, according to a \code{\link[=march.Dataset-class]{march.Dataset}}.
 The first \emph{maxOrder}-\emph{orderVC} elements of each sequence are truncated in order to return a model
 which can be compared with other Markovian model of visible order maxOrder. The construction is performed either by an evolutionary algorithm (EA) or by improving an existing DCMM.
 The EA performs \emph{gen} generations on a population of \emph{popSize} individuals. The EA behaves as a Lamarckian evolutionary algorithm, using a Baum-Welch algorithm as
@@ -68,6 +68,6 @@ print(HS[1:10])
 Ogier Maitre
 }
 \seealso{
-\code{\link{march.Dcmm-class}}, \code{\link{march.Model-class}}, \code{\link{march.Dataset-class}}.
+\code{\link{march.Dcmm-class}}, \code{\link{march.Model-class}}, \code{\link[=march.Dataset-class]{march.Dataset}}.
 }
 

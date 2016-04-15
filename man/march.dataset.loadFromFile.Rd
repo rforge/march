@@ -15,7 +15,7 @@ march.dataset.loadFromFile(filename, MARGIN = 2, sep = ",", weights = NA)
 \item{weights}{If specified, contains the weight of each sequence.}
 }
 \value{
-a \code{\link{march.Dataset}} object containing the data from the file found at \emph{filename}, using separator
+a \code{\link[=march.Dataset-class]{march.Dataset}} object containing the data from the file found at \emph{filename}, using separator
 \emph{sep}.
 }
 \description{
