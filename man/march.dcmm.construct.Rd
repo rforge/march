@@ -27,9 +27,11 @@ march.dcmm.construct(y, orderHC, orderVC, M, gen = 5, popSize = 4,
 
 \item{stopBw}{the minimum increase in quality (log-likelihood) authorized in the Baum-Welch algorithm.}
 }
+
 \value{
 the best \code{\link[=march.Dcmm-class]{march.Dcmm}} constructed by the EA or the result of the Baum-Welch algorithm on \emph{seedModel}.
 }
+
 \description{
 Construct a \code{\link[=march.Dcmm-class]{march.Dcmm}} object, with visible order \emph{orderVC}, hidden order \emph{orderHC} and \emph{M} hidden states, according to a \code{\link[=march.Dataset-class]{march.Dataset}}.
 The first \emph{maxOrder}-\emph{orderVC} elements of each sequence are truncated in order to return a model
