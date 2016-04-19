@@ -1,0 +1,16 @@
+{
+    "contents" : "Package: march\nTitle: Markov Chains\nDescription: A package implementing several Markovian models\nVersion: 1.04\nDate: November 20, 2014\nAuthor: Ogier Maitre, with contributions from Andre Berchtold\nMaintainer: Andre Berchtold <andre.berchtold@unil.ch>\nDepends:\n    R (>= 3.0.2),\n    methods\nLicense: GPL-2\nLazyData: true\n",
+    "created" : 1416340132438.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1473989443",
+    "id" : "53C52E42",
+    "lastKnownWriteTime" : 1416793961,
+    "path" : "D:/AB/Projets/Projet Markov dans R/Code/march_dev/pkg/pkg/DESCRIPTION",
+    "project_path" : "pkg/pkg/DESCRIPTION",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "dcf"
+}

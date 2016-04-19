@@ -1,0 +1,16 @@
+{
+    "contents" : "\\name{march-package}\n\\alias{march}\n\\title{Computation of Markovian models for categorical data}\n\\description{\nThis package is dedicated to the computation of various Markovian models for categorical data including the independence model, homogeneous Markov chains of any order, the Mixture Transition Distribution (MTD) model for the approximation of high-order homogeneous Markov chains, Hidden Markov Models (HMMs) and Double Chain Markov Models (DCMMs).\n}\n\\author{Ogier Maitre & Andre Berchtold}\n\\references{\n Berchtold A, Raftery AE (2002) The Mixture Transition Distribution Model for High-Order Markov Chains and Non-Gaussian Time-Series.\n \\emph{Statistical Science} 17(3), 328-356.\n \n Berchtold A (2002) High-order extensions of the Double Chain Markov Model. \n \\emph{Stochastic Models} 18, 193-227.\n}\n\n\\seealso{\n\\code{\\link{march.Model-class}}, \\code{\\link{march.Dataset-class}}.\n}",
+    "created" : 1416340148066.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2053332537",
+    "id" : "D926C24D",
+    "lastKnownWriteTime" : 1416340156,
+    "path" : "D:/AB/Projets/Projet Markov dans R/Code/march_dev/pkg/pkg/man/march.Rd",
+    "project_path" : "pkg/pkg/man/march.Rd",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_doc"
+}
