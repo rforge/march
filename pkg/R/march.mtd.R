@@ -311,12 +311,12 @@ OptimizeQ <- function(q,j,pd_q,delta,delta_stop,ll,n_i0_il,q_i0_il,phi,i0_il,k,l
 
 #' Construct a Mixture Transition Distribution (MTD) model.
 #'
-#' A Mixture Transition Distribution model (\code{\link{march.Mtd}}) object of order \emph{order} is constructed
-#' according to a given \code{\link{march.Dataset}} \emph{y}. The first \emph{maxOrder}-\emph{order}
+#' A Mixture Transition Distribution model (\code{\link[=march.Mtd-class]{march.Mtd}}) object of order \emph{order} is constructed
+#' according to a given \code{\link[=march.Dataset-class]{march.Dataset}} \emph{y}. The first \emph{maxOrder}-\emph{order}
 #' elements of each sequence are truncated in order to return a model
 #' which can be compared with other Markovian models of visible order maxOrder.
 #'
-#' @param y the dataset (\code{\link{march.Dataset}}) from which to construct the model.
+#' @param y the dataset (\code{\link[=march.Dataset-class]{march.Dataset}}) from which to construct the model.
 #' @param order the order of the constructed model.
 #' @param maxOrder the maximum visible order among the set of Markovian models to compare.
 #' @param mtdg flag indicating whether the constructed model should be a MTDg using a different transition matrix for each lag (value: \emph{TRUE} or \emph{FALSE}).
@@ -327,7 +327,7 @@ OptimizeQ <- function(q,j,pd_q,delta,delta_stop,ll,n_i0_il,q_i0_il,phi,i0_il,k,l
 #'
 #' @author Ogier Maitre
 #' @example examples/march.mtd.construct.example.R
-#' @seealso \code{\link{march.Mtd-class}}, \code{\link{march.Model-class}}, \code{\link{march.Dataset-class}}.
+#' @seealso \code{\link[=march.Mtd-class]{march.Mtd-class}}, \code{\link{march.Model-class}}, \code{\link[=march.Dataset-class]{march.Dataset-class}}.
 #' @export
 march.mtd.construct <- function(y,order,maxOrder=order,mtdg=FALSE,init="best", deltaStop=0.0001, llStop=0.01, maxIter=0){
 

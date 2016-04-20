@@ -50,7 +50,7 @@ setClass("march.Sequence",representation(y="vector",weight="numeric",N="integer"
 #'    \describe{
 #'      \item{\code{ll}:}{A \code{\link{numeric}} representing the log-likelihood for this model \emph{w.r.t} its 
 #'      construction dataset.}
-#'      \item{\code{y}:}{The \code{\link{march.DataSet-class}} used to construct the model.}
+#'      \item{\code{y}:}{The \code{\link[=march.Dataset-class]{march.DataSet-class}} used to construct the model.}
 #'      \item{\code{dsL}:}{A \code{\link{numeric}} representing the number of sample used to construct the model.}
 #'      \item{\code{nbZeros}:}{A \code{\link{numeric}} representing the number of zeros created during model construction.}
 #'      }
@@ -80,7 +80,7 @@ setClass("march.Indep",contains="march.Model",representation(indP="vector",indC=
 #'
 #' @section Slots:
 #'  \describe{
-#'    \item{\code{RC}:}{A matrix of \code{\link{numeric }} representing the reduced form of the 
+#'    \item{\code{RC}:}{A matrix of \code{\link{numeric}} representing the reduced form of the 
 #'    transition matrix of the current Markov Chain.}
 #'    \item{\code{order}:}{An \code{\link{integer}} representing the order of the current Markov Chain.}
 #'    \item{\code{RT}:}{A matrix of \code{\link{integer}} representing the number of sample used to compute each 
