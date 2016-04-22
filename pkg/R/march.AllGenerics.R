@@ -286,6 +286,7 @@ setMethod(f="march.thompson",signature=signature("march.Dcmm",alpha="numeric"),d
 #'
 #' Generate a name for the march model contained in the given \emph{object}.
 #'
+#' @param object contains the name of the model(Independence model, MTD,...). 
 #' @author Ogier Maitre & Andre Berchtold
 #' @example examples/march.name.example.R
 #' @export
@@ -321,6 +322,10 @@ setMethod(f="march.name",signature=signature(object="march.Dcmm"),definition=mar
 #' march.Model Summary.
 #'
 #' Print key values for the current model.
+#' 
+#' @param object can contain the results of any model computed  using march
+#' @param ... should indicate any additional parameter passed to the function
+#' @author Ogier Maitre & Andre Berchtold
 #' @export
 march.summary <- function(object,...){
   v <- array(NA,c(1,4))

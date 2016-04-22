@@ -6,7 +6,15 @@
 \usage{
 march.summary(object, ...)
 }
+\arguments{
+\item{object}{can contain the results of any model computed  using march}
+
+\item{...}{should indicate any additional parameter passed to the function}
+}
 \description{
 Print key values for the current model.
+}
+\author{
+Ogier Maitre & Andre Berchtold
 }
 

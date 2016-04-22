@@ -5,6 +5,10 @@
 
 
 #' Extract a sequence from a dataset.
+#' 
+#' 
+#' @param y is the dataset from which one sequence of data is extracted
+#' @param i is the number of sequence to extract
 #' @export
 march.dataset.h.extractSequence <- function(y,i){
   new("march.Sequence",y=y@y[[i]],N=as.integer(y@T[i]),weight=y@weights[i])
