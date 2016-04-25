@@ -11,7 +11,7 @@ provides it to the march.thompson function.}
 \arguments{
 \item{object}{contains the name of the model.}
 
-\item{alpha}{contains a numeric}
+\item{alpha}{contains the Type I error}
 }
 \description{
 This method is called with the object "march.Dcmm" and the aplha "numeric" and

@@ -16,7 +16,7 @@
 #' 
 #' 
 #' @seealso \code{\link{march.Indep-class}}, \code{\link{march.Model-class}}, \code{\link{march.Dataset-class}}.
-#' @example examples/march.indep.construct.example.R
+#' @example tests/examples/march.indep.construct.example.R
 #' @author Ogier Maitre
 #' @export
 march.indep.construct <- function(y,maxOrder=0){

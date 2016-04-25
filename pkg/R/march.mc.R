@@ -15,7 +15,7 @@
 #' @return the \code{\link[=march.Mc-class]{march.Mc}} of order \emph{order} constructed \emph{w.r.t} the dataset \emph{y} and maxOrder.
 #'
 #' @author Ogier Maitre
-#' @example examples/march.mc.construct.example.R
+#' @example tests/examples/march.mc.construct.example.R
 #' @seealso \code{\link[=march.Mc-class]{march.Mc-class}}, \code{\link{march.Model-class}}, \code{\link[=march.Dataset-class]{march.Dataset-class}}.
 #' @export
 march.mc.construct <- function(y,order,maxOrder=order) {

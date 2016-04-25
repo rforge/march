@@ -80,7 +80,7 @@ march.dcmm.h.compactA <- function(d){
 #'
 #' @return A list of vectors containing the most likely sequences of hidden states, considering the given model for each sequence of the given dataset.
 #' @author Ogier Maitre
-#' @example examples/march.dcmm.viterbi.example.R
+#' @example tests/examples/march.dcmm.viterbi.example.R
 #'
 #'@export
 march.dcmm.viterbi <- function(d,y){
@@ -441,7 +441,7 @@ march.dcmm.bw <- function(d,y){
 #' @return the best \code{\link[=march.Dcmm-class]{march.Dcmm}} constructed by the EA or the result of the Baum-Welch algorithm on \emph{seedModel}.
 #'
 #' @author Ogier Maitre
-#' @example examples/march.dcmm.construct.example.R
+#' @example tests/examples/march.dcmm.construct.example.R
 #' @seealso \code{\link[=march.Dcmm-class]{march.Dcmm-class}}, \code{\link{march.Model-class}}, \code{\link[=march.Dataset-class]{march.Dataset-class}}.
 #'
 #' @export

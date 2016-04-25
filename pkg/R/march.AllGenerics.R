@@ -221,7 +221,7 @@ setMethod(f="march.nbParams",signature="march.Dcmm",definition=march.dcmm.nbPara
 #'
 #' @return A list of half-length confidence intervals for each probability distribution of the considered model.
 #' @author Ogier Maitre
-#' @example examples/march.thompson.example.R
+#' @example tests/examples/march.thompson.example.R
 #'
 #' @export
 march.thompson <- function(object,alpha){}
@@ -281,28 +281,28 @@ setGeneric(name="march.thompson",def=function(object,alpha)march.model.thompson(
 #' This method is called with the object "march.Indep" and the aplha "numeric" and
 #' provides it to the march.thompson function.
 #' @param object contains the name of the model.
-#' @param alpha contains a numeric
+#' @param alpha contains the Type I error
 setMethod(f="march.thompson",signature=signature(object="march.Indep",alpha="numeric"),definition=march.indep.thompson)
 
 #' This method is called with the object "march.Mc" and the aplha "numeric" and
 #' provides it to the march.thompson function.
 #'
 #' @param object contains the name of the model.
-#' @param alpha contains a numeric
+#' @param alpha contains the Type I error
 setMethod(f="march.thompson",signature=signature("march.Mc",alpha="numeric"),definition=march.mc.thompson)
 
 #' This method is called with the object "march.Mtd" and the aplha "numeric" and
 #' provides it to the march.thompson function.
 #'
 #' @param object contains the name of the model.
-#' @param alpha contains a numeric
+#' @param alpha contains the Type I error
 setMethod(f="march.thompson",signature=signature("march.Mtd",alpha="numeric"),definition=march.mtd.thompson)
 
 #' This method is called with the object "march.Dcmm" and the aplha "numeric" and
 #' provides it to the march.thompson function.
 #'
 #' @param object contains the name of the model.
-#' @param alpha contains a numeric
+#' @param alpha contains the Type I error
 setMethod(f="march.thompson",signature=signature("march.Dcmm",alpha="numeric"),definition=march.dcmm.thompson)
 
 #' march.Model name.
@@ -311,7 +311,7 @@ setMethod(f="march.thompson",signature=signature("march.Dcmm",alpha="numeric"),d
 #'
 #' @param object contains the name of the model(Independence model, MTD,...). 
 #' @author Ogier Maitre & Andre Berchtold
-#' @example examples/march.name.example.R
+#' @example tests/examples/march.name.example.R
 #' @export
 march.name <- function(object){}
 
