@@ -215,6 +215,7 @@ setMethod(f="march.nbParams",signature="march.Dcmm",definition=march.dcmm.nbPara
 #' object. See Thompson SK (1987) Sample size for estimating multinomial proportions,
 #' American Statistician 41:42-46, for details.
 #'
+#'
 #' @param object the march.Model object on which compute the confidence intervals.
 #' @param alpha the significance level among : 0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.025, 0.02, 0.01, 0.005, 0.001, 0.0005, 0.0001.
 #'
@@ -273,17 +274,39 @@ march.dcmm.thompson <- function(object,alpha){
   C
 }
 
-
 #This part create the generic method and describe how a call to this generic
-#has to be redirected to the rigth method, according to the considerd object.
+#has to be redirected to the rigth method, according to the considered object.
 setGeneric(name="march.thompson",def=function(object,alpha)march.model.thompson(object,alpha))
+
+#' This method is called with the object "march.Indep" and the aplha "numeric" and
+#' provides it to the march.thompson function.
+#' @param object contains the name of the model.
+#' @param alpha contains a numeric
 setMethod(f="march.thompson",signature=signature(object="march.Indep",alpha="numeric"),definition=march.indep.thompson)
+
+#' This method is called with the object "march.Mc" and the aplha "numeric" and
+#' provides it to the march.thompson function.
+#'
+#' @param object contains the name of the model.
+#' @param alpha contains a numeric
 setMethod(f="march.thompson",signature=signature("march.Mc",alpha="numeric"),definition=march.mc.thompson)
+
+#' This method is called with the object "march.Mtd" and the aplha "numeric" and
+#' provides it to the march.thompson function.
+#'
+#' @param object contains the name of the model.
+#' @param alpha contains a numeric
 setMethod(f="march.thompson",signature=signature("march.Mtd",alpha="numeric"),definition=march.mtd.thompson)
+
+#' This method is called with the object "march.Dcmm" and the aplha "numeric" and
+#' provides it to the march.thompson function.
+#'
+#' @param object contains the name of the model.
+#' @param alpha contains a numeric
 setMethod(f="march.thompson",signature=signature("march.Dcmm",alpha="numeric"),definition=march.dcmm.thompson)
 
 #' march.Model name.
-#'
+#' 
 #' Generate a name for the march model contained in the given \emph{object}.
 #'
 #' @param object contains the name of the model(Independence model, MTD,...). 
@@ -311,10 +334,32 @@ march.dcmm.name <- function(object){
 }
 
 
+#This part create the generic method and describe how a call to this generic
+#has to be redirected to the right method, according to the considered object.
 setGeneric(name="march.name",def=function(object)march.model.name(object))
+
+#' This method is called with the object "march.Indep" and provides it 
+#' to the march.name function.
+#'
+#' @param object contains the name of the model.
 setMethod(f="march.name",signature=signature(object="march.Indep"),definition=march.indep.name)
+
+#' This method is called with the object "march.MC" and provides it 
+#' to the march.name function.
+#'
+#' @param object contains the name of the model.
 setMethod(f="march.name",signature=signature(object="march.Mc"),definition=march.mc.name)
+
+#' This method is called with the object "march.Mtd" and provides it 
+#' to the march.name function.
+#'
+#' @param object contains the name of the model.
 setMethod(f="march.name",signature=signature(object="march.Mtd"),definition=march.mtd.name)
+
+#' This method is called with the object "march.Dcmm" and provides it 
+#' to the march.name function.
+#'
+#' @param object contains the name of the model.
 setMethod(f="march.name",signature=signature(object="march.Dcmm"),definition=march.dcmm.name)
 
 #quote=FALSE,digits = getOption("digits")
