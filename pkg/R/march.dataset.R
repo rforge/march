@@ -3,7 +3,6 @@
 # Author: Ogier Maitre
 ###############################################################################
 
-
 #' Extract a sequence from a dataset.
 #' 
 #' 
@@ -13,6 +12,7 @@
 march.dataset.h.extractSequence <- function(y,i){
   new("march.Sequence",y=y@y[[i]],N=as.integer(y@T[i]),weight=y@weights[i])
 }
+
 
 #' Load a dataset from a file.
 #' 

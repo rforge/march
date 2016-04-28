@@ -197,4 +197,3 @@ setClass("march.dcmm.ea.MutationParameters",contains="march.ea.MutationParameter
 setClass("march.dcmm.ea.OptimizingParameters",contains="march.ea.OptimizingParameters",
          representation(ds="march.Dataset",iterBw="integer",stopBw="numeric")
 )
-

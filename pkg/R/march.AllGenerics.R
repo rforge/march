@@ -18,6 +18,13 @@
 #
 
 
+# the imported methods which needed for march are added to the 
+# NAMMESPACE file with the following Code.
+#' @importFrom stats C qchisq rnorm runif
+#' @importFrom utils read.table write.table
+#' @importFrom methods new
+
+
 ###############################################################################
 # Show methods here, are the implementation of generic methods to print
 # models to the standard output. These methods are implemented for all
@@ -222,7 +229,7 @@ setMethod(f="march.nbParams",signature="march.Dcmm",definition=march.dcmm.nbPara
 #' @return A list of half-length confidence intervals for each probability distribution of the considered model.
 #' @author Ogier Maitre
 #' @example tests/examples/march.thompson.example.R
-#'
+#' 
 #' @export
 march.thompson <- function(object,alpha){}
 
