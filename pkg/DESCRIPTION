@@ -5,8 +5,8 @@ Description: The computation of the Double Chain Markov Model, including special
     package.
 Version: 1.1
 Date: 2016-04-12
-Author: Ogier Maitre, with contributions from Andre Berchtold
-Maintainer: Oliver Buschor <buschoro@ethz.ch>
+Author: Ogier Maitre, with contributions from Andre Berchtold and Oliver Buschor
+Maintainer: Andre Berchtold <andre.berchtold@unil.ch>
 Depends:
     R (>= 3.0.2),
     methods
