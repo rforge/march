@@ -1,13 +1,13 @@
 # Construct a 2 hidden states DCMM for the pewee data
 # with hidden order set to 2 and visible order set to 1.
 # The estimation procedure uses both the evolutionary algorithm (population size 2, 
-# 2 iterations) and the the Bauw-Welch algorithm (one iteration only).
-march.dcmm.construct(y=pewee,orderHC=2,orderVC=1,M=2,popSize=2,gen=2,iterBw=1,stopBw=0.0001)
+# one iteration) and the Bauw-Welch algorithm (one iteration).
+march.dcmm.construct(y=pewee,orderHC=2,orderVC=1,M=2,popSize=2,gen=1,iterBw=1,stopBw=0.0001)
 
 \dontrun{
  
 # Same as above, but the DCMM is replaced by a HMM (the visible order OrderVC is set to zero).
-march.dcmm.construct(y=pewee,orderHC=2,orderVC=0,M=2,popSize=2,gen=2,iterBw=1,stopBw=0.0001)  
+march.dcmm.construct(y=pewee,orderHC=2,orderVC=0,M=2,popSize=2,gen=1,iterBw=1,stopBw=0.0001)  
   
 # Construct a DCMM using an order 2 hidden chain,
 # a visible chain of order 3 and 3 hidden states.
