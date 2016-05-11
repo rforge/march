@@ -3,9 +3,9 @@
 # The estimation procedure uses only the evolutionary algorithm (one generation only).
 march.dcmm.construct(y=pewee,orderHC=1,orderVC=1,M=2,popSize=2,gen=1)
 
-# Construct a first-order, three hidden states HMM for the pewee data.
+# Construct a first-order, two hidden states HMM for the pewee data.
 # The estimation procedure uses only the Bauw-Welch algorithm (one iteration only).
-march.dcmm.construct(pewee,orderHC=1,orderVC=0,M=3,gen=1,popSize=1,iterBw=1,stopBw=0.0001)
+march.dcmm.construct(pewee,orderHC=1,orderVC=0,M=2,gen=1,popSize=1,iterBw=1,stopBw=0.0001)
 
 \dontrun{
   
