@@ -1,14 +1,14 @@
 # Construct a 2 hidden states DCMM for the pewee data
 # with hidden and visible orders set to 1.
-# The estimation procedure uses only the evolutionary algorithm.
-march.dcmm.construct(y=pewee,orderHC=1,orderVC=1,M=2,popSize=2,gen=2)
+# The estimation procedure uses only the evolutionary algorithm (one generation only).
+march.dcmm.construct(y=pewee,orderHC=1,orderVC=1,M=2,popSize=2,gen=1)
 
 # Construct a first-order, three hidden states HMM for the pewee data.
-# The estimation procedure uses only the Bauw-Welch algorithm.
-march.dcmm.construct(pewee,orderHC=1,orderVC=0,M=3,gen=1,popSize=1,iterBw=3,stopBw=0.001)
+# The estimation procedure uses only the Bauw-Welch algorithm (one iteration only).
+march.dcmm.construct(pewee,orderHC=1,orderVC=0,M=3,gen=1,popSize=1,iterBw=1,stopBw=0.0001)
 
-## Not run:
-
+\dontrun{
+  
 # Construct a DCMM using an order 2 hidden chain,
 # a visible chain of order 3 and 3 hidden states.
 # A first model is computed using both EA and Baum-Welch algorithms.
@@ -34,4 +34,4 @@ HS <- march.dcmm.viterbi(HMM,sleep)
 # Display the hidden states for the first 10 subjects.
 print(HS[1:10])
 
-## End(Not run)
+}
