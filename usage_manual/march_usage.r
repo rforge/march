@@ -18,26 +18,47 @@ library(march)
 # install.packages("TraMineR")
 library(TraMineR)
 
+#Download the package March from LINK and create a new R Project in R Studio with
+#an existing directory. Then choose the directory for the project to te 
+#folder where March is located. 
+#Make sure your data you want to use for a markovian model is located in the 
+#data folder in the package march. 
+#when you reload march, just close and open your project again your data should be
+#available. You can test if your data is available with the following command.
 
+data() # scroll down to: Data sets in package 'NameOfProject
+
+#
 ###################
 ###################
 # The pewee example
 
-# Loading a data frame and turning it into a march dataset
+# Loading a data frame, here with the example of the pewee_df
 data(pewee_df)
+
+# turning it into a march dataset
 PEWEE <- march.dataset.loadFromDataFrame(pewee_df, 
                       MARGIN = 1, weights = NA, missingDataRep = NA)
+# for a better explanation and several examples see the following help command
 help(march.dataset.loadFromDataFrame)
+
 
 # Building a model
 # The independence model
+# it calculates the loglikelihood, the total number of variables (dsl) aswell as the
+# Aikake (AIC) and the Bayesian (BIC) Information Criterion. 
+# indP is the percentage for each of the variables
 Indep <- march.indep.construct(PEWEE)
 print(Indep)
 march.summary(Indep)
 
 help(march.indep.construct)
+help(march.summary)
 
-# Using the maxOrder parameter
+# Now the maxOrder parameter is used. when you print(Indep.2) you can notice, that
+# the total amount of used variables (dsl) is reduced by the the value of maxOrder, 
+# because the Independence Model needs 5 Variables and creates the model starting from 
+# the 6th variable.s
 Indep.2 <- march.indep.construct(PEWEE,maxOrder=5)
 print(Indep.2)
 
