@@ -1,0 +1,19 @@
+\begin{thebibliography}{}
+
+\bibitem[Berchtold, 2002]{Berchtold2002}
+Berchtold, A. (2002).
+\newblock High-order extensions of the double chain markov model.
+\newblock {\em Stochastic Models}, 18(2):193--227.
+
+\bibitem[Berchtold and Raftery, 2002]{berchtold2002mixture}
+Berchtold, A. and Raftery, A.~E. (2002).
+\newblock The mixture transition distribution model for high-order markov
+  chains and non-gaussian time series.
+\newblock {\em Statistical Science}, pages 328--356.
+
+\bibitem[Forney~Jr, 1973]{Forney1973}
+Forney~Jr, G.~D. (1973).
+\newblock The viterbi algorithm.
+\newblock {\em Proceedings of the IEEE}, 61(3):268--278.
+
+\end{thebibliography}

@@ -1,0 +1,49 @@
+% Encoding: UTF-8
+
+@Article{Berchtold2002,
+  author  = {André Berchtold},
+  title   = {High-order extensions of the Double Chain Markov Model},
+  journal = {Stochastic Models},
+  year    = {2002},
+  volume  = {18},
+  number  = {2},
+  pages   = {193-227},
+  doi     = {10.1081/STM-120004464},
+  eprint  = { http://dx.doi.org/10.1081/STM-120004464 },
+  url     = { 
+        http://dx.doi.org/10.1081/STM-120004464
+    
+},
+}
+
+@Article{berchtold2002mixture,
+  author    = {Berchtold, Andr{\'e} and Raftery, Adrian E},
+  title     = {The mixture transition distribution model for high-order Markov chains and non-Gaussian time series},
+  journal   = {Statistical Science},
+  year      = {2002},
+  pages     = {328--356},
+  publisher = {JSTOR},
+}
+
+@Article{bolano2016general,
+  author    = {Bolano, Danilo and Berchtold, Andr{\'e}},
+  title     = {General framework and model building in the class of Hidden Mixture Transition Distribution models},
+  journal   = {Computational Statistics \& Data Analysis},
+  year      = {2016},
+  volume    = {93},
+  pages     = {131--145},
+  publisher = {Elsevier},
+}
+
+@Article{Forney1973,
+  author    = {Forney Jr, G David},
+  title     = {The viterbi algorithm},
+  journal   = {Proceedings of the IEEE},
+  year      = {1973},
+  volume    = {61},
+  number    = {3},
+  pages     = {268--278},
+  publisher = {IEEE},
+}
+
+@Comment{jabref-meta: databaseType:bibtex;}

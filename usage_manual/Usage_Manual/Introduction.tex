@@ -1,0 +1,30 @@
+\section{Introduction}
+This manual should explain how the \M ~package can be used. Therefore it is a precondition that you have a compiler which can deal with R code, R-Studio is  recommended.\\
+Together with \manual this file will get you a basic introduction to \M. It is a program to compute Double Chain Markov Models, including special cases like the Hidden Markov Models and homogeneous Markov chains. The different models and their application will be discussed later. \\
+To install the package \M ~you can type the following Code into the console of R-Studio.
+\begin{verbatim}
+install.packages("march", repos="http://R-Forge.R-project.org")
+\end{verbatim}
+With the following command the namespace of \M ~loaded and attached to the search list. 
+\begin{verbatim}
+library(march)
+\end{verbatim}
+Further the package TraMineR, is provided and available on CRAN. With the following code it can be downloaded and installed in R-Studio.
+\begin{verbatim}
+install.packages("TraMineR")
+\end{verbatim}
+To attach TraMineR to the search list the following command is necessary. 
+\begin{verbatim}
+library(TraMineR)
+\end{verbatim}
+It is possible to download \M ~directly from the CRAN Homepage  \href{https://cran.r-project.org/web/packages/march/index.html}{here}. When \M~ is installed a new R Project in R Studio can be created. Therefore you choose:\\
+\begin{center}
+\mybox{File}\hspace{6pt} $\triangleright$\hspace{6pt}\mybox{New Project}\hspace{6pt} $\triangleright $\hspace{6pt} \mybox{Existing Directory}\hspace{6pt} $\triangleright$\hspace{6pt}\mybox{Directory to your \M file}
+\end{center}
+Make sure the data which is used for the Markovian models is located in the data folder on the toplevel environment of your package \M. After a reload \M, just close and open the project again, the data should be available. With the following command it is possible to test if the data is available, respectively all the data in your R environment are shown. 
+\begin{verbatim}
+data()
+\end{verbatim}
+Scroll down to:
+\begin{verbatim}Data sets in package 'NameOfProject'\end{verbatim}
+If everything worked well the data should appear here and can now be used by the \M ~package. 
