@@ -53,6 +53,7 @@ print(Indep)
 march.summary(Indep)
 
 help(march.indep.construct)
+help("march.Indep-class")
 help(march.summary)
 
 # Now the maxOrder parameter is used. when you print(Indep.2) you can notice, that
@@ -61,6 +62,8 @@ help(march.summary)
 # the 6th variable.s
 Indep.2 <- march.indep.construct(PEWEE,maxOrder=5)
 print(Indep.2)
+
+
 
 
 # Building a first order Markov chain
@@ -74,7 +77,8 @@ print(MC1.2)
 MC2 <- march.mc.construct(PEWEE,order=2,maxOrder=5)
 print(MC2)
 
-
+help(march.mc.construct)
+help("march.Mc-class")
 #################
 #################
 # Sleep disorders
@@ -95,6 +99,8 @@ r <- do.call(rbind,lapply(models,march.summary))
 print(r)
 
 # MTD
+help("march.mtd.construct")
+help("march.Mtd-class")
 mtd2 <- march.mtd.construct(sleep,order=2,maxOrder=3)
 print(mtd2)
 march.summary(mtd2)
@@ -122,7 +128,6 @@ models_all[6] <- models[4]
 models_all[7] <- mtd3
 models_all[8] <- mtdg3
 
-
 r <- do.call(rbind,lapply(models_all,march.summary))
 print(r)
 
@@ -138,6 +143,7 @@ PEWEE <- march.dataset.loadFromDataFrame(pewee_df,
                                          MARGIN = 1, weights = NA, missingDataRep = NA)
 
 # Searching for the best model among homogeneous models
+
 # Maximal order set to 3
 models <- list()
 models[[length(models)+1]] <- march.indep.construct(PEWEE,maxOrder=3)
@@ -156,8 +162,10 @@ print(models[3])
 
 # Hidden Markov model
 help(march.dcmm.construct)
+help("march.Dcmm-class")
+
 HMM.1 <- march.dcmm.construct(PEWEE,orderHC=1,M=2,orderVC=0,maxOrder=3,
-                              popSize=10,gen=10)
+                              popSize=10,gen=5)
 march.summary(HMM.1)
 
 HMM.2 <- march.dcmm.construct(PEWEE,orderHC=1,M=2,orderVC=0,maxOrder=3,
@@ -166,18 +174,23 @@ march.summary(HMM.2)
 
 print(HMM.2)
 
+help("march.Dcmm-class")
 
 # Double Chain Markov model
-DCMM.1 <- march.dcmm.construct(PEWEE,orderHC=1,M=2,orderVC=1,maxOrder=3,
+DCMM.1A <- march.dcmm.construct(PEWEE,orderHC=1,M=2,orderVC=1,maxOrder=3,
                                popSize=4,gen=5,iterBw=2,stopBw=0.0001)
-print(DCMM.1)
+print(DCMM.1A)
+#march.summary(DCMM.1A)
 
 # Additional iterations using the previous model as seed
 DCMM.1 <- march.dcmm.construct(PEWEE,orderHC=1,M=2,orderVC=1,maxOrder=3,
-                               seedModel=DCMM.1,iterBw=50,stopBw=0.0001)
+                               seedModel=DCMM.1A,iterBw=50,stopBw=0.0001)
 
-march.summary(DCMM.1)
+#march.summary(DCMM.2)
 print(DCMM.1)
+
+march.summary(DCMM.1A)
+march.summary(DCMM.1)
 
 
 # More hidden states
@@ -204,14 +217,13 @@ HS <- march.dcmm.viterbi(DCMM.4,PEWEE)
 print(HS)
 print(PEWEE@y)
 
-
 ################################################################################
 ################################################################################
 # ANALYSIS OF HIDDEN STATES
 
 # We use the example provided in the help page of the march.dcmm.construct() function
 help(march.dcmm.construct)
-
+#data(sleep)
 HMM <- march.dcmm.construct(sleep,orderHC=1,orderVC=0,M=3,gen=1,
                             popSize=1,iterBw=10,stopBw=0.0001)
 print(HMM)
@@ -227,14 +239,13 @@ for (i in 1:1000){
   ltemp <- length(temp)
   HS2[i,1:ltemp] <- temp
 }
-
 # Hidden states visualization using TraMineR
 hs.labels <- c("1", "2", "3")
 hs.seq <- seqdef(HS2, alphabet=hs.labels, states = hs.labels,labels = hs.labels)
 
 seqfplot(hs.seq, border = NA, title = "10 most frequent sequences")
 seqdplot(hs.seq, border = NA, title = "Distribution of hidden states by period")
-
+help(seqplot)
 
 # HIERARCHICAL MODELS
 # Strictly hierarchical model
@@ -270,7 +281,6 @@ HMM.h2 <- march.dcmm.construct(sleep,orderHC=1,orderVC=0,M=3,gen=1,
                                seedModel=HMM.h2)
 print(HMM.h2)
 
-
 # CLASSIFICATION
 HMM.c <- Seed.Model
 A <-  diag(c(1,1,1))
@@ -300,5 +310,3 @@ hs.c <- seqdef(sleep_df, alphabet=hs.labels.c, states = hs.labels.c,labels = hs.
 # Presentation of the data by group
 seqfplot(hs.c, border = NA, group=HSc[,1],title = "25 most frequent sequences",tlim=1:25)
 seqdplot(hs.c, border = NA, group=HSc[,1],title = "Distribution of observed data")
-
-
