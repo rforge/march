@@ -5,16 +5,16 @@
 march.dcmm.constructEmptyDcmm <- function(M,y,orderVC,orderHC){
   RB <- array(1/y@K,c(M,y@K^orderVC,y@K)) # emit
   Pi <- array(1/M,c(orderHC,M^(orderHC-1),M))
-
+  
   RA <- array(1/M,c(M^orderHC,M))
   A <- march.dcmm.h.expandRAInternal(RA,M,orderHC)
-
+  
   new("march.Dcmm",Pi=Pi,A=A,M=M,orderVC=orderVC,orderHC=orderHC,RB=RB,y=y)
 }
 
 
 march.dcmm.h.encodeOutput <- function(s,t,d){
-
+  
   if( d@orderVC>0 ){
     code <- array(0,c(d@orderVC-1))
     i <- march.h.seq(0,d@orderVC-1)
@@ -46,7 +46,7 @@ march.dcmm.h.expandRA <- function(d,RA){
 
 march.dcmm.h.expandRAInternal <- function(RA,M,orderHC){
   A <- array(0,c(M^orderHC,M^orderHC))
-
+  
   for( r2 in 1:M ){
     for( r1 in march.h.seq(1,M^(orderHC-1)) ){
       for( c in 1:M ){
@@ -54,13 +54,13 @@ march.dcmm.h.expandRAInternal <- function(RA,M,orderHC){
       }
     }
   }
-
+  
   A
 }
 
 march.dcmm.h.compactA <- function(d){
   RA <- array(0,c(d@M^d@orderHC,d@M))
-
+  
   for( r2 in 1:d@M ){
     for( r1 in 1:d@M^(d@orderHC-1) ){
       for( c in 1:d@M ){
@@ -68,7 +68,7 @@ march.dcmm.h.compactA <- function(d){
       }
     }
   }
-
+  
   RA
 }
 
@@ -84,21 +84,21 @@ march.dcmm.h.compactA <- function(d){
 #'
 #'@export
 march.dcmm.viterbi <- function(d,y){
-
+  
   l <- list()
-
+  
   for( n in 1:y@N ){
     s <- march.dataset.h.extractSequence(y,n)
     delta <- matrix(0,nrow=s@N,ncol=d@M^d@orderHC)
-
+    
     # intial step t=orderVC+1
     t = d@orderVC+1
     for( j0 in 1:d@M ){
       delta[t,j0] <- d@Pi[1,1,j0]*d@RB[j0,march.dcmm.h.encodeOutput(s,t,d),s@y[t]]
     }
-
+    
     delta[t,] <- march.dcmm.h.scaleAlpha(d@M,delta[t,])$scaled
-
+    
     if( d@orderHC>1 ){
       # initial step to<=orderVC+orderHC
       for( t in march.h.seq(d@orderVC+2,d@orderVC+d@orderHC)){
@@ -110,7 +110,7 @@ march.dcmm.viterbi <- function(d,y){
         delta[t,] <- march.dcmm.h.scaleAlpha(d@M^(t-d@orderVC),delta[t,])$scaled
       }
     }
-
+    
     # Induction to t=length(y)
     for( t in (d@orderVC+d@orderHC+1):s@N){ #
       rowC <- march.dcmm.h.encodeOutput(s,t,d)
@@ -120,28 +120,28 @@ march.dcmm.viterbi <- function(d,y){
       }
       delta[t,] <- march.dcmm.h.scaleAlpha(d@M^d@orderHC,delta[t,])$scaled
     }
-
-
+    
+    
     X <- vector(mode="integer",s@N)
     e_t = which.max(delta[t,])
     x_t = floor((e_t-1)/(d@M^(d@orderHC-1)))+1
-
+    
     X[s@N] <- x_t
-
+    
     # find the best sequence of hidden step
     for( t in seq(s@N-1,d@orderVC+d@orderHC) ){
       e_t <- which.max(delta[t,]*d@A[,e_t])
       x_t <- floor((e_t-1)/(d@M^(d@orderHC-1)))+1
       X[t] <- x_t
     }
-
+    
     if (d@orderHC>1){
       for( t in seq(d@orderHC+d@orderVC-1,d@orderVC+1)){
         e_t <- which.max(delta[t,]*d@Pi[t-d@orderVC+1,x_t,])
         X[t] <- floor((e_t-1)/(d@M^(d@orderHC-1)))+1
       }
     }
-
+    
     l[[n]] <- X
   }
   l
@@ -157,15 +157,15 @@ march.dcmm.viterbi <- function(d,y){
 march.dcmm.forward <- function(d,s){
   alpha <- matrix(0,nrow=s@N,ncol=d@M^d@orderHC)
   l <- vector("numeric",s@N)
-
+  
   # intial step t=orderVC+1
   t <- d@orderVC+1;
   alpha[t,1:d@M] <- d@RB[,march.dcmm.h.encodeOutput(s,t,d),s@y[t]]*d@Pi[1,1,]
-
+  
   scaled <- march.dcmm.h.scaleAlpha(d@M,alpha[t,])
   alpha[t,]<- scaled$scaled
   l[t] <- log(scaled$scale)
-
+  
   if( d@orderHC>1 ){
     # initial step to<=orderVC+orderHC
     for( t in march.h.seq((d@orderVC+2),(d@orderVC+d@orderHC)) ){
@@ -180,7 +180,7 @@ march.dcmm.forward <- function(d,s){
       l[t] <- log(scaled$scale)
     }
   }
-
+  
   # Induction to t=length(y)
   for( t in march.h.seq(d@orderVC+d@orderHC+1,s@N) ){
     rowC <- march.dcmm.h.encodeOutput(s,t,d)
@@ -192,7 +192,7 @@ march.dcmm.forward <- function(d,s){
     alpha[t,]<- scaled$scaled
     l[t] <- log(scaled$scale)
   }
-
+  
   LL <- log(sum(matrix(1,ncol=1,nrow=d@M^d@orderHC)*alpha[s@N,]))+sum(l*matrix(1,nrow=length(s),ncol=1))
   list(alpha=alpha,l=l,LL=LL)
 }
@@ -202,10 +202,10 @@ march.dcmm.forward <- function(d,s){
 march.dcmm.backward <- function(d,s){
   beta <- matrix(0,nrow=s@N,ncol=d@M^d@orderHC)
   l <- vector("numeric",s@N)
-
+  
   beta[s@N,] <- matrix(1,ncol=d@M^d@orderHC,nrow=1)
-
-
+  
+  
   for( t in march.h.seq(s@N-1,d@orderVC+d@orderHC,-1)){
     rowC <- march.dcmm.h.encodeOutput(s,t+1,d)
     for( i in 1:(d@M^(d@orderHC))){
@@ -218,7 +218,7 @@ march.dcmm.backward <- function(d,s){
     beta[t,] <- scaled$scaled
     l[t] <- log(scaled$scale)
   }
-
+  
   if( d@orderHC>1 ){
     for( t in march.h.seq(d@orderVC+d@orderHC-1,d@orderVC+1,-1)){
       rowC <- march.dcmm.h.encodeOutput(s,t+1,d)
@@ -233,7 +233,7 @@ march.dcmm.backward <- function(d,s){
       l[t] <- log(scaled$scale)
     }
   }
-
+  
   list(beta=beta,l=l)
 }
 
@@ -241,7 +241,7 @@ march.dcmm.backward <- function(d,s){
 march.dcmm.epsilon <- function(d,s,alpha,beta,SAlog,SBlog,LLAlpha){
   epsilon <- array(0,c(s@N-1,d@M^d@orderHC,d@M))
   zepsilon <- array(1,c(s@N-1,d@M^d@orderHC,d@M))
-
+  
   for( t in march.h.seq(d@orderVC+1,d@orderVC+d@orderHC-1)){
     rowC <-  march.dcmm.h.encodeOutput(s,t+1,d)
     for( i in 1:d@M^(t-d@orderVC)){
@@ -250,7 +250,7 @@ march.dcmm.epsilon <- function(d,s,alpha,beta,SAlog,SBlog,LLAlpha){
       zepsilon[t,i,j] <- alpha[t,i] & beta[t+1,col] & d@Pi[t-d@orderVC+1,i,j] & d@RB[j, rowC,s@y[t+1]]
     }
   }
-
+  
   for( t in march.h.seq(d@orderHC+d@orderVC,s@N-1)){
     rowC <- march.dcmm.h.encodeOutput(s,t+1,d)
     for( i in 1:d@M^d@orderHC ){
@@ -259,7 +259,7 @@ march.dcmm.epsilon <- function(d,s,alpha,beta,SAlog,SBlog,LLAlpha){
       zepsilon[t,i,j] <- alpha[t,i] & beta[t+1,col] & d@A[i,col] & d@RB[j, rowC,s@y[t+1]]
     }
   }
-
+  
   LSAfact <- 0
   for( t in march.h.seq(d@orderVC+1,d@orderVC+d@orderHC-1)){
     rowC <- march.dcmm.h.encodeOutput(s,t+1,d)
@@ -272,11 +272,11 @@ march.dcmm.epsilon <- function(d,s,alpha,beta,SAlog,SBlog,LLAlpha){
       }
     }
   }
-
+  
   for( t in march.h.seq(d@orderHC+d@orderVC,s@N-1)){
     rowC <- march.dcmm.h.encodeOutput(s,t+1,d)
     LSAfact = LSAfact+SAlog[t]
-
+    
     for( i in 1:(d@M^d@orderHC) ){
       for( j in 1:d@M ){
         col <- d@M^(d@orderHC-1)*(j-1)+floor((i-1)/d@M)+1
@@ -286,7 +286,7 @@ march.dcmm.epsilon <- function(d,s,alpha,beta,SAlog,SBlog,LLAlpha){
       }
     }
   }
-
+  
   LSBfact <- 0
   for( t in march.h.seq(s@N-1,d@orderHC+d@orderVC,-1)){
     LSBfact <- LSBfact+SBlog[t+1]
@@ -299,7 +299,7 @@ march.dcmm.epsilon <- function(d,s,alpha,beta,SAlog,SBlog,LLAlpha){
       }
     }
   }
-
+  
   if( d@orderHC> 1){
     for( t in march.h.seq(d@orderHC+d@orderVC-1,d@orderVC+1,-1)){
       LSBfact <- LSBfact+SBlog[t+1]
@@ -313,25 +313,25 @@ march.dcmm.epsilon <- function(d,s,alpha,beta,SAlog,SBlog,LLAlpha){
       }
     }
   }
-
+  
   epsilon
 }
 
 march.dcmm.gamma <- function(d,s,alpha,beta,SAlog,SBlog,LL,epsilon){
   gamma <- array(0,c(s@N,d@M^d@orderHC))
-
+  
   for( t in march.h.seq(d@orderVC+1,d@orderVC+d@orderHC-1)){
     for( i in 1:d@M^(t-d@orderVC)){
       gamma[t,i] <- sum(epsilon[t,i,])
     }
   }
-
+  
   for( t in march.h.seq(d@orderVC+d@orderHC,s@N-1)){
     for( i in 1:d@M^d@orderHC){
       gamma[t,i] <- sum(epsilon[t,i,])
     }
   }
-
+  
   t <- s@N
   for( i in 1:d@M^d@orderHC){
     gamma[t,i] <- exp(log(alpha[t,i])+sum(SAlog)+SBlog[t]-LL)
@@ -343,36 +343,34 @@ march.dcmm.gamma <- function(d,s,alpha,beta,SAlog,SBlog,LL,epsilon){
 # Baum-Welch algorithm applied to Dcmm
 #
 march.dcmm.bw <- function(d,y){
-
+  
   RA <- array(0,c(d@M^d@orderHC,d@M))
   RB <- array(0,c(d@M,d@y@K^d@orderVC,d@y@K))
   Pi <- array(0,c(d@orderHC,d@M^(d@orderHC-1),d@M))
-
+  
   for( n in 1:y@N ){
     # extract the current sequence
     s <- march.dataset.h.extractSequence(y,n)
-
+    
     # First compute all the needed data, depending on d and y
     a <- march.dcmm.forward(d,s)
     b <- march.dcmm.backward(d,s)
     epsilon <- march.dcmm.epsilon(d,s,a$alpha,b$beta,a$l,b$l,a$LL)
     gamma <- march.dcmm.gamma(d,s,a$alpha,b$beta,a$l,b$l,a$LL,epsilon)
-
+    if(max(epsilon)==Inf){
+      flag<-0
+      break
+    }else{
+      flag<-1
+    
+    }
     # Reestimation of the RA
     #print(RA)
     for( t in march.h.seq(d@orderVC+d@orderHC,s@N-1)){
       RA <- RA+epsilon[t,,]
     }
-
-    tot <- rowSums(RA)
-    #print(d)
-    for( i in 1:d@M^d@orderHC ){
-      if( tot[i]>0 ){
-        RA[i,] <- RA[i,]/tot[i]
-      }
-    }
-
-
+    
+    
     # Reestimation of RB
     for( t in march.h.seq((d@orderVC+1),(d@orderHC+d@orderVC-1))){
       rowC <- march.dcmm.h.encodeOutput(s,t,d)
@@ -380,27 +378,19 @@ march.dcmm.bw <- function(d,y){
         RB[m,rowC,s@y[t]] <- RB[m,rowC,s@y[t]]+sum(gamma[t,((m-1)*d@M^(t-d@orderVC)+1):(m*d@M^(t-d@orderVC))])
       }
     }
-
+    
     for( t in (d@orderHC+d@orderVC):s@N){
       rowC <- march.dcmm.h.encodeOutput(s,t,d)
       for( m in 1:d@M){
         RB[m,rowC,s@y[t]] <- RB[m,rowC,s@y[t]]+sum(gamma[t,((m-1)*d@M^(d@orderHC-1)+1):(m*d@M^(d@orderHC-1))])
       }
     }
-
-    for( m in 1:d@M ){
-      tot <- RB[m,,]%*%march.h.ones(d@y@K,1)
-
-      for( j in 1:(d@y@K^d@orderVC )){
-        if( tot[j] ){
-          RB[m,j,] <- RB[m,j,]/tot[j]
-        }
-      }
-    }
-
+    
+    
+    
     # Reestimation of Pi
     Pi[1,1,] <- Pi[1,1,]+gamma[d@orderVC+1,1:d@M]
-
+    
     for( t in march.h.seq(2,d@orderHC) ){
       for( i in 1:(d@M^(t-1))){
         if( gamma[d@orderVC+t-1,i]>0 )
@@ -408,14 +398,40 @@ march.dcmm.bw <- function(d,y){
       }
     }
   }
-  Pi <- Pi/y@N
-
+  
+  for( m in 1:d@orderHC ){
+    tot <- Pi[m,,]%*%march.h.ones(d@M,1)
+    
+    for( j in 1:(d@M^(d@orderHC-1) )){
+      if( tot[j] ){
+        Pi[m,j,] <- Pi[m,j,]/tot[j]
+      }
+    }
+  }
+  
+  tot <- rowSums(RA)
+  #print(d)
+  for( i in 1:d@M^d@orderHC ){
+    if( tot[i]>0 ){
+      RA[i,] <- RA[i,]/tot[i]
+    }
+  }
+  
+  for( m in 1:d@M ){
+    tot <- RB[m,,]%*%march.h.ones(d@y@K,1)
+    
+    for( j in 1:(d@y@K^d@orderVC )){
+      if( tot[j] ){
+        RB[m,j,] <- RB[m,j,]/tot[j]
+      }
+    }
+  }
   # Expansion of RA into A
   A <- march.dcmm.h.expandRA(d,RA)
-
-
+  
+  
   # finally return a new Dcmm with the reestimated probability distributions
-  new("march.Dcmm",Pi=Pi,A=A,M=d@M,y=d@y,orderVC=d@orderVC,orderHC=d@orderHC,RB=RB)
+  list(opt=new("march.Dcmm",Pi=Pi,A=A,M=d@M,y=d@y,orderVC=d@orderVC,orderHC=d@orderHC,RB=RB),flag=flag,epsilon=epsilon)
 }
 
 #' Construct a double chain Markov model (DCMM).
@@ -446,47 +462,47 @@ march.dcmm.bw <- function(d,y){
 #'
 #' @export
 march.dcmm.construct <- function(y,orderHC,orderVC,M,gen=5,popSize=4,maxOrder=orderVC,seedModel=NULL,iterBw=2,stopBw=0.1){
-
+  
   if( is.null(seedModel) ){
     orderHC <- march.h.paramAsInteger(orderHC)
     orderVC <- march.h.paramAsInteger(orderVC)
     M <- march.h.paramAsInteger(M)
     maxOrder <- march.h.paramAsInteger(maxOrder)
-
+    
     if( orderVC>maxOrder ){
       stop("maxOrder should be greater or equal than orderVC")
     }
-
+    
   }
-
-
+  
+  
   iterBw <- march.h.paramAsInteger(iterBw)
-
-
+  
+  
   gen <- march.h.paramAsInteger(gen)
   popSize <- march.h.paramAsInteger(popSize)
-
+  
   #
   if( is.null(seedModel) ){
     y <- march.dataset.h.filtrateShortSeq(y,maxOrder+1)
     y <- march.dataset.h.cut(y,maxOrder-orderVC)
   }
-
+  
   if( is.null(seedModel)==FALSE ){
-
+    
     # AB
     y <- march.dataset.h.filtrateShortSeq(y,maxOrder+1)
     y <- march.dataset.h.cut(y,maxOrder-orderVC)
     # \AB
-
+    
     op <- new("march.dcmm.ea.OptimizingParameters",fct=march.dcmm.ea.optimizing,ds=y,stopBw=stopBw,iterBw=iterBw)
     m <- march.dcmm.ea.optimizing(seedModel,op)
-
+    
     # AB
     m@dsL <- sum(y@T-orderVC)
     #m@dsL <- sum(y@T)
     # \AB
-
+    
     m@y <- y
     #m@ll <- march.dcmm.forward(m,march.dataset.h.extractSequence(y,1))$LL
     m@ll <- march.dcmm.h.computeLL(m,y)
@@ -497,13 +513,13 @@ march.dcmm.construct <- function(y,orderHC,orderVC,M,gen=5,popSize=4,maxOrder=or
     ip <- new("march.dcmm.ea.InitParameters",AConst=FALSE,y=y,orderVC=orderVC,orderHC=orderHC,M=M,fct=march.dcmm.ea.initialization)
     mp <- new("march.dcmm.ea.MutationParameters",pMut=as.numeric(0.05),fct=march.dcmm.ea.mutation)
     cp <- new("march.ea.CrossoverParameters",fct=march.dcmm.ea.crossover)
-
+    
     op <- new("march.dcmm.ea.OptimizingParameters",fct=march.dcmm.ea.optimizing,ds=y,stopBw=stopBw,iterBw=iterBw)
     p <- new("march.ea.Parameters",optimizing=TRUE,
              initParameters=ip,evalParameters=ep,mutationParameters = mp, optimizingParameters=op,crossoverParameters=cp,
              populationSize=popSize,crossoverProb=0.5,generation=gen)
     res<-march.loop(p)
-
+    
     # AB
     res$best@dsL <- sum(y@T-orderVC)
     #res$best@dsL <- sum(y@T)

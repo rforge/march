@@ -216,13 +216,21 @@ march.dcmm.ea.optimizing <- function(d,p){
 	}	
   
   opt <- d  # the optimized individual.
-  
   referenceLL <- march.dcmm.h.computeLL(opt,p@ds)
   for( i in march.h.seq(1,p@iterBw)){
-    opt <- march.dcmm.bw(opt,p@ds)
-    
-    currentLL <- march.dcmm.h.computeLL(opt,p@ds)
-    if( abs(currentLL-referenceLL)<=p@stopBw ){ break }
+    #Test if BW gives Inf in the calculus of epsilon (if "flag"==0, we are in this situation), 
+    #which gives birth to "NA" in the transitions matrix
+    #This would lead to a breakdown of the algorithm in the following "currentLL" calculus.
+    #If this situation happens, we keep the previous model
+    Tempmod <- march.dcmm.bw(opt,p@ds)
+    if(Tempmod$flag==1){
+      opt<-Tempmod$opt
+      currentLL <- march.dcmm.h.computeLL(opt,p@ds)
+      if( abs(currentLL-referenceLL)<=p@stopBw ){ break }
+    }else{break}
   }
+
+
+  
   opt
 }
