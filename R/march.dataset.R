@@ -80,15 +80,19 @@ march.dataset.loadFromDataFrame <- function( dataframe, MARGIN=2,weights=NA,miss
   Ncov=as.integer(0)
   Kcov=vector()
   if(is.null(covariates)==FALSE){
-  cov=array(covariates,c(y@N,dim(covariates)[2],y@Ncov))
-  Ncov=dim(covariates)[3]
-  Kcov=array(0,Ncov)
+    if(length(dim(covariates))==3){
+    Ncov=as.integer(dim(covariates)[3])
+    } else{
+      Ncov=as.integer(1)
+    }
+    cov=array(covariates,c(y@N,dim(covariates)[2],Ncov))
+    Kcov=array(0,Ncov)
   
   
   for(i in 1:Ncov){
-    s<-covariates[,,i]
+    s<-cov[,,i]
     cfactor<-factor(as.vector(t(s)))
-    dico<-levels(cfactor)
+    #dico<-levels(cfactor)
     Kcov[i]<-as.integer(max(as.numeric(cfactor),na.rm=TRUE))
   }
 

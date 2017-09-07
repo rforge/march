@@ -203,21 +203,14 @@ InitializeParameters <- function(u,init_method,c,is_mtdg,m,order,kcov,ncov){
     }
   }
   S=list()
-    # if(ncov>0){
-    #   for(i in 1:ncov){
-    #     S[[i]]=matrix(0,kcov[i],m)
-    #     S[[i]]<-0.1+array(runif(kcov[i]*m),c(kcov[i],m))
-    #     S[[i]]<-S[[i]]/rowSums(S[[i]])
-    #   }
-    # }
+  #Initialisation of the matrices of transition between covariates and the dependant variable by normalizing the crosstables.
   if(ncov>0){
     for(i in 1:ncov){
       S[[i]]=matrix(0,kcov[i],m)
       S[[i]]<-NormalizeTable(c[[order+i]])
     }
   }
-    # Random initialisation of the link transition matrix between covariates and the dependant variable
-    # (if any)
+    
     return(list(phi=phi,q=q,S=S))
   
 }
@@ -669,6 +662,7 @@ march.mtd.construct <- function(y,order,maxOrder=order,mtdg=FALSE,init="best", d
     res_opt_S<-OptimizeS(order,y@K,y@Kcov,y@Ncov,S,g,phi,order+i,new_ll,pd_s[g,],delta[1+y@K+(tot-1)*maxkcov+g],delta_stop,n_i0_il,i0_il,q_i0_il,q,i)
     new_ll<-res_opt_S$ll
     S<-res_opt_S$S
+    delta[1+y@K+(tot-1)*maxkcov+g]<-res_opt_S$delta
     }
       }
     }
