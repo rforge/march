@@ -46,7 +46,7 @@ march.dataset.loadFromFile <- function( filename, MARGIN=2,sep=",",weights=NA){
 #' @author Ogier Maitre
 #'
 #' @export
-march.dataset.loadFromDataFrame <- function( dataframe, MARGIN=2,weights=NA,missingDataRep=NA ){
+march.dataset.loadFromDataFrame <- function( dataframe, MARGIN=2,weights=NA,missingDataRep=NA, covariates=NULL ){
   
   if( is.na(missingDataRep)==FALSE ){ dataframe[dataframe==missingDataRep]<-NA }
   
@@ -75,6 +75,24 @@ march.dataset.loadFromDataFrame <- function( dataframe, MARGIN=2,weights=NA,miss
   # determining the number of possible output
   K <- as.integer(max(as.numeric(yfactorV),na.rm=TRUE))
   
+  
+  cov=array()
+  Ncov=as.integer(0)
+  Kcov=vector()
+  if(is.null(covariates)==FALSE){
+  cov=array(covariates,c(y@N,dim(covariates)[2],y@Ncov))
+  Ncov=dim(covariates)[3]
+  Kcov=array(0,Ncov)
+  
+  
+  for(i in 1:Ncov){
+    s<-covariates[,,i]
+    cfactor<-factor(as.vector(t(s)))
+    dico<-levels(cfactor)
+    Kcov[i]<-as.integer(max(as.numeric(cfactor),na.rm=TRUE))
+  }
+
+  }
   # create a list of values for each sequence
   y <- list(N)
   y[[1]] <- as.numeric(yfactorV[1:T[1]])
@@ -82,13 +100,13 @@ march.dataset.loadFromDataFrame <- function( dataframe, MARGIN=2,weights=NA,miss
     y[[i]] <- as.numeric(yfactorV[(dim(r)[2]*(i-1))+(1:(T[i]))])
   }
   
+
   
   # weights
   if( length(weights)==1 && is.na(weights) ){
     weights <- array(1,c(N))
   }
-  
-  new("march.Dataset",yRaw=as.matrix(r),T=T,y=y,dictionary=dictionary,N=N,K=K,weights=weights)
+  new("march.Dataset",yRaw=as.matrix(r),T=T,y=y,dictionary=dictionary,N=N,K=K,weights=weights,Ncov=Ncov,cov=cov,Kcov=Kcov)
 }
 
 march.dataset.h.filtrateShortSeq <- function(y,limit){
@@ -108,19 +126,29 @@ march.dataset.h.filtrateShortSeq <- function(y,limit){
     }
   }
   
-  new("march.Dataset",y=seqs,K=y@K,N=as.integer(count),T=unlist(nT),weights=unlist(nW),dictionary=y@dictionary)
+  new("march.Dataset",y=seqs,K=y@K,N=as.integer(count),T=unlist(nT),weights=unlist(nW),dictionary=y@dictionary,Ncov=y@Ncov,Kcov=y@Kcov,cov=y@cov)
 }
 
 march.dataset.h.cut <- function(y,start){
   seqs <- list()
   nT <- list()
   nW <- list()
+  newCov<-y@cov
   
   for( i in 1:y@N ){
     seqs[[i]] <- y@y[[i]][(1+start):y@T[i]]
     nT[[i]] <- y@T[i]-start
     nW[[i]] <- y@weights[i]
   }
+  if(y@Ncov>0){
+    d<-dim(y@cov)[2]
+    newCov<-array(0,c(y@N,d-start,y@Ncov))
+    for(i in 1:y@Ncov){
+      for(n in 1:y@N){
+        newCov[n,,i]<-y@cov[n,(start+1):d,i]
+      }
+    }
+  }
   
-  new("march.Dataset",y=seqs,K=y@K,N=y@N,T=unlist(nT),weights=unlist(nW),dictionary=y@dictionary)
+  new("march.Dataset",y=seqs,K=y@K,N=y@N,T=unlist(nT),weights=unlist(nW),dictionary=y@dictionary,Ncov=y@Ncov,Kcov=y@Kcov,cov=newCov)
 }

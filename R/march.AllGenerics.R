@@ -90,7 +90,16 @@ march.mtd.show <- function(object){
       }    
     }
   }
-  
+  cat("\n")
+  if(length(object@S)>0){
+    for(g in 1:length(object@S)){
+      cat(sprintf("S%d : \n",g))
+      for(i in 1:object@y@Kcov[g]){
+        cat(sprintf("%.4f", object@S[[g]][i,]))
+        cat("\n")
+      }
+    }
+  }
   cat("\n")
   cat("phi : ")
   cat(sprintf("%.4f",object@phi))
