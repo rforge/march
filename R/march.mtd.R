@@ -312,7 +312,7 @@ BuildArrayNumberOfSequences <- function(y,order){
 
 BuildArrayQ <- function(m,l,i0_il,n_i0_il,q,kcov,ncov,S){
   
-  if(y@Ncov>0){
+  if(ncov>0){
     tCovar<-prod(kcov)
   }else{
     tCovar=1
@@ -565,7 +565,6 @@ OptimizeS <-function(order,k,kcov,ncov,S,Tr,phi,pcol,ll,pd_s,delta,delta_stop,n_
 #' @seealso \code{\link{march.Mtd-class}}, \code{\link{march.Model-class}}, \code{\link{march.Dataset-class}}.
 #' @export
 march.mtd.construct <- function(y,order,maxOrder=order,mtdg=FALSE,init="best", deltaStop=0.0001, llStop=0.01, maxIter=0){
-
   order <- march.h.paramAsInteger(order)
   if(order<1){
     stop('Order should be greater or equal than 1')
@@ -577,14 +576,11 @@ march.mtd.construct <- function(y,order,maxOrder=order,mtdg=FALSE,init="best", d
   }
 
   ySave <- y
-
   y <- march.dataset.h.filtrateShortSeq(y,maxOrder+1)
   y <- march.dataset.h.cut(y,maxOrder-order)
-
   is_constrained <- TRUE # if FALSE the model is unconstrained and the constraints given by Eq. 4 are activated instead of those given by Eq. 3 (Berchtold, 2001, p. 380)
   is_mtdg <- mtdg
   init_method <- init
-
   # 1.1. Choose initial values for all parameters
   # nt <- BuildArrayNumberOfDataItems(y) This is no longer needed, as y now contains the T field
   c <- BuildContingencyTable(y,order)
@@ -604,7 +600,6 @@ march.mtd.construct <- function(y,order,maxOrder=order,mtdg=FALSE,init="best", d
   delta <- array(0.1,dim=c(1,y@K+1+maxkcov*y@Ncov)) # a different delta is used for each of the m+1 sets of parameters (vector phi + each row of the transition matrix Q)
   delta_stop <- deltaStop
   ll_stop <- llStop
-
   # 2. Iterations
   # 2.1. Reestimate the vector phi by modifying two of its elements
   # 2.2. Reestimate the transition matrix Q by modifying two elements of each row
@@ -612,11 +607,11 @@ march.mtd.construct <- function(y,order,maxOrder=order,mtdg=FALSE,init="best", d
   # 3. End criterion
   # 3.1. If the increase of the LL since the last iteration is greater than the stop criterion, go back to step 2
   # 3.2. Otherwise, end the procedure
-
   i0_il <- BuildArrayCombinations(y@K,order,y@Kcov,y@Ncov)
   n_i0_il <- BuildArrayNumberOfSequences(y,order)
-  q_i0_il <- BuildArrayQ(m=y@K,l=order,i0_il=i0_il,n_i0_il = n_i0_il,q=q,kcov=y@Kcov,ncov=y@Ncov,S=S)
+  q_i0_il <- BuildArrayQ(y@K,l=order,i0_il=i0_il,n_i0_il = n_i0_il,q=q,kcov=y@Kcov,ncov=y@Ncov,S=S)
   new_ll <- CalculateLogLikelihood(n_i0_il=n_i0_il,q_i0_il=q_i0_il,phi=phi)
+ 
 
   iter <- 0
   while (TRUE){
@@ -667,10 +662,8 @@ march.mtd.construct <- function(y,order,maxOrder=order,mtdg=FALSE,init="best", d
       }
     }
     
-    
     if (new_ll - ll < ll_stop){ break }
   }
-
   nbZeros <- length(which(q==0))+length(which(phi==0))
   ll<-as.numeric(ll)
   # construct and return the final object.
