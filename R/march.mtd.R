@@ -64,7 +64,7 @@ BuildArrayNumberOfDataItems <- function(x){
          for (i in 1:y@T[n]){
           row=y@cov[n,i,j]
            col=y@y[[n]][i]
-           CT[row,col]=CT[row,col]+1
+           CT[row,col]=CT[row,col]+y@weights[i]
        }
        }
        l[[order+j]]<-CT

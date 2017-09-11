@@ -79,14 +79,23 @@ march.dataset.loadFromDataFrame <- function( dataframe, MARGIN=2,weights=NA,miss
   cov=array()
   Ncov=as.integer(0)
   Kcov=vector()
+  
+  #
   if(is.null(covariates)==FALSE){
     if(length(dim(covariates))==3){
     Ncov=as.integer(dim(covariates)[3])
     } else{
       Ncov=as.integer(1)
     }
-    cov=array(covariates,c(y@N,dim(covariates)[2],Ncov))
+    cov=array(covariates,c(dim(covariates)[1],dim(covariates)[2],Ncov))
     Kcov=array(0,Ncov)
+    if( MARGIN==1 ){
+      tcov=array(0,c(dim(covariates)[2],dim(covariates)[1],Ncov))
+      for(i in 1:Ncov){
+        tcov[,,i]<-t(cov[,,i])
+      }
+      cov=tcov
+    }
   
   
   for(i in 1:Ncov){
@@ -109,6 +118,10 @@ march.dataset.loadFromDataFrame <- function( dataframe, MARGIN=2,weights=NA,miss
   # weights
   if( length(weights)==1 && is.na(weights) ){
     weights <- array(1,c(N))
+    
+  }
+  if(length(weights)!=N){
+    stop("The number of weights should be equal to the number of sequences")
   }
   new("march.Dataset",yRaw=as.matrix(r),T=T,y=y,dictionary=dictionary,N=N,K=K,weights=weights,Ncov=Ncov,cov=cov,Kcov=Kcov)
 }

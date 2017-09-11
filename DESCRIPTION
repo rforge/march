@@ -1,15 +1,13 @@
 Package: march
 Title: Markov Chains
-Description: Computation of the Double Chain Markov Model, including special
-    cases (Hidden Markov Models and homogeneous Markov chains) is done by this
-    package.
+Description: Computation of various Markovian models for categorical data
+    including homogeneous Markov chains of any order, MTD models, Hidden Markov
+    models, and Double Chain Markov Models.
 Version: 2.0
-Date: 2016-04-12
-Author: Ogier Maitre, with contributions from Andre Berchtold
+Date: 2016-05-11
+Author: Ogier Maitre, with contributions from Andre Berchtold and Oliver Buschor
 Maintainer: Andre Berchtold <andre.berchtold@unil.ch>
-Depends:
-    R (>= 3.0.2),
-    methods
+Depends: R (>= 3.0.2), methods
 License: GPL-2
 LazyData: true
-RoxygenNote: 5.0.1
+
