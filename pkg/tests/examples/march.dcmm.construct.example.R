@@ -3,8 +3,6 @@
 # The estimation procedure uses both the evolutionary algorithm (population size 2, 
 # one iteration) and the Bauw-Welch algorithm (one iteration).
 march.dcmm.construct(y=pewee,orderHC=2,orderVC=1,M=2,popSize=2,gen=1,iterBw=1,stopBw=0.0001)
-
-\dontrun{
  
 # Same as above, but the DCMM is replaced by a HMM (the visible order OrderVC is set to zero).
 march.dcmm.construct(y=pewee,orderHC=2,orderVC=0,M=2,popSize=2,gen=1,iterBw=1,stopBw=0.0001)  
@@ -34,4 +32,4 @@ HS <- march.dcmm.viterbi(HMM,sleep)
 # Display the hidden states for the first 10 subjects.
 print(HS[1:10])
 
-}
+

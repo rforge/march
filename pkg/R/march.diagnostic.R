@@ -12,7 +12,7 @@
 #' @param model The model for which the BIC has to be computed.
 #'
 #' @author Ogier Maitre 
-#' @example examples/march.BIC.example.R
+#' @example tests/examples/march.BIC.example.R
 #' @export 
 march.BIC <- function(model){
 	-2*model@ll + march.nbParams(model)*log(model@dsL)
@@ -30,7 +30,7 @@ march.BIC <- function(model){
 #' @return The AIC of the given model.
 #'
 #' @author Ogier Maitre
-#' @example examples/march.AIC.example.R
+#' @example tests/examples/march.AIC.example.R
 #' @export
 march.AIC <- function(model){
 	nbParams <- march.nbParams(model)

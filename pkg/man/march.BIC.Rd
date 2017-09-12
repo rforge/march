@@ -14,6 +14,10 @@ The BIC (Bayesian Information Criterion) is computed for
  a given \code{\link{march.Model-class}} according to the data
  used during construction.
 }
+\examples{
+indepModel <- march.indep.construct(pewee)
+march.BIC(indepModel)
+}
 \author{
 Ogier Maitre
 }

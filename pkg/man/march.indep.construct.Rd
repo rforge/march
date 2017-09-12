@@ -19,6 +19,11 @@ Construct a \code{\link{march.Indep-class}} model from a given \code{\link{march
 the first \emph{maxOrder} elements of each sequence being truncated in order to return a model
 which can be compared with other Markovian models of visible order maxOrder.
 }
+\examples{
+# Build an independance model from the pewee data set.
+model <- march.indep.construct(pewee)
+print(model)
+}
 \seealso{
 \code{\link{march.Indep-class}}, \code{\link{march.Model-class}}, \code{\link{march.Dataset-class}}.
 }

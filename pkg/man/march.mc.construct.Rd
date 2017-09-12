@@ -21,6 +21,13 @@ A \code{\link{march.Mc}} object of order \emph{order} is constructed from
 the dataset \emph{y}. The first maxOrder-order elements of each sequence of the dataset are truncated in order to return a model
 which can be compared with other Markovian models of visible order maxOrder.
 }
+\examples{
+# pewee dataset is a data object of the march package in march.Dataset class format.
+model <- march.mc.construct(pewee,2)
+
+# print the reduced form of the transition matrix of the Markovian Model.
+print(model@RC)
+}
 \seealso{
 \code{\link{march.Mc-class}}, \code{\link{march.Model-class}}, \code{\link{march.Dataset-class}}.
 }

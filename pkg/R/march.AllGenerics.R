@@ -229,7 +229,7 @@ setMethod(f="march.nbParams",signature="march.Dcmm",definition=march.dcmm.nbPara
 #' 
 #' @return A list of half-length confidence intervals for each probability distribution of the considered model.
 #' @author Ogier Maitre
-#' @example examples/march.thompson.example.R
+#' @examples tests/examples/march.thompson.example.R
 #'
 #'  @export 
 march.thompson <- function(object,alpha){}
@@ -295,7 +295,7 @@ setMethod(f="march.thompson",signature=signature("march.Dcmm",alpha="numeric"),d
 #' 
 #' Generate a name for the march model contained in the given \emph{object}.
 #' @author Ogier Maitre & Andre Berchtold
-#' @example examples/march.name.example.R
+#' @example tests/examples/march.name.example.R
 #' @export
 march.name <- function(object){}
 

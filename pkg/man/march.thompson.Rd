@@ -19,6 +19,11 @@ Compute the confidence intervals using Thompson's formula on a march.Model
 object. See Thompson SK (1987) Sample size for estimating multinomial proportions,
 American Statistician 41:42-46, for details.
 }
+\examples{
+tests/examples/march.thompson.example.R
+
+ @export 
+}
 \author{
 Ogier Maitre
 }

@@ -23,6 +23,10 @@ Compute Akaike Information Criterion (AIC).
  a given \code{\link{march.Model-class}} according to the data
  used during construction.
 }
+\examples{
+indepModel <- march.indep.construct(pewee)
+march.AIC(indepModel)
+}
 \author{
 Ogier Maitre
 }

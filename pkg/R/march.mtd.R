@@ -561,7 +561,7 @@ OptimizeS <-function(order,k,kcov,ncov,S,Tr,phi,pcol,ll,pd_s,delta,delta_stop,n_
 #' @param maxIter the maximal number of iterations of the optimisation algorithm (zero for no maximal number).
 #'
 #' @author Ogier Maitre
-#' @example examples/march.mtd.construct.example.R
+#' @example tests/examples/march.mtd.construct.example.R
 #' @seealso \code{\link{march.Mtd-class}}, \code{\link{march.Model-class}}, \code{\link{march.Dataset-class}}.
 #' @export
 march.mtd.construct <- function(y,order,maxOrder=order,mtdg=FALSE,init="best", deltaStop=0.0001, llStop=0.01, maxIter=0){

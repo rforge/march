@@ -30,6 +30,16 @@ according to a given \code{\link{march.Dataset}} \emph{y}. The first \emph{maxOr
 elements of each sequence are truncated in order to return a model
 which can be compared with other Markovian models of visible order maxOrder.
 }
+\examples{
+# Build a 4th order MTD model from the pewee data set.
+model <- march.mtd.construct(pewee,4)
+print(model)
+
+# Build a 3th order MTDg model from the pewee data set.
+model <- march.mtd.construct(pewee,3,mtdg=TRUE)
+print(model)
+
+}
 \seealso{
 \code{\link{march.Mtd-class}}, \code{\link{march.Model-class}}, \code{\link{march.Dataset-class}}.
 }
