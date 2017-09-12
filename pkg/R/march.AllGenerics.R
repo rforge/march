@@ -229,9 +229,9 @@ setMethod(f="march.nbParams",signature="march.Dcmm",definition=march.dcmm.nbPara
 #' 
 #' @return A list of half-length confidence intervals for each probability distribution of the considered model.
 #' @author Ogier Maitre
-#' @examples tests/examples/march.thompson.example.R
+#' @example tests/examples/march.thompson.example.R
 #'
-#'  @export 
+#' @export 
 march.thompson <- function(object,alpha){}
 
 march.model.thompson <- function(object,alpha){
