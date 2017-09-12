@@ -11,4 +11,4 @@ MTD3 <- march.mtd.construct(pewee,3)
 print(MTD3)
 # Compute the half-length 95% confidence interval for the vector of lags
 # and for each row of the transition matrix.
-march.thompson(MTD3,alpha=0.05)MC1 <- march.mc.construct(pewee,1)
+march.thompson(MTD3,alpha=0.05)
