@@ -6,12 +6,6 @@
 \usage{
 march.dataset.h.extractSequence(y, i)
 }
-\arguments{
-\item{y}{is the dataset from which one sequence of data is extracted}
-
-\item{i}{is the number of sequence to extract}
-}
 \description{
 Extract a sequence from a dataset.
 }
-

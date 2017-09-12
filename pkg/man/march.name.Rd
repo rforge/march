@@ -6,20 +6,9 @@
 \usage{
 march.name(object)
 }
-\arguments{
-\item{object}{contains the name of the model(Independence model, MTD,...).}
-}
 \description{
 Generate a name for the march model contained in the given \emph{object}.
-}
-\examples{
-# Compute a third-order homogeneous Markov Chain for the pewee data.
-model <- march.mc.construct(pewee,3)
-
-# Assign its name to the model.
-march.name(model)
 }
 \author{
 Ogier Maitre & Andre Berchtold
 }
-

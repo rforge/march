@@ -19,12 +19,15 @@
 #'    \item{\code{N}:}{A \code{\link{integer}} value representing the number of sequence.}
 #'    \item{\code{Dictionary}:}{A vector of \code{\link{character}} string representing the translation between 
 #'    the yRaw and y data. Each character string is stored according to the integer which represents it into y.}
+#'    \item{\code{cov}:}{A matrix of \code{\link{integer}} representing the covariates.}
+#'    \item{\code{Kcov}:}{A vector of \code{\link{integer}} representing the number of possible output for each covariate.}
+#'    \item{\code{Ncov}:}{A \code{\link{integer}} value representing the number of covariates.}
 #'  }
 #'  @seealso \code{\link{march.dataset.loadFromFile}}, \code{\link{march.dataset.loadFromDataFrame}}
 #'  @author Ogier Maitre
 setClass("march.Dataset",
          representation(  yRaw="matrix",y="list","T"="vector",weights="vector",
-                          K="integer",N="integer",dictionary="vector"))
+                          K="integer",N="integer",dictionary="vector",cov="array",Kcov="vector",Ncov="integer"))
 
 # This class represents a discrete-valued time serie.
 # 
@@ -50,7 +53,7 @@ setClass("march.Sequence",representation(y="vector",weight="numeric",N="integer"
 #'    \describe{
 #'      \item{\code{ll}:}{A \code{\link{numeric}} representing the log-likelihood for this model \emph{w.r.t} its 
 #'      construction dataset.}
-#'      \item{\code{y}:}{The \code{\link[=march.Dataset-class]{march.DataSet-class}} used to construct the model.}
+#'      \item{\code{y}:}{The \code{\link{march.DataSet-class}} used to construct the model.}
 #'      \item{\code{dsL}:}{A \code{\link{numeric}} representing the number of sample used to construct the model.}
 #'      \item{\code{nbZeros}:}{A \code{\link{numeric}} representing the number of zeros created during model construction.}
 #'      }
@@ -80,7 +83,7 @@ setClass("march.Indep",contains="march.Model",representation(indP="vector",indC=
 #'
 #' @section Slots:
 #'  \describe{
-#'    \item{\code{RC}:}{A matrix of \code{\link{numeric}} representing the reduced form of the 
+#'    \item{\code{RC}:}{A matrix of \code{\link{numeric }} representing the reduced form of the 
 #'    transition matrix of the current Markov Chain.}
 #'    \item{\code{order}:}{An \code{\link{integer}} representing the order of the current Markov Chain.}
 #'    \item{\code{RT}:}{A matrix of \code{\link{integer}} representing the number of sample used to compute each 
@@ -111,13 +114,14 @@ setClass("march.Mc",contains="march.Model",representation(RC="array",order="inte
 #'  \describe{
 #'    \item{\code{Q}:}{A matrix of \code{\link{numeric}} representing the transition matrix associated with the 
 #'    current MTD model.}
+#'    \item{\code{S}:}{A list of matrices of \code{\link{numeric}} representing the transition matrices between the covariates and the dependent variable}
 #'    \item{\code{phi}:}{A vector of \code{\link{numeric}} representing the vector of lag parameters.}
 #'    \item{\code{order}:}{An \code{\link{integer}} representing the order of the model.}
 #'  }
 #'    
 #' @seealso \code{\link{march.mtd.construct}}, \code{\link{march.Model-class}}.
 setClass("march.Mtd",contains="march.Model",
-         representation(Q="array",phi="vector",order="integer"))
+         representation(Q="array",phi="vector",S="list",order="integer"))
 
 
 #' A Double Chain Markov Model (DCMM).
@@ -197,3 +201,4 @@ setClass("march.dcmm.ea.MutationParameters",contains="march.ea.MutationParameter
 setClass("march.dcmm.ea.OptimizingParameters",contains="march.ea.OptimizingParameters",
          representation(ds="march.Dataset",iterBw="integer",stopBw="numeric")
 )
+

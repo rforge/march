@@ -29,7 +29,7 @@ The model used here is described in :
    \item{\code{orderHC}:}{An \code{\link{integer}} value representing the order of the hidden Markov chain.}
  }
 }
+
 \seealso{
 \code{\link{march.dcmm.construct}}, \code{\link{march.Model-class}}.
 }
-
