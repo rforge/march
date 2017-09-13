@@ -10,11 +10,16 @@ march.dataset.loadFromDataFrame(dataframe, MARGIN = 2, weights = NA,
 \arguments{
 \item{dataframe}{A \code{\link{data.frame}} containing the dataset.}
 
-\item{MARGIN}{The dimension of the matrix/data.frame that contains the sequences (resp 1 for the column, 2 for the rows).}
+\item{MARGIN}{The dimension of the matrix/data.frame that contains the sequences and of the covariates (resp 1 for the column, 
+2 for the rows).}
 
 \item{weights}{If specified, contains the weight of each sequence.}
 
 \item{missingDataRep}{If specified, the symbol representing a missing data.}
+
+\item{covariates}{If specified, a three dimensional array of integers, representing the covariates. The data for the i-th covariates
+should be in [, , i]. If the data are column-wise (respectively row-wise), the covariates should be column-wise (respectively row-wise). If we only have one covariate,
+we can simply pass a two-dimensional array. The covariates should be coded as integers from 1 to the number of possible outputs.}
 }
 \value{
 A \code{\link{march.Dataset-class}} object containing the data contructed from the matrix or data.frame.
@@ -43,6 +48,22 @@ weighting <- rep(1.5,1000)
 weighting[501:1000] <- rep(0.5,500)
 sleep.w <- march.dataset.loadFromDataFrame(sleep_df, MARGIN = 2,
                            weights = weighting, missingDataRep = NA)
+
+# We add two covariates to the sleep data. The first is the sex of the subject
+# (1 for male, 2 for female), and the second is the age range (1 for younger
+# than 40, 2 for older than 40). We suppose that the first 250 sequences 
+# represent men older than 40, the next 250 sequences men younger than 40,
+# the next 250 women younger than 40 and the last 250 women older than 40.
+# We build the two tables of covariates and bind them together to obtain a
+# three dimensional array that can be handled by MARCH.
+covariates.sex<-rbind(matrix(1,500,7),matrix(1,500,7))
+covariates.age<-rbind(matrix(1,250,7), matrix(2,250,7), matrix(1,250,7),
+                    matrix(2,250,7))
+covariates<-array(0,c(100,7,2))
+covariates[ , ,1]<-covariates.sex
+covariates[ , ,2]<-covariates.age
+# We build a MARCH dataset object containing these covariates.
+sleep.covariates<-march.dataset.loadFromDataFrame(sleep_df,covariates=covariates)
 }
 \author{
 Ogier Maitre

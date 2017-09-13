@@ -5,6 +5,9 @@
 
 
 #' Extract a sequence from a dataset.
+#' @param y A sequence of integers.
+#' @param i The number of observations to keep.
+#' @author Ogier Maitre
 #' @export
 march.dataset.h.extractSequence <- function(y,i){
   new("march.Sequence",y=y@y[[i]],N=as.integer(y@T[i]),weight=y@weights[i])
@@ -38,9 +41,13 @@ march.dataset.loadFromFile <- function( filename, MARGIN=2,sep=",",weights=NA){
 #' an independent data series when \emph{MARGIN} is 2 (resp. 1).
 #' 
 #' @param dataframe A \code{\link{data.frame}} containing the dataset.
-#' @param MARGIN The dimension of the matrix/data.frame that contains the sequences (resp 1 for the column, 2 for the rows).
+#' @param MARGIN The dimension of the matrix/data.frame that contains the sequences and of the covariates (resp 1 for the column, 
+#' 2 for the rows).
 #' @param weights If specified, contains the weight of each sequence.
 #' @param missingDataRep If specified, the symbol representing a missing data.
+#' @param covariates If specified, a three dimensional array of integers, representing the covariates. The data for the i-th covariates
+#' should be in [, , i]. If the data are column-wise (respectively row-wise), the covariates should be column-wise (respectively row-wise). If we only have one covariate,
+#' we can simply pass a two-dimensional array. The covariates should be coded as integers from 1 to the number of possible outputs.
 #' @return A \code{\link{march.Dataset-class}} object containing the data contructed from the matrix or data.frame.
 #' @example tests/examples/march.dataset.loadFromDataFrame.example.R
 #' @author Ogier Maitre

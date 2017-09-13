@@ -6,6 +6,14 @@
 \usage{
 march.dataset.h.extractSequence(y, i)
 }
+\arguments{
+\item{y}{A sequence of integers.}
+
+\item{i}{The number of observations to keep.}
+}
 \description{
 Extract a sequence from a dataset.
+}
+\author{
+Ogier Maitre
 }
