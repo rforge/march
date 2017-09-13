@@ -543,7 +543,7 @@ OptimizeS <-function(order,k,kcov,ncov,S,Tr,phi,pcol,ll,pd_s,delta,delta_stop,n_
     }
   }
 }
-
+#' @useDynLib <pkg> 
 #' Construct a Mixture Transition Distribution (MTD) model.
 #'
 #' A Mixture Transition Distribution model (\code{\link{march.Mtd}}) object of order \emph{order} is constructed
