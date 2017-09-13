@@ -334,7 +334,7 @@ setMethod(f="march.name",signature=signature(object="march.Dcmm"),definition=mar
 #' @author Ogier Maitre & Andre Berchtold
 #' @seealso \code{\link{march.Model-class}}
 #' @export
-march.summary <- function(object,...){
+march.summary <- function(object){
   v <- array(NA,c(1,4))
   rownames(v) <- march.name(object)
   colnames(v) <- c(gettext("ll"),gettext("param"),gettext("BIC"),gettext("AIC"))

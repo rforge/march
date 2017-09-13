@@ -4,7 +4,7 @@
 \alias{march.summary}
 \title{march.Model Summary.}
 \usage{
-march.summary(object, ...)
+march.summary(object)
 }
 \arguments{
 \item{object}{the (\code{\link{march.Model}}) from which to extract the informations.}

@@ -1,3 +1,10 @@
+#' @importFrom utils write.table
+#' @importFrom utils read.table
+#' @importFrom stats C
+#' @importFrom stats qchisq
+#' @importFrom stats rnorm
+#' @importFrom stats runif
+#' @importFrom methods new
 #' Dataset for march package.
 #' 
 #' This class contains several discrete-valued time series, in a dataset. It contains for each sequence, 

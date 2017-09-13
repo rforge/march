@@ -50,16 +50,16 @@ march.dcmm.construct(y=pewee,orderHC=2,orderVC=1,M=2,popSize=2,gen=1,iterBw=1,st
 march.dcmm.construct(y=pewee,orderHC=2,orderVC=0,M=2,popSize=2,gen=1,iterBw=1,stopBw=0.0001)  
   
 # Construct a DCMM using an order 2 hidden chain,
-# a visible chain of order 3 and 3 hidden states.
+# a visible chain of order 1 and 2 hidden states.
 # A first model is computed using both EA and Baum-Welch algorithms.
 # Then the initial solution is improved through two rounds of Baum-Welch optimization.
 models <- list()
 models[[length(models)+1]] <- march.dcmm.construct(y=pewee,orderHC=2,
-                                                   orderVC=3,M=3,popSize=2,gen=2)
+                                                   orderVC=1,M=2,popSize=2,gen=2)
 models[[length(models)+1]] <- march.dcmm.construct(y=pewee,seedModel=models[[1]],
-                                                   orderVC=3,iterBw=10,stopBw=0.001)
+                                                   orderVC=1,iterBw=10,stopBw=0.001)
 models[[length(models)+1]] <- march.dcmm.construct(y=pewee,seedModel=models[[2]],
-                                                   orderVC=3,iterBw=10,stopBw=0.0001)
+                                                   orderVC=1,iterBw=10,stopBw=0.0001)
 # Show performance indicators (ll, number of independent parameters,
 # BIC and AIC) for all computed models.
 r <- do.call(rbind,lapply(models,march.summary))
