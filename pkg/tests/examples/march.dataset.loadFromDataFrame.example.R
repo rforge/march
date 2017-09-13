@@ -28,7 +28,7 @@ sleep.w <- march.dataset.loadFromDataFrame(sleep_df, MARGIN = 2,
 covariates.sex<-rbind(matrix(1,500,7),matrix(1,500,7))
 covariates.age<-rbind(matrix(1,250,7), matrix(2,250,7), matrix(1,250,7),
                     matrix(2,250,7))
-covariates<-array(0,c(100,7,2))
+covariates<-array(0,c(1000,7,2))
 covariates[ , ,1]<-covariates.sex
 covariates[ , ,2]<-covariates.age
 # We build a MARCH dataset object containing these covariates.
