@@ -18,8 +18,8 @@ march.dataset.loadFromDataFrame(dataframe, MARGIN = 2, weights = NA,
 \item{missingDataRep}{If specified, the symbol representing a missing data.}
 
 \item{covariates}{If specified, a three dimensional array of integers, representing the covariates. The data for the i-th covariates
-should be in [, , i]. If the data are column-wise (respectively row-wise), the covariates should be column-wise (respectively row-wise). If we only have one covariate,
-we can simply pass a two-dimensional array. The covariates should be coded as integers from 1 to the number of possible outputs.}
+should be in [, , i]. If the data are column-wise (respectively row-wise), each table of covariates should be column-wise (respectively row-wise).
+If we only have one covariate, we can simply pass a two-dimensional array. The covariates should be coded as integers from 1 to the number of possible outputs.}
 }
 \value{
 A \code{\link{march.Dataset-class}} object containing the data contructed from the matrix or data.frame.
