@@ -294,7 +294,7 @@ setMethod(f="march.thompson",signature=signature("march.Dcmm",alpha="numeric"),d
 #' march.Model name.
 #' 
 #' Generate a name for the march model contained in the given \emph{object}.
-#' @param object the (\code{\link{march.Model}}) from which to extract the name.
+#' @param object the (\code{\link{march.Model-class}}) from which to extract the name.
 #' @author Ogier Maitre & Andre Berchtold
 #' @example tests/examples/march.name.example.R
 #' @export
@@ -329,7 +329,7 @@ setMethod(f="march.name",signature=signature(object="march.Dcmm"),definition=mar
 #' march.Model Summary.
 #' 
 #' Print the log-likelihood, the number of non-zeros parameter, the AIC and the BIC of the current model.
-#' @param object the (\code{\link{march.Model}}) from which to extract the informations.
+#' @param object the (\code{\link{march.Model-class}}) from which to extract the informations.
 #' 
 #' @author Ogier Maitre & Andre Berchtold
 #' @seealso \code{\link{march.Model-class}}

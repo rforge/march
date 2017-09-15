@@ -24,7 +24,7 @@ march.dataset.h.extractSequence <- function(y,i){
 #' @param sep A caracter used as element separator on a line.
 #' @param weights If specified, contains the weight of each sequence.
 #' 
-#' @return a \code{\link{march.Dataset}} object containing the data from the file found at \emph{filename}, using separator
+#' @return a \code{\link{march.Dataset-class}} object containing the data from the file found at \emph{filename}, using separator
 #' \emph{sep}.
 #' @author Ogier Maitre
 #' #'
@@ -37,7 +37,7 @@ march.dataset.loadFromFile <- function( filename, MARGIN=2,sep=",",weights=NA){
 
 #' Construct a dataset from a data.frame or a matrix.
 #' 
-#' The function creates a \code{\link{march.Dataset}} from a \emph{dataframe} or a \emph{matrix}, where each row (resp. column) represents 
+#' The function creates a \code{\link{march.Dataset-class}} from a \emph{dataframe} or a \emph{matrix}, where each row (resp. column) represents 
 #' an independent data series when \emph{MARGIN} is 2 (resp. 1).
 #' 
 #' @param dataframe A \code{\link{data.frame}} containing the dataset.

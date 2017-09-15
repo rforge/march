@@ -7,7 +7,7 @@
 march.summary(object)
 }
 \arguments{
-\item{object}{the (\code{\link{march.Model}}) from which to extract the informations.}
+\item{object}{the (\code{\link{march.Model-class}}) from which to extract the informations.}
 }
 \description{
 Print the log-likelihood, the number of non-zeros parameter, the AIC and the BIC of the current model.

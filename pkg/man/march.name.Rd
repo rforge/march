@@ -7,7 +7,7 @@
 march.name(object)
 }
 \arguments{
-\item{object}{the (\code{\link{march.Model}}) from which to extract the name.}
+\item{object}{the (\code{\link{march.Model-class}}) from which to extract the name.}
 }
 \description{
 Generate a name for the march model contained in the given \emph{object}.
