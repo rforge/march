@@ -7,7 +7,7 @@
 march.mc.construct(y, order, maxOrder = order)
 }
 \arguments{
-\item{y}{the \code{\link{march.Dataset}} from which the homogeneous Markov chain will be constructed.}
+\item{y}{the \code{\link{march.Dataset-class}} from which the homogeneous Markov chain will be constructed.}
 
 \item{order}{the order of the constructed Markov Chain.}
 
@@ -17,7 +17,7 @@ march.mc.construct(y, order, maxOrder = order)
 the \code{\link{march.Mc}} of order \emph{order} constructed \emph{w.r.t} the dataset \emph{y} and maxOrder.
 }
 \description{
-A \code{\link{march.Mc}} object of order \emph{order} is constructed from
+A \code{\link{march.Mc-class}} object of order \emph{order} is constructed from
 the dataset \emph{y}. The first maxOrder-order elements of each sequence of the dataset are truncated in order to return a model
 which can be compared with other Markovian models of visible order maxOrder.
 }

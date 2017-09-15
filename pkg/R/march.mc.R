@@ -4,11 +4,11 @@
 
 #' Construct an homogeneous Markov Chain.
 #'
-#' A \code{\link{march.Mc}} object of order \emph{order} is constructed from
+#' A \code{\link{march.Mc-class}} object of order \emph{order} is constructed from
 #' the dataset \emph{y}. The first maxOrder-order elements of each sequence of the dataset are truncated in order to return a model
 #' which can be compared with other Markovian models of visible order maxOrder.
 #'
-#' @param y the \code{\link{march.Dataset}} from which the homogeneous Markov chain will be constructed.
+#' @param y the \code{\link{march.Dataset-class}} from which the homogeneous Markov chain will be constructed.
 #' @param order the order of the constructed Markov Chain.
 #' @param maxOrder the maximum visible order among the set of Markovian models to compare.
 #'
