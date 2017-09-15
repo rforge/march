@@ -12,7 +12,7 @@
 #' @param order the order of the constructed Markov Chain.
 #' @param maxOrder the maximum visible order among the set of Markovian models to compare.
 #'
-#' @return the \code{\link{march.Mc}} of order \emph{order} constructed \emph{w.r.t} the dataset \emph{y} and maxOrder.
+#' @return the \code{\link{march.Mc-class}} of order \emph{order} constructed \emph{w.r.t} the dataset \emph{y} and maxOrder.
 #'
 #' @author Ogier Maitre
 #' @example tests/examples/march.mc.construct.example.R

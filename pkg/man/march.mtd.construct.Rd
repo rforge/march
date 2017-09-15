@@ -26,7 +26,7 @@ march.mtd.construct(y, order, maxOrder = order, mtdg = FALSE,
 }
 \description{
 A Mixture Transition Distribution model (\code{\link{march.Mtd-class}}) object of order \emph{order} is constructed
-according to a given \code{\link{march.Dataset}} \emph{y}. The first \emph{maxOrder}-\emph{order}
+according to a given \code{\link{march.Dataset-class}} \emph{y}. The first \emph{maxOrder}-\emph{order}
 elements of each sequence are truncated in order to return a model
 which can be compared with other Markovian models of visible order maxOrder.
 }

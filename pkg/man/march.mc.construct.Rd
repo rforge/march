@@ -14,7 +14,7 @@ march.mc.construct(y, order, maxOrder = order)
 \item{maxOrder}{the maximum visible order among the set of Markovian models to compare.}
 }
 \value{
-the \code{\link{march.Mc}} of order \emph{order} constructed \emph{w.r.t} the dataset \emph{y} and maxOrder.
+the \code{\link{march.Mc-class}} of order \emph{order} constructed \emph{w.r.t} the dataset \emph{y} and maxOrder.
 }
 \description{
 A \code{\link{march.Mc-class}} object of order \emph{order} is constructed from
