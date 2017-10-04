@@ -217,7 +217,10 @@ InitializeParameters <- function(u,init_method,c,is_mtdg,m,order,kcov,ncov){
 
 # Construct the array i0_il with all possible combinations of states 1...m together with the covariates in a time window of size l+1
 BuildArrayCombinations <- function(m,l,kcov,ncov){
+  tCovar=1
+  if(prod(kcov)>0){
   tCovar<-prod(kcov)
+  }
   i0_il <- array(0,c(m^(l+1)*tCovar,l+1+ncov))
   values <- 1:m
   for(i in 1:(l+1)){
