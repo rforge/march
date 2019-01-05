@@ -217,24 +217,27 @@ InitializeParameters <- function(u,init_method,c,is_mtdg,m,order,kcov,ncov){
 
 # Construct the array i0_il with all possible combinations of states 1...m together with the covariates in a time window of size l+1
 BuildArrayCombinations <- function(m,l,kcov,ncov){
-  tCovar=1
+  tCovar <- 1
+  
   if(prod(kcov)>0){
   tCovar<-prod(kcov)
   }
+  
   i0_il <- array(0,c(m^(l+1)*tCovar,l+1+ncov))
   values <- 1:m
   for(i in 1:(l+1)){
     i0_il[,i] <- t(kronecker(values,rep(1,m^(l+1)*tCovar/m^i)))
     values <- kronecker(rep(1,m),values)
   }
+  
   if(ncov>0){
-    totm=tCovar
-    totp=m^(l+1)
+    totm <- tCovar
+    totp <- m^(l+1)
     for(i in 1:ncov){
-      totm=totm/kcov[i]
-      values=1:kcov[i]
-      i0_il[,l+1+i]<-kronecker(rep(1,totp),kronecker(values,rep(1,totm)))
-      totp=totp*kcov[i]
+      totm <- totm/kcov[i]
+      values <- 1:kcov[i]
+      i0_il[,l+1+i] <- kronecker(rep(1,totp),kronecker(values,rep(1,totm)))
+      totp <- totp*kcov[i]
     }
   }
   return(i0_il)
@@ -536,7 +539,7 @@ OptimizeS <-function(order,k,kcov,ncov,S,Tr,phi,pcol,ll,pd_s,delta,delta_stop,n_
       if(delta_it==delta){
         delta<-2*delta
       }
-      return(list(S=new_S,ll=new_ll,delta=delta,q_i0_il=new_q_i0_il))
+      return(list(S=new_S,ll=new_ll,delta=delta,q_i0_il=new_q_i0_il,))
     }else{
       if(delta_it<=delta_stop){
         delta<-2*delta
@@ -546,15 +549,15 @@ OptimizeS <-function(order,k,kcov,ncov,S,Tr,phi,pcol,ll,pd_s,delta,delta_stop,n_
     }
   }
 }
-
+#' @useDynLib <pkg> 
 #' Construct a Mixture Transition Distribution (MTD) model.
 #'
-#' A Mixture Transition Distribution model (\code{\link{march.Mtd-class}}) object of order \emph{order} is constructed
-#' according to a given \code{\link{march.Dataset-class}} \emph{y}. The first \emph{maxOrder}-\emph{order}
+#' A Mixture Transition Distribution model (\code{\link{march.Mtd}}) object of order \emph{order} is constructed
+#' according to a given \code{\link{march.Dataset}} \emph{y}. The first \emph{maxOrder}-\emph{order}
 #' elements of each sequence are truncated in order to return a model
 #' which can be compared with other Markovian models of visible order maxOrder.
 #'
-#' @param y the dataset (\code{\link{march.Dataset-class}}) from which to construct the model.
+#' @param y the dataset (\code{\link{march.Dataset}}) from which to construct the model.
 #' @param order the order of the constructed model.
 #' @param maxOrder the maximum visible order among the set of Markovian models to compare.
 #' @param mtdg flag indicating whether the constructed model should be a MTDg using a different transition matrix for each lag (value: \emph{TRUE} or \emph{FALSE}).
@@ -563,8 +566,8 @@ OptimizeS <-function(order,k,kcov,ncov,S,Tr,phi,pcol,ll,pd_s,delta,delta_stop,n_
 #' @param llStop the ll increase below which the EM algorithm stop.
 #' @param maxIter the maximal number of iterations of the optimisation algorithm (zero for no maximal number).
 #'
-#' @author Ogier Maitre
-#' @example tests/examples/march.mtd.construct.example.R
+#' @author Ogier Maitre, Kevin Emery
+#' @example examples/march.mtd.construct.example.R
 #' @seealso \code{\link{march.Mtd-class}}, \code{\link{march.Model-class}}, \code{\link{march.Dataset-class}}.
 #' @export
 march.mtd.construct <- function(y,order,maxOrder=order,mtdg=FALSE,init="best", deltaStop=0.0001, llStop=0.01, maxIter=0){
