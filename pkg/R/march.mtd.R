@@ -18,24 +18,6 @@ BuildArrayNumberOfDataItems <- function(x){
   return(nt)
 }
 
-#% Computation of the contingency table (Cg in page 385 of Berchtold, 2001)
-# BuildContingencyTable <- function(y,order){
-#   n_rows_data <- y@N # number of rows (number of data sequences)
-#   c <- array(data=0,dim=c(order,y@K,y@K)) # crosstable (rt, Cg in page 385 of Berchtold, 2001)
-#   for (g in 1:order){
-#     for (i in 1:n_rows_data){
-#       for (t in 1:(y@T[i]-g)){ # mc_lag is g in Berchtold, 2001
-#         past <- y@y[[i]][t]
-#         present <- y@y[[i]][t+g]
-#         if(length((which(c(past,present)<1) | (which(c(past,present)>y@K))))==0){
-#           c[g,past,present] <- c[g,past,present] + y@weights[i]
-#         }
-#       }
-#     }
-#   }
-#   return(c)
-# }
-
 #Build the contingency tables. The first order table concerns the contingency between the lag g and the present. The next tables
 #concern the contingency table between the covariate and the 
  BuildContingencyTable <- function(y,order){
@@ -72,27 +54,6 @@ BuildArrayNumberOfDataItems <- function(x){
    }
    return(l)
  }
-
-# BuildContingencyTableCovariates <- function(y,kcov,cov){
-#   CT=matrix(0,kcov,y@K)
-#   #TM=matrix(0,kcov,y@K)
-#   
-#   for(n in 1:y@N){
-#     for (i in 1:y@T[i]){
-#       row=cov[n,i]
-#       col=y@y[[n]][i]
-#       CT[row,col]=CT[row,col]+1
-#     }
-#   }
-#   
-#   # for(i in 1:kcov){
-#   #   tot=sum(CT[i,])
-#   #   if(tot>0){
-#   #     TM[i,]=CT[i,]/tot
-#   #   }
-#   # }
-#   return(CT)
-# }
 
 NormalizeTable <- function(x){
   nx <- array(NA,dim=dim(x))
@@ -243,21 +204,6 @@ BuildArrayCombinations <- function(m,l,kcov,ncov){
   return(i0_il)
 }
 
-#Construct array n_i0_il where n_i0_il[i0,...il] is the number of sequences of the form X(t-l)=il,...,X(t)=i0
-# BuildArrayNumberOfSequences <- function(y,order){
-#   n_i0_il <- array(0,dim=rep(y@K,order+1))
-#   for(i in 1:y@N){
-#     for(t in march.h.seq(1,y@T[i]-order)){
-#       ind <- y@y[[i]][t:(t+order)]
-#       n_i0_il[rbind(ind)] <- n_i0_il[rbind(ind)] + 1
-#     }
-# 
-#   }
-#   # Transform to a one-dimensional array
-#   n_i0_il <- c(n_i0_il)
-#   return(n_i0_il)
-# }
-
 BuildArrayNumberOfSequences <- function(y,order){
   
   if(y@Ncov>0){
@@ -297,24 +243,6 @@ BuildArrayNumberOfSequences <- function(y,order){
   #n_i0_il <- c(n_i0_il)
   return(n_i0_il)
 }
-
-# Transform transition matrix q in such a way that the log-likelihood (Eq. 6) and the partial derivatives (equations in page 382) are easy to calculate
-# BuildArrayQ <- function(m,l,i0_il,n_i0_il,q){
-#   q_i0_il <- array(0,c(m^(l+1),l))
-#   for (j in 1:length(n_i0_il)){
-#     if( dim(q)[1]>1){
-#       for (g in 1:l){
-#         q_i0_il[j,g] <- q[g,i0_il[j,g+1],i0_il[j,1]]
-#       }
-#     }
-#     else {
-#       for (k in 1:l){
-#         q_i0_il[j,k] <- q[1,i0_il[j,k+1],i0_il[j,1]]
-#       }
-#     }
-#   }
-#   return(q_i0_il)
-# }
 
 BuildArrayQ <- function(m,l,i0_il,n_i0_il,q,kcov,ncov,S){
   
@@ -549,7 +477,6 @@ OptimizeS <-function(order,k,kcov,ncov,S,Tr,phi,pcol,ll,pd_s,delta,delta_stop,n_
     }
   }
 }
-#' @useDynLib <pkg> 
 #' Construct a Mixture Transition Distribution (MTD) model.
 #'
 #' A Mixture Transition Distribution model (\code{\link{march.Mtd}}) object of order \emph{order} is constructed
@@ -567,7 +494,7 @@ OptimizeS <-function(order,k,kcov,ncov,S,Tr,phi,pcol,ll,pd_s,delta,delta_stop,n_
 #' @param maxIter the maximal number of iterations of the optimisation algorithm (zero for no maximal number).
 #'
 #' @author Ogier Maitre, Kevin Emery
-#' @example examples/march.mtd.construct.example.R
+#' @example tests/examples/march.mtd.construct.example.R
 #' @seealso \code{\link{march.Mtd-class}}, \code{\link{march.Model-class}}, \code{\link{march.Dataset-class}}.
 #' @export
 march.mtd.construct <- function(y,order,maxOrder=order,mtdg=FALSE,init="best", deltaStop=0.0001, llStop=0.01, maxIter=0){

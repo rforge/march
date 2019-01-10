@@ -83,7 +83,7 @@ setClass("march.Indep",contains="march.Model",representation(indP="vector",indC=
 #'
 #' @section Slots:
 #'  \describe{
-#'    \item{\code{RC}:}{A matrix of \code{\link{numeric}} representing the reduced form of the 
+#'    \item{\code{RC}:}{A matrix of \code{\link{numeric }} representing the reduced form of the 
 #'    transition matrix of the current Markov Chain.}
 #'    \item{\code{order}:}{An \code{\link{integer}} representing the order of the current Markov Chain.}
 #'    \item{\code{RT}:}{A matrix of \code{\link{integer}} representing the number of sample used to compute each 
@@ -146,11 +146,13 @@ setClass("march.Mtd",contains="march.Model",
 #'    \item{\code{M}:}{An \code{\link{integer}} value representing the number of hidden state.}
 #'    \item{\code{orderVC}:}{An \code{\link{integer}} value representing the order of the visible Markov chain.}
 #'    \item{\code{orderHC}:}{An \code{\link{integer}} value representing the order of the hidden Markov chain.}
+#'	  \item{\code{Amodel}:}{A vector of \code{\link{character}} string representing the modeling of the hidden transition matrix (complete, mtd or mtdg)}
+#'	  \item{\code{Cmodel}:}{A vector of \code{\link{character}} string representing the modeling of the visible transition matrix (complete, mtd or mtdg)}
 #'  }
 #'    
 #' @seealso \code{\link{march.dcmm.construct}}, \code{\link{march.Model-class}}.
 setClass( "march.Dcmm", 
-          representation(Pi="array",A="array",RB="array",M="integer",orderVC="integer",orderHC="integer"),
+        representation(Pi="array",A="array",RB="array",APhi="array", CPhi="array", ATCovar="list",CTCovar="list",M="integer",orderVC="integer",orderHC="integer",AQ="array",CQ="array",AMCovar="vector",CMCovar="vector",Amodel="character",Cmodel="character",AProbT="array",CProbT="array"),
           contains="march.Model");
 
 
@@ -158,11 +160,30 @@ setClass( "march.Dcmm",
 # Real EA algorithms should all use implementations of
 # these classes.
 setClass("march.ea.InitParameters",representation(fct="function"))
+setClass("march.ea.cov.InitParameters",representation(fct="function"))
 setClass("march.ea.EvalParameters",representation(fct="function"))
+setClass("march.ea.cov.EvalParameters",representation(fct="function"))
 setClass("march.ea.CrossoverParameters",representation(fct="function"))
+setClass("march.ea.cov.CrossoverParameters",representation(fct="function"))
 setClass("march.ea.MutationParameters",representation(fct="function"))
+setClass("march.ea.cov.MutationParameters",representation(fct="function"))
 setClass("march.ea.OptimizingParameters",representation(fct="function"))
+setClass("march.ea.cov.OptimizingParameters",representation(fct="function"))
 
+
+setClass("march.dcmm.cov.ea.InitParameters",contains="march.ea.cov.InitParameters",
+         representation( AConst="logical",
+                         M="integer",
+                         K="integer",
+                         orderVC="integer",
+                         orderHC="integer",
+                         y="march.Dataset",
+                         Amodel="character",
+                         Cmodel="character",
+                         AMCovar="vector",
+                         CMCovar="vector"
+         )
+)
 
 setClass("march.ea.Parameters",representation(
   crossoverProb="numeric",
@@ -177,6 +198,18 @@ setClass("march.ea.Parameters",representation(
   generation="integer")
 )
 
+setClass("march.ea.cov.Parameters",representation(
+  crossoverProb="numeric",
+  optimizing="logical",
+  
+  initParameters="march.ea.cov.InitParameters",
+  evalParameters="march.ea.cov.EvalParameters",
+  mutationParameters="march.ea.cov.MutationParameters",
+  crossoverParameters="march.ea.cov.CrossoverParameters",
+  optimizingParameters="march.ea.cov.OptimizingParameters",
+  populationSize="integer",
+  generation="integer")
+)
 
 # those are implementation of the abstract classes defined in march.ea.R
 # init, eval and mutation parameters :
@@ -194,11 +227,23 @@ setClass("march.dcmm.ea.EvalParameters",contains="march.ea.EvalParameters",
          representation(ds="march.Dataset")		
 )
 
+setClass("march.dcmm.cov.ea.EvalParameters",contains="march.ea.cov.EvalParameters",
+         representation(ds="march.Dataset")		
+)
+
 setClass("march.dcmm.ea.MutationParameters",contains="march.ea.MutationParameters",
          representation(pMut="numeric")
 )
 
+setClass("march.dcmm.cov.ea.MutationParameters",contains="march.ea.cov.MutationParameters",
+         representation(pMut="numeric")
+)
+
 setClass("march.dcmm.ea.OptimizingParameters",contains="march.ea.OptimizingParameters",
+         representation(ds="march.Dataset",iterBw="integer",stopBw="numeric")
+)
+
+setClass("march.dcmm.cov.ea.OptimizingParameters",contains="march.ea.cov.OptimizingParameters",
          representation(ds="march.Dataset",iterBw="integer",stopBw="numeric")
 )
 

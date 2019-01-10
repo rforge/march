@@ -108,37 +108,39 @@ march.mtd.show <- function(object){
   march.model.show(object)
 }
 
-# show method for dcmm object
 march.dcmm.show <- function(object){
-  cat(march.name(object))
-  cat("\nRA : \n")
-  s <- march.h.mc.printableMatrix(march.dcmm.h.compactA(object),object@orderHC,object@M)
-  print(s)
-  cat("\n")
+	placeACovar <- which(object@AMCovar==1)
+	placeCCovar <- which(object@CMCovar==1)
+	AtmCovar <- 1
+  	if(sum(object@AMCovar>0)){
+  		AtmCovar <-prod(object@y@Kcov[placeACovar])
+  	}
+	
+  	cat(march.name(object))
+  	cat("\nRA : \n")
+  	if(object@orderHC==0){
+  		s <- march.cov.h.mc.printableMatrix(object@A[1:AtmCovar,,drop=FALSE],0,object@M,object@y@Kcov[placeACovar],sum(object@AMCovar))
+  	}else{
+  		s <- march.cov.h.mc.printableMatrix(march.dcmm.cov.h.compactA(object),object@orderHC,object@M,object@y@Kcov[placeACovar],sum(object@AMCovar))
+  	}
+  	print(s)
+  	cat("\n")
   
-  cat("RB : \n")
-  for( i in 1:object@M ){
-    cat(i,":\n"); 
-    if( object@y@K^object@orderVC==1 ){
-      s <- t(data.frame(object@RB[i,,]))
-      s <- march.h.mc.printableMatrix(s,1,object@y@K) 
-    }
-    else{
-      s <- march.h.mc.printableMatrix(object@RB[i,,],object@orderVC,object@y@K) 
-    }
-    print(s)
-  }
-  
-  cat("\nPi : \n")
-  for( i in 1:object@orderHC ){
-    for( j in 1:(object@M^(i-1))){
-      cat(sprintf("%.4f",object@Pi[i,j,]))
-      cat("\n")
-    }
-    cat("\n")
-  }
-  
-  march.model.show(object)
+  	cat("RB : \n")
+   	for( i in 1:object@M ){
+     	cat(i,":\n"); 
+        s <- march.cov.h.mc.printableMatrix(object@RB[,,i],object@orderVC,object@y@K,object@y@Kcov[placeCCovar],sum(object@CMCovar))
+        print(s) 
+    }  
+  	cat("\nPi : \n")
+  	for( i in 1:object@orderHC){
+    	for( j in 1:(AtmCovar*object@M^(i-1))){
+      		cat(sprintf("%.4f",object@Pi[j,,i]))
+    		cat("\n")
+    	}
+    	cat("\n")
+	}
+  	march.model.show(object)
 }
 
 # this part describes how a call to show method (print) should be 
@@ -230,7 +232,6 @@ setMethod(f="march.nbParams",signature="march.Dcmm",definition=march.dcmm.nbPara
 #' @return A list of half-length confidence intervals for each probability distribution of the considered model.
 #' @author Ogier Maitre
 #' @example tests/examples/march.thompson.example.R
-#'
 #' @export 
 march.thompson <- function(object,alpha){}
 
@@ -283,18 +284,42 @@ march.dcmm.thompson <- function(object,alpha){
 } 
 
 
-# This part create the generic method and describe how a call to this generic 
-# has to be redirected to the rigth method, according to the considerd object.
+#This part create the generic method and describe how a call to this generic
+#has to be redirected to the rigth method, according to the considered object.
 setGeneric(name="march.thompson",def=function(object,alpha)march.model.thompson(object,alpha))
+
+#' This method is called with the object "march.Indep" and the aplha "numeric" and
+#' provides it to the march.thompson function.
+#' @param object contains the name of the model.
+#' @param alpha contains the Type I error
 setMethod(f="march.thompson",signature=signature(object="march.Indep",alpha="numeric"),definition=march.indep.thompson)
+
+#' This method is called with the object "march.Mc" and the aplha "numeric" and
+#' provides it to the march.thompson function.
+#'
+#' @param object contains the name of the model.
+#' @param alpha contains the Type I error
 setMethod(f="march.thompson",signature=signature("march.Mc",alpha="numeric"),definition=march.mc.thompson)
+
+#' This method is called with the object "march.Mtd" and the aplha "numeric" and
+#' provides it to the march.thompson function.
+#'
+#' @param object contains the name of the model.
+#' @param alpha contains the Type I error
 setMethod(f="march.thompson",signature=signature("march.Mtd",alpha="numeric"),definition=march.mtd.thompson)
+
+#' This method is called with the object "march.Dcmm" and the aplha "numeric" and
+#' provides it to the march.thompson function.
+#'
+#' @param object contains the name of the model.
+#' @param alpha contains the Type I error
 setMethod(f="march.thompson",signature=signature("march.Dcmm",alpha="numeric"),definition=march.dcmm.thompson)
 
 #' march.Model name.
 #' 
 #' Generate a name for the march model contained in the given \emph{object}.
-#' @param object the (\code{\link{march.Model-class}}) from which to extract the name.
+#'
+#' @param object contains the name of the model(Independence model, MTD,...). 
 #' @author Ogier Maitre & Andre Berchtold
 #' @example tests/examples/march.name.example.R
 #' @export
@@ -303,9 +328,9 @@ march.name <- function(object){}
 march.model.name <- function(object){ "abstract model" } # should never be called
 march.indep.name <- function(object){ "Independence" }
 march.mc.name <- function(object){ sprintf("MC(%d)",object@order) }
-march.mtd.name <- function(object){ 
+march.mtd.name <- function(object){
   if( dim(object@Q)[1]==1 ){
-    sprintf("MTD(%d)",object@order)   
+    sprintf("MTD(%d)",object@order)
   }
   else{
     sprintf("MTDg(%d)",object@order)
@@ -318,23 +343,46 @@ march.dcmm.name <- function(object){
   else{ sprintf("Dcmm(%d,%d)",object@orderHC,object@orderVC) }
 }
 
+
+#This part create the generic method and describe how a call to this generic
+#has to be redirected to the right method, according to the considered object.
 setGeneric(name="march.name",def=function(object)march.model.name(object))
+
+#' This method is called with the object "march.Indep" and provides it 
+#' to the march.name function.
+#'
+#' @param object contains the name of the model.
 setMethod(f="march.name",signature=signature(object="march.Indep"),definition=march.indep.name)
+
+#' This method is called with the object "march.MC" and provides it 
+#' to the march.name function.
+#'
+#' @param object contains the name of the model.
 setMethod(f="march.name",signature=signature(object="march.Mc"),definition=march.mc.name)
+
+#' This method is called with the object "march.Mtd" and provides it 
+#' to the march.name function.
+#'
+#' @param object contains the name of the model.
 setMethod(f="march.name",signature=signature(object="march.Mtd"),definition=march.mtd.name)
+
+#' This method is called with the object "march.Dcmm" and provides it 
+#' to the march.name function.
+#'
+#' @param object contains the name of the model.
 setMethod(f="march.name",signature=signature(object="march.Dcmm"),definition=march.dcmm.name)
 
 #quote=FALSE,digits = getOption("digits")
 
 #' march.Model Summary.
+#'
+#' Print key values for the current model.
 #' 
-#' Print the log-likelihood, the number of non-zeros parameter, the AIC and the BIC of the current model.
-#' @param object the (\code{\link{march.Model-class}}) from which to extract the informations.
-#' 
+#' @param object can contain the results of any model computed  using march
+#' @param ... should indicate any additional parameter passed to the function
 #' @author Ogier Maitre & Andre Berchtold
-#' @seealso \code{\link{march.Model-class}}
 #' @export
-march.summary <- function(object){
+march.summary <- function(object,...){
   v <- array(NA,c(1,4))
   rownames(v) <- march.name(object)
   colnames(v) <- c(gettext("ll"),gettext("param"),gettext("BIC"),gettext("AIC"))

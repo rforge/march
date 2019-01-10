@@ -5,10 +5,11 @@
 \title{Construct a double chain Markov model (DCMM).}
 \usage{
 march.dcmm.construct(y, orderHC, orderVC, M, gen = 5, popSize = 4,
-  maxOrder = orderVC, seedModel = NULL, iterBw = 2, stopBw = 0.1)
+  maxOrder = orderVC, seedModel = NULL, iterBw = 2, stopBw = 0.1,
+  Amodel = "mtd", Cmodel = "mtd", AMCovar = 0, CMCovar = 0)
 }
 \arguments{
-\item{y}{the dataset from which the Dcmm will be constructed \code{\link{march.Dataset-class}}.}
+\item{y}{the dataset from which the Dcmm will be constructed \code{\link{march.Dataset}}.}
 
 \item{orderHC}{the order of the hidden chain of the constructed Dcmm.}
 
@@ -27,12 +28,20 @@ march.dcmm.construct(y, orderHC, orderVC, M, gen = 5, popSize = 4,
 \item{iterBw}{the number of iteration performed by the Baum-Welch algorithm.}
 
 \item{stopBw}{the minimum increase in quality (log-likelihood) authorized in the Baum-Welch algorithm.}
+
+\item{Amodel}{the modeling of the hidden transition matrix (mtd, mtdg or complete)}
+
+\item{Cmodel}{the modeling of the visible transition matrix (mtd, mtdg or complete)}
+
+\item{AMCovar}{vector of the size Ncov indicating which covariables are used into the hidden process (0: no, 1:yes)}
+
+\item{CMCovar}{vector of the size Ncov indicating which covariables are used into the visible process (0: no, 1:yes)}
 }
 \value{
-the best \code{\link{march.Dcmm-class}} constructed by the EA or the result of the Baum-Welch algorithm on \emph{seedModel}.
+the best \code{\link{march.Dcmm}} constructed by the EA or the result of the Baum-Welch algorithm on \emph{seedModel}.
 }
 \description{
-Construct a \code{\link{march.Dcmm-class}} object, with visible order \emph{orderVC}, hidden order \emph{orderHC} and \emph{M} hidden states, according to a \code{\link{march.Dataset-class}}.
+Construct a \code{\link{march.Dcmm}} object, with visible order \emph{orderVC}, hidden order \emph{orderHC} and \emph{M} hidden states, according to a \code{\link{march.Dataset}}.
 The first \emph{maxOrder}-\emph{orderVC} elements of each sequence are truncated in order to return a model
 which can be compared with other Markovian model of visible order maxOrder. The construction is performed either by an evolutionary algorithm (EA) or by improving an existing DCMM.
 The EA performs \emph{gen} generations on a population of \emph{popSize} individuals. The EA behaves as a Lamarckian evolutionary algorithm, using a Baum-Welch algorithm as
@@ -72,5 +81,5 @@ HMM <- march.dcmm.construct(pewee,orderHC=1,orderVC=0,M=2,gen=1,popSize=1,iterBw
 \code{\link{march.Dcmm-class}}, \code{\link{march.Model-class}}, \code{\link{march.Dataset-class}}.
 }
 \author{
-Ogier Maitre
+Emery Kevin
 }

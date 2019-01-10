@@ -4,16 +4,15 @@
 \alias{march.summary}
 \title{march.Model Summary.}
 \usage{
-march.summary(object)
+march.summary(object, ...)
 }
 \arguments{
-\item{object}{the (\code{\link{march.Model-class}}) from which to extract the informations.}
+\item{object}{can contain the results of any model computed  using march}
+
+\item{...}{should indicate any additional parameter passed to the function}
 }
 \description{
-Print the log-likelihood, the number of non-zeros parameter, the AIC and the BIC of the current model.
-}
-\seealso{
-\code{\link{march.Model-class}}
+Print key values for the current model.
 }
 \author{
 Ogier Maitre & Andre Berchtold

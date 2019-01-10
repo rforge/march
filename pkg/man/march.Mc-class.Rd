@@ -12,7 +12,7 @@ inherits its slots.
 \section{Slots}{
 
  \describe{
-   \item{\code{RC}:}{A matrix of \code{\link{numeric}} representing the reduced form of the 
+   \item{\code{RC}:}{A matrix of \code{\link{numeric }} representing the reduced form of the 
    transition matrix of the current Markov Chain.}
    \item{\code{order}:}{An \code{\link{integer}} representing the order of the current Markov Chain.}
    \item{\code{RT}:}{A matrix of \code{\link{integer}} representing the number of sample used to compute each 
