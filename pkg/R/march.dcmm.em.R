@@ -30,7 +30,7 @@ march.dcmm.cov.em <- function(d,AMDelta,CMDelta,ConstAPhi,ConstCPhi){
   	
 	for(n in 1:d@y@N){
 		#Extract the current sequence
-		s <- march.dataset.h.extractSequence(y,n)
+		s <- march.dataset.h.extractSequence(d@y,n)
 		
 		#Forward-Backward algorithm
 		a <- march.dcmm.fp.cov(d,s,d@y@cov[n,,],AtmCovar,CtmCovar)
@@ -60,7 +60,7 @@ march.dcmm.cov.em <- function(d,AMDelta,CMDelta,ConstAPhi,ConstCPhi){
   	LLAlphat <- rep(0,d@y@N)
   	
   	for(n in 1:d@y@N){
-  		s <- march.dataset.h.extractSequence(y,n)
+  		s <- march.dataset.h.extractSequence(d@y,n)
 		
 		a <- march.dcmm.fp.cov(dtmp,s,dtmp@y@cov[n,,],AtmCovar,CtmCovar)
 		SAlphat[,1:dtmp@y@T[n],n] <- a$SAlpha
@@ -78,7 +78,7 @@ march.dcmm.cov.em <- function(d,AMDelta,CMDelta,ConstAPhi,ConstCPhi){
 	##########Reestimation of A when a mixture modeling or some covariates are involved###########
 	if(d@M>1 & ((d@Amodel=="complete" & AtmCovar>1) | d@Amodel=="mtd" | d@Amodel=="mtdg")){
 		for(n in 1:d@y@N){
-			s <- march.dataset.h.extractSequence(y,n)
+			s <- march.dataset.h.extractSequence(d@y,n)
 			b <- march.dcmm.bp.cov(d,s,d@y@cov[n,,],AtmCovar,CtmCovar)
 			SBeta[,1:d@y@T[n],n] <- b$SBeta
 			SBlog[1:d@y@T[n],n] <- b$SBlog
@@ -185,7 +185,7 @@ march.dcmm.cov.em <- function(d,AMDelta,CMDelta,ConstAPhi,ConstCPhi){
 		
 		for(n in 1:d@y@N){
 			#Extract the current sequence
-			s <- march.dataset.h.extractSequence(y,n)
+			s <- march.dataset.h.extractSequence(d@y,n)
 		
 			#Forward-Backward algorithm
 			a <- march.dcmm.fp.cov(d,s,d@y@cov[n,,],AtmCovar,CtmCovar)
@@ -1222,7 +1222,7 @@ GMTD.oq.dcmm.A.b<-function(d,AtmCovar,CtmCovar,ValT,NSS,Qr,SDiq,Delta,Stop){
 		if(tLLtest==0){
 			tLL <- 0
 			for(n in 1:d@y@N){
-				s <- march.dataset.h.extractSequence(y,n)
+				s <- march.dataset.h.extractSequence(d@y,n)
 				tLL <- tLL+march.dcmm.fp.cov(d,s,d@y@cov[n,1:s@N,],AtmCovar,CtmCovar)$LLAlpha
 			}
 			dtmp@ll <- tLL

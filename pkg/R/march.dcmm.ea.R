@@ -90,6 +90,7 @@ march.dcmm.cov.ea.initialization <- function(p){
   	Amodel <- p@Amodel
   	Cmodel <- p@Cmodel
   	K <- p@y@K
+  	y <- p@y
   
   	d <- march.dcmm.cov.constructEmptyDcmm(p@M,p@y,p@orderVC,p@orderHC,p@AMCovar,p@CMCovar,p@Amodel,p@Cmodel)
    

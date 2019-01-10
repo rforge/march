@@ -29,7 +29,7 @@
 #' @seealso \code{\link{march.Dcmm-class}}, \code{\link{march.Model-class}}, \code{\link{march.Dataset-class}}.
 #'
 #' @export
-march.dcmm.construct <- function(y,orderHC,orderVC,M,gen=5,popSize=4,maxOrder=orderVC,seedModel=NULL,iterBw=2,stopBw=0.1,Amodel="mtd",Cmodel="mtd",AMCovar=0,CMCovar=0){
+march.dcmm.construct <- function(y,orderHC,orderVC,M=2,gen=5,popSize=4,maxOrder=orderVC,seedModel=NULL,iterBw=2,stopBw=0.1,Amodel="mtd",Cmodel="mtd",AMCovar=0,CMCovar=0){
 	
 	if(Amodel!="complete" & Amodel!="mtd" & Amodel!="mtdg"){
 		stop("Amodel should be equal to complete, mtd or mtdg")
