@@ -31,74 +31,74 @@
 #' @export
 march.dcmm.construct <- function(y,orderHC,orderVC,M=2,gen=5,popSize=4,maxOrder=orderVC,seedModel=NULL,iterBw=2,stopBw=0.1,Amodel="mtd",Cmodel="mtd",AMCovar=0,CMCovar=0){
 	
-	if(Amodel!="complete" & Amodel!="mtd" & Amodel!="mtdg"){
-		stop("Amodel should be equal to complete, mtd or mtdg")
-	}
+  if( is.null(seedModel) ){
+    if(Amodel!="complete" & Amodel!="mtd" & Amodel!="mtdg"){
+		  stop("Amodel should be equal to complete, mtd or mtdg")
+	  }
 	
-	if(Cmodel!="complete" & Cmodel!="mtd" & Cmodel!="mtdg"){
-		stop("Cmodel should be equal to complete mtd or mtdg")
-	}
+	  if(Cmodel!="complete" & Cmodel!="mtd" & Cmodel!="mtdg"){
+		  stop("Cmodel should be equal to complete mtd or mtdg")
+	  }
 	
-	if(length(AMCovar)!=y@Ncov & length(AMCovar)>1){
-		stop("AMCovar should have his length equal to the number of covariates in y")
-	}
+	  if(length(AMCovar)!=y@Ncov & length(AMCovar)>1){
+		  stop("AMCovar should have his length equal to the number of covariates in y")
+	  }
 	
-	if(length(CMCovar)!=y@Ncov & length(CMCovar)>1){
-		stop("CMCovar should have his length equal to the number of covariates in y")
-	}	
+	  if(length(CMCovar)!=y@Ncov & length(CMCovar)>1){
+		  stop("CMCovar should have his length equal to the number of covariates in y")
+	  }	
 	
 	
-	#Checking
-	if(M==1){
-		AMCovar <- rep(0,max(1,y@Ncov))
-		Amodel <- "complete"
-		orderHC <- 1
-	}
+	  #Checking
+	  if(M==1){
+		  AMCovar <- rep(0,max(1,y@Ncov))
+		  Amodel <- "complete"
+		  orderHC <- 1
+	  }
 	
-	if(orderVC==0){
-		Cmodel <- "complete"
-	}
+	  if(orderVC==0){
+		  Cmodel <- "complete"
+	  }
 	
-	if(orderHC==0){
-		stop("orderHC should be greater than 0")
-		#Amodel <- "complete"
-	}
+	  if(orderHC==0){
+	  	stop("orderHC should be greater than 0")
+		  #Amodel <- "complete"
+	  }
 	
-	if(orderHC==1 & Amodel=="mtdg"){
-		Amodel <- "mtd"
-	}
+	  if(orderHC==1 & Amodel=="mtdg"){
+		  Amodel <- "mtd"
+	  }
 	
-	if(orderVC==1 & Cmodel=="mtdg"){
-		Cmodel <- "mtd"
-	}
+	  if(orderVC==1 & Cmodel=="mtdg"){
+		  Cmodel <- "mtd"
+	  }
 		
-	if( is.null(seedModel) ){
+
 		orderHC <- march.h.paramAsInteger(orderHC)
 		orderVC <- march.h.paramAsInteger(orderVC)
 		M <- march.h.paramAsInteger(M)
 		maxOrder <- march.h.paramAsInteger(maxOrder)
     
-    	if( orderVC>maxOrder ){
-      		stop("maxOrder should be greater or equal than orderVC")
-    	}
-    
-  	}
+    if( orderVC>maxOrder ){
+      	stop("maxOrder should be greater or equal than orderVC")
+    }
+  }
   
   
-  	iterBw <- march.h.paramAsInteger(iterBw)
+  iterBw <- march.h.paramAsInteger(iterBw)
   
   
-  	gen <- march.h.paramAsInteger(gen)
-  	popSize <- march.h.paramAsInteger(popSize)
+  gen <- march.h.paramAsInteger(gen)
+  popSize <- march.h.paramAsInteger(popSize)
   
-  	if( is.null(seedModel) ){
-    	y <- march.dataset.h.filtrateShortSeq(y,maxOrder+1)
-    	y <- march.dataset.h.cut(y,maxOrder-orderVC)
-    	}
+  if( is.null(seedModel) ){
+    y <- march.dataset.h.filtrateShortSeq(y,maxOrder+1)
+    y <- march.dataset.h.cut(y,maxOrder-orderVC)
+  }
   
   if( is.null(seedModel)==FALSE ){
   	y <- march.dataset.h.filtrateShortSeq(y,maxOrder+1)
-    y <- march.dataset.h.cut(y,maxOrder-orderVC)
+    y <- march.dataset.h.cut(y,maxOrder-seedModel@orderVC)
   	op <- new("march.dcmm.cov.ea.OptimizingParameters",fct=march.dcmm.cov.ea.optimizing,ds=y,stopBw=stopBw,iterBw=iterBw)
   	m <- march.dcmm.cov.ea.optimizing(seedModel,op)
   	

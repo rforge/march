@@ -1177,7 +1177,7 @@ GMTD.oq.dcmm.A.b<-function(d,AtmCovar,CtmCovar,ValT,NSS,Qr,SDiq,Delta,Stop){
 	
 	if(d@AQ[1,Qr,SDiq_p[1]]==0){
 		for(k in 2:d@M){
-			if(d@AQ[Qr,SDiq_p[k]]!=0){
+			if(d@AQ[1,Qr,SDiq_p[k]]!=0){
 				d_dec <- SDiq_p[k]
 				break
 			}

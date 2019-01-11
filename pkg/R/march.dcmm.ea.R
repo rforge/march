@@ -94,7 +94,7 @@ march.dcmm.cov.ea.initialization <- function(p){
   
   	d <- march.dcmm.cov.constructEmptyDcmm(p@M,p@y,p@orderVC,p@orderHC,p@AMCovar,p@CMCovar,p@Amodel,p@Cmodel)
    
-	placeACovar <- which(AMCovar==1)
+	  placeACovar <- which(AMCovar==1)
   
   	AtmCovar <- 1
   	if(NbAMCovar>0){
@@ -142,7 +142,7 @@ march.dcmm.cov.ea.initialization <- function(p){
     	}
     
     
-       	mccov <- march.mccov.sk(M,max(orderHC,1),AtmCovar,KCovar,placeACovar,NbAMCovar,matrix(AQ[1,,],M^max(orderHC,1),M),ATCovar)
+      mccov <- march.mccov.sk(M,max(orderHC,1),AtmCovar,KCovar,placeACovar,NbAMCovar,matrix(AQ[1,,],M^max(orderHC,1),M),ATCovar)
     	AProbT <- mccov$ProbT
     
     	l <- GMTD_tm_cov(max(orderHC,1),M,APhi,AProbT)

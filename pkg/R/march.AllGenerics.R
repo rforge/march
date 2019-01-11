@@ -178,32 +178,116 @@ march.mtd.nbParams <- function(object){
 
 # nbParams method for dcmm object
 march.dcmm.nbParams <- function(object){
-  nbPPi <- 0
-  # get the number of parameters for Pi :
-  for( t in 1:object@orderHC ){
-    nbPPi <- nbPPi + object@M^(t-1)*(object@M-1)
-    for( i in 1:object@M^(t-1)){
-      for( j in 1:object@M){
-        if( object@Pi[t,i,j]==0 ){ nbPPi <- nbPPi-1 }
+  
+  placeACovar <- which(object@AMCovar==1)
+  placeCCovar <- which(object@CMCovar==1)
+  AtmCovar <- 1
+  if(sum(object@AMCovar>0)){
+    for (i in 1:sum(object@AMCovar)){
+      AtmCovar <- AtmCovar*object@y@Kcov[placeACovar[i]]
+    }
+  }
+  #Pi
+  nbparpi <- 0
+  
+  if(object@M>1 & object@orderHC>0){
+    for(t in 1:object@orderHC){
+      nbparpi <- nbparpi+object@M^(t-1)*AtmCovar*(object@M-1)
+      for(i in 1:(object@M^(t-1)*AtmCovar)){
+        for(j in 1:object@M){
+          if(object@Pi[i,j,t]==0){
+            nbparpi <- nbparpi-1
+          }
+        }
+        if(sum(object@Pi[i,,t])==0){
+          nbparpi <- nbparpi+1
+        }
       }
     }
-    if( all(object@Pi==0)){
-      nbPPi <- nbPPi+1
+  }
+  
+  #A
+  nbparA <- 0
+  
+  if(object@M>1){
+    if(object@Amodel=="complete" & object@APhi[1,1]!=0){
+      if(object@orderHC==0){
+        nbparA <- object@M-1-sum(object@AQ[1,1,]==0)
+      }else{
+        nbparA <- object@M^object@orderHC*(object@M-1)-sum(object@AQ[1,,]==0)+sum(rowSums(object@AQ[1,,])==0)
+      }
+    }else if(object@Amodel=="mtd" & sum(object@APhi[1,1:object@orderHC])>0){
+      nbparA <- object@M*(object@M-1)-sum(object@AQ[1,,]==0)+sum(rowSums(object@AQ[1,,])==0)
+    }else if(object@Amodel=="mtdg" & sum(object@APhi[1,1:object@orderHC])>0){
+      for(ord in 1:object@orderHC){
+        if(object@APhi[1,ord]!=0){
+          nbparA <- nbparA+object@M*(object@M-1)-sum(object@AQ[ord,,]==0)+sum(rowSums(object@AQ[ord,,])==0)
+        }
+      }
     }
+    
+    if(sum(object@AMCovar)>0){
+      if(object@Amodel=="complete"){
+        CCov <- 1
+      }else{
+        CCov <- object@orderHC
+      }
+      
+      for(ord in 1:sum(object@AMCovar)){
+        if(object@APhi[1,CCov+ord]!=0){
+          KC <- object@y@Kcov[placeACovar[ord]]
+          nbparA <- nbparA+KC*(object@M-1)-sum(object@ATCovar[[ord]]==0)+sum(rowSums(object@ATCovar[[ord]])==0)
+        }
+      }
+    }
+    
+    #Independent parameters in APhi
+    
+    nbparA <- nbparA+length(object@APhi[1,])-1-sum(object@APhi[1,]==0)
   }
   
-  # get the number of parameters for A
-  RA <- march.dcmm.h.compactA(d=object)
-  nbPA <- object@M^object@orderHC*(object@M-1)-sum(RA==0)+sum(rowSums(RA)==0)
-  
-  # get the number of parameters for RB
-  nbPRB <- 0
-  for( i in 1:object@M ){
-    nbPRB <- nbPRB+object@y@K^object@orderVC*(object@y@K-1)-sum(object@RB[1,,]==0)+sum(colSums(object@RB)==0)
+  #Number of parameters visible process
+  nbparC <- 0
+  for(state in 1:object@M){
+    if(object@Cmodel=="complete" & object@CPhi[1,1,state]!=0){
+      if(sum(object@CMCovar)==0){
+        nbparC <- nbparC+object@y@K^object@orderVC*(object@y@K-1)-sum(object@RB[,,state]==0)+sum(rowSums(object@RB[,,state])==0)
+      }else{
+        nbparC <- nbparC+object@y@K^object@orderVC*(object@y@K-1)-sum(object@CQ[1,,,state]==0)+sum(rowSums(object@CQ[1,,,state])==0)
+      }
+    }else if(object@Cmodel=="mtd" & sum(object@CPhi[1,1:object@orderVC,state])!=0){
+      nbparC <- nbparC+object@y@K*(object@y@K-1)-sum(object@CQ[1,,,state]==0)+sum(rowSums(object@CQ[1,,,state])==0)
+    }else if(object@Cmodel=="mtdg" & sum(object@CPhi[1,1:object@orderVC,state])!=0){
+      for(ord in 1:object@orderVC){
+        if(object@CPhi[1,ord,state]!=0){
+          nbparC <- nbparC+object@y@K*(object@y@K-1)-sum(object@CQ[ord,,,state]==0)+sum(rowSums(object@CQ[ord,,,state])==0)
+        }
+      }
+    }
+    
+    if(sum(object@CMCovar)>0){
+      if(object@Cmodel=="complete"){
+        CCov <- 1
+      }else{
+        CCov <- object@orderVC
+      }
+      
+      for(ord in 1:sum(object@CMCovar)){
+        if(object@CPhi[1,CCov+ord,state]!=0){
+          KC <- object@y@Kcov[placeCCovar[ord]]
+          nbparC <- nbparC+KC*(object@y@K-1)-sum(object@CTCovar[[ord]][,,state]==0)+sum(rowSums(object@CTCovar[[ord]][,,state])==0)
+        }
+      }
+    }
+    
+    #Independant parameters in CPhi
+    nbparC <- nbparC+length(object@CPhi[1,,state])-1-sum(object@CPhi[1,,state]==0)
   }
-  nbPA+nbPPi+nbPRB
+  
+  Nbparam <- nbparpi+nbparA+nbparC
+  
+  Nbparam
 }
-
 # This part create the generic method and describe how a call to this generic 
 # has to be redirected to the rigth method, according to the considerd object.
 setGeneric(name="march.nbParams",def=function(object)march.model.nbParams(object))
@@ -276,11 +360,12 @@ march.mtd.thompson <- function( object, alpha){
 
 march.dcmm.thompson <- function(object,alpha){
   
-  ys <- march.dataset.h.extractSequence(object@y,1)
-  alpha<-march.dcmm.forward(object,ys)
-  beta<-march.dcmm.backward(object,ys)
-  
-  C
+  stop("This part is not yet implemented")
+  # ys <- march.dataset.h.extractSequence(object@y,1)
+  # alpha<-march.dcmm.forward(object,ys)
+  # beta<-march.dcmm.backward(object,ys)
+  # 
+  # C
 } 
 
 
