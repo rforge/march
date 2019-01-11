@@ -8,14 +8,14 @@ march.dcmm.cov.em <- function(d,AMDelta,CMDelta,ConstAPhi,ConstCPhi){
   	AtmCovar <- 1
   	if(NbAMCovar>0){
     	for (i in 1:NbAMCovar){
-      		AtmCovar <- AtmCovar*y@Kcov[placeACovar[i]]
+      		AtmCovar <- AtmCovar*d@y@Kcov[placeACovar[i]]
       	}
   	}
   	
 	CtmCovar <- 1
   	if(NbCMCovar>0){
     	for (i in 1:NbCMCovar){
-      		CtmCovar <- CtmCovar*y@Kcov[placeCCovar[i]]
+      		CtmCovar <- CtmCovar*d@y@Kcov[placeCCovar[i]]
     	}
   	}
   
@@ -44,7 +44,7 @@ march.dcmm.cov.em <- function(d,AMDelta,CMDelta,ConstAPhi,ConstCPhi){
 		
 		#Computation of epsilon and gamma
 		Epsilon[,,1:d@y@T[n]-1,n] <- march.dcmm.eps.cov(d,s,d@y@cov[n,,],a$SAlpha,b$SBeta,a$SAlog,b$SBlog,a$LLAlpha,AtmCovar,CtmCovar)
-		Gamma[,1:d@y@T[n],n] <- march.dcmm.gam.cov(d,s,d@y@cov[n,,],a$SAlpha,b$SBeta,a$SAlog,b$SBlog,a$LLAlpha,Epsilon,AtmCovar,CtmCovar)
+		Gamma[,1:d@y@T[n],n] <- march.dcmm.gam.cov(d,s,d@y@cov[n,,],a$SAlpha,b$SBeta,a$SAlog,b$SBlog,a$LLAlpha,AtmCovar,CtmCovar)
 	}
 	#Computation of the log-likelihood
 	d@ll <- sum(LLAlpha)
@@ -199,7 +199,7 @@ march.dcmm.cov.em <- function(d,AMDelta,CMDelta,ConstAPhi,ConstCPhi){
 		
 			#Computation of epsilon and gamma
 			Epsilon[,,1:d@y@T[n]-1,n] <- march.dcmm.eps.cov(d,s,d@y@cov[n,,],a$SAlpha,b$SBeta,a$SAlog,b$SBlog,a$LLAlpha,AtmCovar,CtmCovar)
-			Gamma[,1:d@y@T[n],n] <- march.dcmm.gam.cov(d,s,d@y@cov[n,,],a$SAlpha,b$SBeta,a$SAlog,b$SBlog,a$LLAlpha,epsilon,AtmCovar,CtmCovar)
+			Gamma[,1:d@y@T[n],n] <- march.dcmm.gam.cov(d,s,d@y@cov[n,,],a$SAlpha,b$SBeta,a$SAlog,b$SBlog,a$LLAlpha,AtmCovar,CtmCovar)
 		}
 		#Computation of the log-likelihood
 		d@ll <- sum(LLAlpha)
@@ -827,7 +827,7 @@ march.dcmm.eps.cov<-function(d,s,Covar,SAlpha,SBeta,SAlog,SBlog,LLAlpha,AtmCovar
 }
 
 
-march.dcmm.gam.cov<-function(d,s,Covar,SAlpha,SBeta,SAlog,SBlog,LLAlpha,epsilon,AtmCovar,CtmCovar){
+march.dcmm.gam.cov<-function(d,s,Covar,SAlpha,SBeta,SAlog,SBlog,LLAlpha,AtmCovar,CtmCovar){
 	
 	#Init
 	ordHC <- d@orderHC
@@ -1783,7 +1783,7 @@ GMTD.oq.dcmm.C.b<-function(d,AtmCovar,CtmCovar,ValT,NSS,Qr,state,SDiq,Delta,Stop
 		return(list(d=d,MD=MD))
 	}
 	
-	if(d@CQ[1,Qr,Sdiq_p[1],state]==0){
+	if(d@CQ[1,Qr,SDiq_p[1],state]==0){
 		for(k in 2:d@y@K){
 			if(d@CQ[1,Qr,SDiq_p[k],state]!=0){
 				d_dec <- SDiq_p[k]
@@ -1823,7 +1823,7 @@ GMTD.oq.dcmm.C.b<-function(d,AtmCovar,CtmCovar,ValT,NSS,Qr,state,SDiq,Delta,Stop
 				tLL <- 0
 				for(n in 1:dtmp@y@N){
 					s <- march.dataset.h.extractSequence(dtmp@y,n)
-					tLL <- tLL+march_dcmm_fp_cov(dtmp,s,dtmp@y@cov[n,,],AtmCovar,CtmCovar)
+					tLL <- tLL+march.dcmm.fp.cov(dtmp,s,dtmp@y@cov[n,,],AtmCovar,CtmCovar)
 				}
 			dtmp@ll <- tLL
 			}
