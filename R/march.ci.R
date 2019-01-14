@@ -145,31 +145,31 @@ march.dcmm.exp_z <- function(d,alpha,beta,t,g,n){
 }
 
 #
-march.dcmm.test <- function(d){
-  PoA <-  array(0,c(d@M^d@orderHC))
-  PoCt <- array(0,c(d@M^d@orderHC))
-  for( i in 1:d@y@N ){
-    # number of point for A
-    s <- march.dataset.h.extractSequence(d@y,i)
-    
-    a <- march.dcmm.forward(d,s)
-    b <- march.dcmm.backward(d,s)
-    epsilon <- march.dcmm.epsilon(d,s,a$alpha,b$beta,a$l,b$l,a$LL)
-    gamma <- march.dcmm.gamma(d,s,a$alpha,b$beta,a$l,b$l,a$LL,epsilon)
-    
-    PoA <- PoA+colSums(gamma[d@orderHC:(d@y@T[i]),])
-    
-    if( d@M>2 ){
-      PoCt <- PoCt+colSums(gamma[1:(d@M-1),])+colSums(gamma[d@M:d@y@T[i],])  
-    }
-    else{
-      PoCt <- PoCt+gamma[1,]+colSums(gamma[d@M:d@y@T[i],])  
-    }
-  }
-  
-  PoC <- array(0,c(1,d@M))
-  for( i in 0:(d@M-1) ){
-    PoC[i+1] <- sum(PoCt[(i*d@orderHC+1):((i+1)*d@orderHC)])
-  } 
-  list(PoA,PoC)
-}
+# march.dcmm.test <- function(d){
+#   PoA <-  array(0,c(d@M^d@orderHC))
+#   PoCt <- array(0,c(d@M^d@orderHC))
+#   for( i in 1:d@y@N ){
+#     # number of point for A
+#     s <- march.dataset.h.extractSequence(d@y,i)
+#     
+#     a <- march.dcmm.forward(d,s)
+#     b <- march.dcmm.backward(d,s)
+#     epsilon <- march.dcmm.epsilon(d,s,a$alpha,b$beta,a$l,b$l,a$LL)
+#     gamma <- march.dcmm.gamma(d,s,a$alpha,b$beta,a$l,b$l,a$LL,epsilon)
+#     
+#     PoA <- PoA+colSums(gamma[d@orderHC:(d@y@T[i]),])
+#     
+#     if( d@M>2 ){
+#       PoCt <- PoCt+colSums(gamma[1:(d@M-1),])+colSums(gamma[d@M:d@y@T[i],])  
+#     }
+#     else{
+#       PoCt <- PoCt+gamma[1,]+colSums(gamma[d@M:d@y@T[i],])  
+#     }
+#   }
+#   
+#   PoC <- array(0,c(1,d@M))
+#   for( i in 0:(d@M-1) ){
+#     PoC[i+1] <- sum(PoCt[(i*d@orderHC+1):((i+1)*d@orderHC)])
+#   } 
+#   list(PoA,PoC)
+# }
