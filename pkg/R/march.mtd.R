@@ -467,7 +467,7 @@ OptimizeS <-function(order,k,kcov,ncov,S,Tr,phi,pcol,ll,pd_s,delta,delta_stop,n_
       if(delta_it==delta){
         delta<-2*delta
       }
-      return(list(S=new_S,ll=new_ll,delta=delta,q_i0_il=new_q_i0_il,))
+      return(list(S=new_S,ll=new_ll,delta=delta,q_i0_il=new_q_i0_il))
     }else{
       if(delta_it<=delta_stop){
         delta<-2*delta
