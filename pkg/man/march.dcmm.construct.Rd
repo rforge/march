@@ -7,7 +7,7 @@
 march.dcmm.construct(y, orderHC, orderVC, M = 2, gen = 5,
   popSize = 4, maxOrder = orderVC, seedModel = NULL, iterBw = 2,
   stopBw = 0.1, Amodel = "mtd", Cmodel = "mtd", AMCovar = 0,
-  CMCovar = 0)
+  CMCovar = 0, pMut = 0.05, pCross = 0.5)
 }
 \arguments{
 \item{y}{the dataset from which the Dcmm will be constructed \code{\link{march.Dataset}}.}
@@ -37,6 +37,10 @@ march.dcmm.construct(y, orderHC, orderVC, M = 2, gen = 5,
 \item{AMCovar}{vector of the size Ncov indicating which covariables are used into the hidden process (0: no, 1:yes)}
 
 \item{CMCovar}{vector of the size Ncov indicating which covariables are used into the visible process (0: no, 1:yes)}
+
+\item{pMut}{mutation probability for the evolutionary algorithm}
+
+\item{pCross}{crossover probability for the evolutionary algorithm}
 }
 \value{
 the best \code{\link{march.Dcmm}} constructed by the EA or the result of the Baum-Welch algorithm on \emph{seedModel}.
@@ -61,12 +65,12 @@ HMM<-march.dcmm.construct(y=pewee,orderHC=2,orderVC=0,M=2,popSize=2,gen=1,iterBw
 
 # A first model is computed using both EA and Baum-Welch algorithms.
 # The previous model is improved through two rounds of Baum-Welch optimization.
-#models <- list()
-#models[[length(models)+1]] <- HMM
-#models[[length(models)+1]] <- march.dcmm.construct(y=pewee,seedModel=models[[1]],
-                                                   #orderVC=0,iterBw=10,stopBw=0.001)
-#models[[length(models)+1]] <- march.dcmm.construct(y=pewee,seedModel=models[[2]],
-                                                   #orderVC=0,iterBw=10,stopBw=0.0001)
+models <- list()
+models[[length(models)+1]] <- HMM
+models[[length(models)+1]] <- march.dcmm.construct(y=pewee,seedModel=models[[1]],
+                                                   orderVC=0,iterBw=10,stopBw=0.001)
+models[[length(models)+1]] <- march.dcmm.construct(y=pewee,seedModel=models[[2]],
+                                                   orderVC=0,iterBw=10,stopBw=0.0001)
 # Show performance indicators (ll, number of independent parameters,
 # BIC and AIC) for all computed models.
 #r <- do.call(rbind,lapply(models,march.summary))

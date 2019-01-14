@@ -166,3 +166,26 @@ march.cov.h.mc.printableMatrix <- function(s,order,K,kcov,ncov){
 	rownames(s) <- paste(rn,":")
 	s
 }
+
+march.cov.h.mc.printableMatrix.orderVC0 <- function(s,K,kcov,ncov){
+  tCovar <- 1
+  if(prod(kcov)>0){
+    tCovar <- prod(kcov)
+  }
+  
+  colnames(s) <- 1:K
+  rn <- rep("",dim(s)[1])
+  if(ncov==0){
+    rownames(s)<-paste(rn,1,":")
+  }else{
+    totm <- tCovar
+    for(i in 1:ncov){
+      totm <-totm/kcov[i]
+      values <- 1:kcov[i]
+      tmp <- as.character(kronecker(values,rep(1,totm)))
+      rn <- paste(rn,tmp)
+    }
+    rownames(s) <- paste(rn,":")
+  }
+  s
+}

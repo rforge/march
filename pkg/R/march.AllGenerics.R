@@ -109,9 +109,9 @@ march.mtd.show <- function(object){
 }
 
 march.dcmm.show <- function(object){
-	placeACovar <- which(object@AMCovar==1)
-	placeCCovar <- which(object@CMCovar==1)
-	AtmCovar <- 1
+	  placeACovar <- which(object@AMCovar==1)
+	  placeCCovar <- which(object@CMCovar==1)
+	  AtmCovar <- 1
   	if(sum(object@AMCovar>0)){
   		AtmCovar <-prod(object@y@Kcov[placeACovar])
   	}
@@ -128,9 +128,13 @@ march.dcmm.show <- function(object){
   
   	cat("RB : \n")
    	for( i in 1:object@M ){
-     	cat(i,":\n"); 
+     	cat(i,":\n");
+   	  if(object@orderVC==0){
+   	    s <- march.cov.h.mc.printableMatrix.orderVC0(matrix(object@RB[,,i],AtmCovar,object@y@K),object@y@K,object@y@Kcov[placeCCovar],sum(object@CMCovar))
+   	  }else{
         s <- march.cov.h.mc.printableMatrix(object@RB[,,i],object@orderVC,object@y@K,object@y@Kcov[placeCCovar],sum(object@CMCovar))
-        print(s) 
+   	  }
+   	  print(s)
     }  
   	cat("\nPi : \n")
   	for( i in 1:object@orderHC){
@@ -251,7 +255,11 @@ march.dcmm.nbParams <- function(object){
   for(state in 1:object@M){
     if(object@Cmodel=="complete" & object@CPhi[1,1,state]!=0){
       if(sum(object@CMCovar)==0){
-        nbparC <- nbparC+object@y@K^object@orderVC*(object@y@K-1)-sum(object@RB[,,state]==0)+sum(rowSums(object@RB[,,state])==0)
+        if(object@orderVC==0 & sum(object@CMCovar)==0){
+          nbparC <- nbparC+object@y@K^object@orderVC*(object@y@K-1)-sum(object@RB[,,state]==0)+sum(sum(object@RB[,,state])==0)
+        }else{
+          nbparC <- nbparC+object@y@K^object@orderVC*(object@y@K-1)-sum(object@RB[,,state]==0)+sum(rowSums(object@RB[,,state])==0)
+        }
       }else{
         nbparC <- nbparC+object@y@K^object@orderVC*(object@y@K-1)-sum(object@CQ[1,,,state]==0)+sum(rowSums(object@CQ[1,,,state])==0)
       }
