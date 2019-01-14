@@ -152,9 +152,9 @@ march.dcmm.cov.constructEmptyDcmm <- function(M,y,orderVC,orderHC,AMCovar,CMCova
   	}
  	
  	if(orderHC==0){
- 		Pi <- array(0,c(AtmCovar,M,1))
+ 		  Pi <- array(0,c(AtmCovar,M,1))
  	}else{
-  		Pi <- array(1/M,c(M^(orderHC-1)*AtmCovar,M,orderHC))
+  		Pi <- array(0,c(M^(orderHC-1)*AtmCovar,M,orderHC))
  	}
   	
   	if(Amodel=="complete"){

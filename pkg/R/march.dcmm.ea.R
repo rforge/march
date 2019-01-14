@@ -627,8 +627,8 @@ march.dcmm.cov.ea.mutation <- function(d,p){
 
 march.dcmm.cov.ea.crossover <- function(d1, d2){
   
-	NbAMCovar <- sum(d1@AMCovar)
- 	NbCMCovar <- sum(d1@CMCovar)
+	  NbAMCovar <- sum(d1@AMCovar)
+ 	  NbCMCovar <- sum(d1@CMCovar)
   
   	placeACovar <- which(d1@AMCovar==1)
   	placeCCovar <- which(d1@CMCovar==1)
