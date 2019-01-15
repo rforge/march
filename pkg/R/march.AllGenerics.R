@@ -255,13 +255,17 @@ march.dcmm.nbParams <- function(object){
   for(state in 1:object@M){
     if(object@Cmodel=="complete" & object@CPhi[1,1,state]!=0){
       if(sum(object@CMCovar)==0){
-        if(object@orderVC==0 & sum(object@CMCovar)==0){
+        if(object@orderVC==0){
           nbparC <- nbparC+object@y@K^object@orderVC*(object@y@K-1)-sum(object@RB[,,state]==0)+sum(sum(object@RB[,,state])==0)
         }else{
           nbparC <- nbparC+object@y@K^object@orderVC*(object@y@K-1)-sum(object@RB[,,state]==0)+sum(rowSums(object@RB[,,state])==0)
         }
       }else{
-        nbparC <- nbparC+object@y@K^object@orderVC*(object@y@K-1)-sum(object@CQ[1,,,state]==0)+sum(rowSums(object@CQ[1,,,state])==0)
+        if(object@orderVC==0){
+          nbparC <- nbparC+object@y@K^object@orderVC*(object@y@K-1)-sum(object@CQ[1,,,state]==0)+sum(sum(object@CQ[1,,,state])==0)
+        }else{
+          nbparC <- nbparC+object@y@K^object@orderVC*(object@y@K-1)-sum(object@CQ[1,,,state]==0)+sum(rowSums(object@CQ[1,,,state])==0)
+        }
       }
     }else if(object@Cmodel=="mtd" & sum(object@CPhi[1,1:object@orderVC,state])!=0){
       nbparC <- nbparC+object@y@K*(object@y@K-1)-sum(object@CQ[1,,,state]==0)+sum(rowSums(object@CQ[1,,,state])==0)

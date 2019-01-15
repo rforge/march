@@ -278,3 +278,272 @@ march.dcmm.cov.h.expandRA <- function(d,RA){
    	A
 
 }
+
+#' Viterbi algorithm for a DCMM model.
+#'
+#' @param d The \code{\link[=march.Dcmm-class]{march.Dcmm-class}} on which to compute the most likely sequences of hidden states.
+#'
+#' @return A list of vectors containing the most likely sequences of hidden states, considering the given model for each sequence of the given dataset.
+#' @author Kevin Emery
+#' @example tests/examples/march.dcmm.viterbi.example.R
+#'
+#'@export
+march.dcmm.viterbi <- function(d){
+  
+  placeACovar <- which(d@AMCovar==1)
+  placeCCovar <- which(d@CMCovar==1)
+  NbAMCovar <- sum(d@AMCovar)
+  NbCMCovar <- sum(d@CMCovar)
+  
+  AtmCovar <- 1
+  if(NbAMCovar>0){
+    for (i in 1:NbAMCovar){
+      AtmCovar <- AtmCovar*d@y@Kcov[placeACovar[i]]
+    }
+  }
+  
+  
+  CtmCovar <- 1
+  if(NbCMCovar>0){
+    for (i in 1:NbCMCovar){
+      CtmCovar <- CtmCovar*d@y@Kcov[placeCCovar[i]]
+    }
+  }
+  
+  l <- list()
+  
+  for(n in 1:d@y@N){
+    
+    #Initialization
+    s <- march.dataset.h.extractSequence(d@y,n)
+    delta <- matrix(0,d@M^d@orderHC,s@N)
+    avdel <- rep(0,s@N)
+    X <- rep(0,s@N)
+    
+    t <- d@orderVC+1
+    
+    pos <- s@y[(t-d@orderVC):(t-1)]
+    rowC <- 1
+    for(r in march.h.seq(1,d@orderVC)){
+      rowC <- rowC+d@y@K^(r-1)*(pos[r]-1)
+    }
+    
+    rowCovar <- 1
+    if(AtmCovar>1){
+      r <- 0
+      tKC <- 1
+      for(i in d@y@Ncov:1){
+        if(d@AMCovar[i]>0){
+          r <- r+1
+          rowCovar <- rowCovar+tKC*(d@y@cov[n,t,i]-1)
+          tKC <- tKC*d@y@Kcov[i]
+        }
+      }
+    }
+    
+    rowCovarC <- 1
+    if(CtmCovar>1){
+      r <- 0
+      tKC <- 1
+      for(i in d@y@Ncov:1){
+        if(d@CMCovar[i]>0){
+          r <- r+1
+          rowCovarC <- rowCovarC +tKC*(d@y@cov[n,t,i]-1)
+          tKC <- tKC*d@y@Kcov[i]
+        }
+      }
+    }
+    
+    for(i in 1:d@M){
+      delta[i,t] <- d@Pi[rowCovar,i,1]*d@RB[(rowC-1)*CtmCovar+rowCovarC,s@y[t],i]
+    }
+    
+    avdel[t] <- sum(delta[1:d@M,t])/d@M
+    
+    if(avdel[t]==0){
+      delta[1:d@M,t] <- rep(1,d@M)/d@M
+    }else{
+      delta[1:d@M,t] <- delta[1:d@M,t]/avdel[t]
+    }
+    
+    #Induction
+    
+    #t=orderVC+2,...,orderVC+orderHC
+    
+    if(d@orderHC>1){
+      for(t in (d@orderVC+2):(d@orderVC+d@orderHC)){
+        
+        pos <- s@y[(t-d@orderVC):(t-1)]
+        rowC <- 1
+        for(r in march.h.seq(1,d@orderVC)){
+          rowC <- rowC+d@y@K^(r-1)*(pos[r]-1)
+        }
+        
+        rowCovar <- 1
+        if(AtmCovar>1){
+          r <- 0
+          tKC <- 1
+          for(i in d@y@Ncov:1){
+            if(d@AMCovar[i]>0){
+              r <- r+1
+              rowCovar <- rowCovar+tKC*(d@y@cov[n,t,i]-1)
+              tKC <- tKC*d@y@Kcov[i]
+            }
+          }
+        }
+        
+        rowCovarC <- 1
+        if(CtmCovar>1){
+          r <- 0
+          tKC <- 1
+          for(i in d@y@Ncov:1){
+            if(d@CMCovar[i]>0){
+              r <- r+1
+              rowCovarC <- rowCovarC +tKC*(d@y@cov[n,t,i]-1)
+              tKC <- tKC*d@y@Kcov[i]
+            }
+          }
+        }
+        
+        for(j in 1:d@M^(t-d@orderVC)){
+          j0 <- floor((j-1)/(d@M^(t-d@orderVC-1)))+1
+          
+          calc <- rep(0,d@M^(t-d@orderVC-1))
+          for(k in 1:d@M^(t-d@orderVC-1)){
+            calc[k] <- delta[k,t-1]*d@Pi[(k-1)*AtmCovar+rowCovar,j0,t-d@orderVC]
+          }
+          calc2 <- max(calc)
+          
+          delta[j,t] <- d@RB[(rowC-1)*CtmCovar+rowCovarC,s@y[t],j0]*calc2
+        }
+        avdel[t] <- sum(delta[1:d@M^(t-d@orderVC)],t)/(d@M^(t-d@orderVC))
+        
+        if(avdel[t]==0){
+          delta[1:d@M^(t-d@orderVC),t] <- rep(1,d@M^(t-d@orderVC))/(d@M^(t-d@orderVC))
+        }else{
+          delta[1:d@M^(t-d@orderVC),t] <- delta[1:d@M^(t-d@orderVC),t]/avdel[t]
+        }
+      }
+    }
+    
+    #t=orderVC+orderHC+1,...,s@N
+    
+    for(t in march.h.seq(d@orderVC+d@orderHC+1,s@N)){
+      
+      pos <- s@y[(t-d@orderVC):(t-1)]
+      rowC <- 1
+      for(r in march.h.seq(1,d@orderVC)){
+        rowC <- rowC+d@y@K^(r-1)*(pos[r]-1)
+      }
+      
+      rowCovar <- 1
+      if(AtmCovar>1){
+        r <- 0
+        tKC <- 1
+        for(i in d@y@Ncov:1){
+          if(d@AMCovar[i]>0){
+            r <- r+1
+            rowCovar <- rowCovar+tKC*(d@y@cov[n,t,i]-1)
+            tKC <- tKC*d@y@Kcov[i]
+          }
+        }
+      }
+      
+      rowCovarC <- 1
+      if(CtmCovar>1){
+        r <- 0
+        tKC <- 1
+        for(i in d@y@Ncov:1){
+          if(d@CMCovar[i]>0){
+            r <- r+1
+            rowCovarC <- rowCovarC +tKC*(d@y@cov[n,t,i]-1)
+            tKC <- tKC*d@y@Kcov[i]
+          }
+        }
+      }
+      
+      for(j in 1:d@M^d@orderHC){
+        j0 <- floor((j-1)/(d@M^(d@orderHC-1)))+1
+        
+        calc <- rep(0,d@M^d@orderHC)
+        for(k in 1:d@M^d@orderHC){
+          calc[k] <- delta[k,t-1]*d@A[(k-1)*AtmCovar+rowCovar,j]
+        }
+        calc2 <- max(calc)
+        
+        delta[j,t] <- d@RB[(rowC-1)*CtmCovar+rowCovarC,s@y[t],j0]*calc2
+      }
+      avdel[t] <- sum(delta[,t])/(d@M^d@orderHC)
+      
+      if(avdel[t]==0){
+        delta[,t] <- rep(1,d@M^d@orderHC)/(d@M^d@orderHC)
+      }else{
+        delta[,t] <- delta[,t]/avdel[t]
+      }
+    }
+    
+    #Sequence of hidden states
+    
+    calc4 <- max(delta[,s@N])
+    calc5 <- which(calc4==delta[,s@N])
+    calc6 <- calc5[1]
+    calc7 <- floor((calc6-1)/(d@M^(d@orderHC-1)))+1
+    X[s@N] <- calc7
+    
+    for(t in march.h.seq(s@N-1,d@orderHC+d@orderVC,-1)){
+      
+      rowCovar <- 1
+      if(AtmCovar>1){
+        r <- 0
+        tKC <- 1
+        for(i in d@y@Ncov:1){
+          if(d@AMCovar[i]>0){
+            r <- r+1
+            rowCovar <- rowCovar+tKC*(d@y@cov[n,t,i]-1)
+            tKC <- tKC*d@y@Kcov[i]
+          }
+        }
+      }
+      
+      calc <- rep(0,d@M^d@orderHC)
+      for(k in 1:d@M^d@orderHC){
+        calc[k] <- delta[k,t]*d@A[(k-1)*AtmCovar+rowCovar,calc6]
+      }
+      
+      calc4 <- max(calc)
+      calc5 <- which(calc==calc4)
+      calc6 <- calc5[1]
+      calc7 <- floor((calc6-1)/(d@M^(d@orderHC-1)))+1
+      X[t] <- calc7
+    }
+    
+    for(t in march.h.seq(d@orderVC+d@orderHC-1,d@orderVC+1,-1)){
+      
+      rowCovar <- 1
+      if(AtmCovar>1){
+        r <- 0
+        tKC <- 1
+        for(i in d@y@Ncov:1){
+          if(d@AMCovar[i]>0){
+            r <- r+1
+            rowCovar <- rowCovar+tKC*(d@y@cov[n,t,i]-1)
+            tKC <- tKC*d@y@Kcov[i]
+          }
+        }
+      }
+      
+      calc <- rep(0,d@M^(t-d@orderVC))
+      for(k in 1:d@M^(t-d@orderVC)){
+        calc[k] <- delta[k,t]*d@Pi[(k-1)*AtmCovar+rowCovar,calc7,t-d@orderVC+1]
+      }
+      
+      calc4 <- max(calc)
+      calc5 <- which(calc==calc4)
+      calc6 <- calc5[1]
+      calc7 <- floor((calc6-1)/(d@M^(t-d@orderVC-1)))+1
+      X[t] <- calc7
+    }
+    l[[n]] <- X
+  }
+  l
+}

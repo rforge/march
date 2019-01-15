@@ -210,7 +210,7 @@ march.dcmm.cov.em <- function(d,AMDelta,CMDelta,ConstAPhi,ConstCPhi){
 		CNSS <- array(0,c(d@y@K^(d@orderVC+1)*CtmCovar,d@M))
 		
 		if(d@M==1){
-			CNSS <- BuildArrayNumberOfSequencesDCMM(d@y,d@orderVC,d@CMCovar,NbCMCovar,placeCCovar)
+			CNSS <- matrix(BuildArrayNumberOfSequencesDCMM(d@y,d@orderVC,d@CMCovar,NbCMCovar,placeCCovar),d@y@K^(d@orderVC+1)*CtmCovar,1)
 		}else{
 			for(state in 1:d@M){
 				for(n in 1:d@y@N){
@@ -1651,14 +1651,14 @@ GMTD.op.dcmm.C<-function(d,AtmCovar,CtmCovar,NSS,SDip,state,Delta,Stop,Constrain
 		
 		if(tLLtest==0){
 			if(d@M==1){
-				dtmp@ll <- GMTD.ll(NSS,dtmp@CProbT[,,state],dtmp@CPhi[,,state])
+				dtmp@ll <- as.numeric(GMTD.ll(NSS,dtmp@CProbT[,,state],dtmp@CPhi[,,state]))
 			}else{
 				tLL <- 0
 				for(n in 1:dtmp@y@N){
 					s <- march.dataset.h.extractSequence(dtmp@y,n)
 					tLL <- tLL+march.dcmm.fp.cov(dtmp,s,dtmp@y@cov[n,,],AtmCovar,CtmCovar)$LLAlpha
 				}
-			dtmp@ll <- tLL
+			  dtmp@ll <- tLL
 			}
 		}
 		
@@ -1904,7 +1904,7 @@ GMTDg.oq.dcmm.C<-function(d,AtmCovar,CtmCovar,ValT,NSS,Ql,Qr,state,SDiq,Delta,St
 		
 		if(tLLtest==0){
 			if(d@M==1){
-				dtmp@ll <- GMTD.ll(NSS,dtmp@CProbT[k,,state],dtmp@CPhi[,,state])
+				dtmp@ll <- as.numeric(GMTD.ll(NSS,dtmp@CProbT[,,state],dtmp@CPhi[,,state]))
 			}else{
 				tLL<-0
 				for(n in 1:dtmp@y@N){
@@ -2020,7 +2020,7 @@ GMTD.ocov.dcmm.C<-function(d,SDicov,AtmCovar,CtmCovar,ValT,NSS,Tl,Tr,state,Pcol,
 		}
 		if(tLLtest==0){
 			if(d@M==1){
-				dtmp@ll <- GMTD.ll(NSS,dtmp@CProbT[,,state],dtmp@CPhi[,,state])
+				dtmp@ll <- as.numeric(GMTD.ll(NSS,dtmp@CProbT[,,state],dtmp@CPhi[,,state]))
 			}else{
 				
 				tLL <- 0
@@ -2028,8 +2028,8 @@ GMTD.ocov.dcmm.C<-function(d,SDicov,AtmCovar,CtmCovar,ValT,NSS,Tl,Tr,state,Pcol,
 					s <- march.dataset.h.extractSequence(d@y,n)
 					tLL <- tLL+march.dcmm.fp.cov(d,s,d@y@cov[n,1:s@N,],AtmCovar,CtmCovar)$LLAlpha
 				}
+				dtmp@ll <- tLL
 			}
-			dtmp@ll <- tLL
 		}
 
 		#Test of improvement
