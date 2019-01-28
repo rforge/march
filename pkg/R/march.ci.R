@@ -44,30 +44,30 @@ march.ci.h.d2n <- function(alpha){
 }
 
 # the expectation of Z_t(g)
-march.mtd.h.z <- function(mtd,y,t,g){
-  s <- 0
-  for( k in 1:mtd@order ){
-    s <- s+mtd@phi[k]*mtd@Q[1,y@y[t-k],y@y[t]]
-  }
-  if(y@Ncov>0){
-    for(j in 1:y@Ncov)
-      s <- s+mtd@phi[order+j]*mtd@S[[j]][cov[n,t,j],y@y[t]]
-  }
-  mtd@phi[g]*mtd@Q[1,y@y[t-g],y@y[t]]/s
-}
-
-
-# the weight coefficient for the g-th lag 
-march.mtd.h.l <- function(mtd,y,g){
-  s <- 0
-  for( i in 1:y@N ){
-    ys <- march.dataset.h.extractSequence(y,i)
-    for( t in march.h.seq(mtd@order+1,ys@N)){
-      s <- s+ march.mtd.h.z(mtd,ys,t,g)
-    }
-  }
-  s
-}
+# march.mtd.h.z <- function(mtd,y,t,g){
+#   s <- 0
+#   for( k in 1:mtd@order ){
+#     s <- s+mtd@phi[k]*mtd@Q[1,y@y[t-k],y@y[t]]
+#   }
+#   if(y@Ncov>0){
+#     for(j in 1:y@Ncov)
+#       s <- s+mtd@phi[order+j]*mtd@S[[j]][cov[n,t,j],y@y[t]]
+#   }
+#   mtd@phi[g]*mtd@Q[1,y@y[t-g],y@y[t]]/s
+# }
+# 
+# 
+# # the weight coefficient for the g-th lag 
+# march.mtd.h.l <- function(mtd,y,g){
+#   s <- 0
+#   for( i in 1:y@N ){
+#     ys <- march.dataset.h.extractSequence(y,i)
+#     for( t in march.h.seq(mtd@order+1,ys@N)){
+#       s <- s+ march.mtd.h.z(mtd,ys,t,g)
+#     }
+#   }
+#   s
+# }
 
 # Matrix containing the estimations of the number of data used to compute each element of Q
 # march.mtd.h.n <- function(mtd,y){
@@ -108,7 +108,7 @@ march.mtd.h.n <- function(mtd,y,is_mtdg){
   for(n in 1:y@N){
     ys <- march.dataset.h.extractSequence(y,n)
     for( t in march.h.seq(mtd@order+1,ys@N)){
-      tot <- march.mtd.h.z.tot(mtd,ys,t,g,n,is_mtdg)
+      tot <- march.mtd.h.z.tot(mtd,ys,t,n,is_mtdg)
       for(ord in 1:mtd@order){
         if(is_mtdg==FALSE){
           nki_0[ys@y[t-ord],ys@y[t]] <- nki_0[ys@y[t-ord],ys@y[t]]+mtd@phi[ord]*mtd@Q[1,ys@y[t-ord],ys@y[t]]/tot
@@ -126,7 +126,7 @@ march.mtd.h.n <- function(mtd,y,is_mtdg){
   list(nki_0=nki_0,numcov=numcov)
 }
 
-march.mtd.h.z.tot <- function(mtd,ys,t,g,n,is_mtdg){
+march.mtd.h.z.tot <- function(mtd,ys,t,n,is_mtdg){
   s <- 0
   if(is_mtdg==FALSE){
     for( k in 1:mtd@order ){
