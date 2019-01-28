@@ -46,8 +46,8 @@ BuildArrayNumberOfDataItems <- function(x){
          for (i in 1:y@T[n]){
           row=y@cov[n,i,j]
            col=y@y[[n]][i]
-           CT[row,col]=CT[row,col]+y@weights[i]
-       }
+           CT[row,col]=CT[row,col]+y@weights[n]
+        }
        }
        l[[order+j]]<-CT
      }
@@ -521,12 +521,12 @@ march.mtd.construct <- function(y,order,maxOrder=order,mtdg=FALSE,init="best", d
   init_params <- InitializeParameters(u=u,init_method=init_method,c=c,is_mtdg=is_mtdg,m=y@K,order=order,kcov=y@Kcov,ncov=y@Ncov)
   phi <- init_params$phi
   q <- init_params$q
-  S<-init_params$S
+  S <- init_params$S
 
 
   # 1.2. Choose a value for delta and a criterion to stop the algorithm
   if(y@Ncov>0){
-    maxkcov<-max(y@Kcov)
+    maxkcov <- max(y@Kcov)
   }else{
     maxkcov=0
   }
@@ -598,7 +598,7 @@ march.mtd.construct <- function(y,order,maxOrder=order,mtdg=FALSE,init="best", d
     if (new_ll - ll < ll_stop){ break }
   }
   nbZeros <- length(which(q==0))+length(which(phi==0))
-  ll<-as.numeric(ll)
+  ll <- as.numeric(ll)
   # construct and return the final object.
   new("march.Mtd",order=order,Q=q,phi=phi,S=S,ll=ll,y=ySave,dsL=sum(y@T-order),nbZeros=nbZeros)
 }

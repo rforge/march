@@ -255,17 +255,13 @@ march.dcmm.nbParams <- function(object){
   for(state in 1:object@M){
     if(object@Cmodel=="complete" & object@CPhi[1,1,state]!=0){
       if(sum(object@CMCovar)==0){
-        if(object@orderVC==0){
+        if(object@orderVC==0 & sum(object@CMCovar)==0){
           nbparC <- nbparC+object@y@K^object@orderVC*(object@y@K-1)-sum(object@RB[,,state]==0)+sum(sum(object@RB[,,state])==0)
         }else{
           nbparC <- nbparC+object@y@K^object@orderVC*(object@y@K-1)-sum(object@RB[,,state]==0)+sum(rowSums(object@RB[,,state])==0)
         }
       }else{
-        if(object@orderVC==0){
-          nbparC <- nbparC+object@y@K^object@orderVC*(object@y@K-1)-sum(object@CQ[1,,,state]==0)+sum(sum(object@CQ[1,,,state])==0)
-        }else{
-          nbparC <- nbparC+object@y@K^object@orderVC*(object@y@K-1)-sum(object@CQ[1,,,state]==0)+sum(rowSums(object@CQ[1,,,state])==0)
-        }
+        nbparC <- nbparC+object@y@K^object@orderVC*(object@y@K-1)-sum(object@CQ[1,,,state]==0)+sum(rowSums(object@CQ[1,,,state])==0)
       }
     }else if(object@Cmodel=="mtd" & sum(object@CPhi[1,1:object@orderVC,state])!=0){
       nbparC <- nbparC+object@y@K*(object@y@K-1)-sum(object@CQ[1,,,state]==0)+sum(rowSums(object@CQ[1,,,state])==0)
@@ -313,7 +309,7 @@ setMethod(f="march.nbParams",signature="march.Dcmm",definition=march.dcmm.nbPara
 # thompson allows to compute confidence intervals according to a given model,
 # using thompson's confidence interval method describe into: Thompson, S.K. (1987) 
 # "Sample size for estimating multinomial proportions," American Statistician, 41, 42-46.
-# Adaptation to markov models is described into : TODO
+# Adaptation to markov models is described into : Berchtold, "Confidence Intervals for Markovian Models"
 ###############################################################################
 
 #' Thompson Confidence Intervals for a march.Model.
@@ -359,15 +355,45 @@ march.indep.thompson <- function(object,alpha){
 # TODO : Handle multi-sequences by computing the number of data
 #  	 influencing each distribution and summing this number.
 #
-march.mtd.thompson <- function( object, alpha){
+# march.mtd.thompson <- function(object, alpha){
+#   d2n <- march.ci.h.d2n(alpha)
+#   
+#   s <- 0
+#   for( i in 1:object@order ){
+#     s<-s+march.mtd.h.l(object,object@y,i)
+#   }
+#   
+#   list(phi=sqrt(d2n/s),Q=sqrt(d2n/rowSums(march.mtd.h.n(object,object@y))))
+# }
+
+march.mtd.thompson <- function(object, alpha){
   d2n <- march.ci.h.d2n(alpha)
   
-  s <- 0
-  for( i in 1:object@order ){
-    s<-s+march.mtd.h.l(object,object@y,i)
+  dphi <- d2n/object@dsL
+  
+  if(dim(object@Q)[1]>1){
+    is_mtdg <- TRUE
+  }else{
+    is_mtdg <- FALSE
+  }
+  l <- march.mtd.h.n(object,object@y,is_mtdg)
+  
+  dQ <- list()
+  if(is_mtdg==FALSE){
+    dQ[[1]] <- d2n/rowSums(l$nki_0)
+  }else{
+    for(ord in 1:object@order){
+      dQ[[ord]] <- d2n/rowSums(l$nki_0[ord,,])
+    }
   }
   
-  list(phi=sqrt(d2n/s),Q=sqrt(d2n/rowSums(march.mtd.h.n(object,object@y))))
+  dS <- list()
+  if(object@y@Ncov>0){
+    for(i in 1:object@y@Ncov){
+      dS[[i]] <- d2n/rowSums(l$numcov[i,,])
+    }
+  }
+  list(phi=dphi,Q=dQ,S=dS)
 }
 
 march.dcmm.thompson <- function(object,alpha){

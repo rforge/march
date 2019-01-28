@@ -49,6 +49,10 @@ march.mtd.h.z <- function(mtd,y,t,g){
   for( k in 1:mtd@order ){
     s <- s+mtd@phi[k]*mtd@Q[1,y@y[t-k],y@y[t]]
   }
+  if(y@Ncov>0){
+    for(j in 1:y@Ncov)
+      s <- s+mtd@phi[order+j]*mtd@S[[j]][cov[n,t,j],y@y[t]]
+  }
   mtd@phi[g]*mtd@Q[1,y@y[t-g],y@y[t]]/s
 }
 
@@ -66,28 +70,79 @@ march.mtd.h.l <- function(mtd,y,g){
 }
 
 # Matrix containing the estimations of the number of data used to compute each element of Q
-march.mtd.h.n <- function(mtd,y){
-  nki_0 <- array(0,c(mtd@y@K,mtd@y@K))
-  for( k in 1:mtd@y@K ){
-    for( i0 in 1:mtd@y@K){
-      s <- 0
-      for( i in 1:y@N ){
-        ys <- march.dataset.h.extractSequence(y,i)
-        for( t in march.h.seq(mtd@order+1,ys@N) ){
-          if( ys@y[t]==i0 ){
-            for( g in 1:mtd@order ){
-              if( ys@y[t-g]==k)
-                s <- s+march.mtd.h.z(mtd,ys,t,g)
-            }
-          }      
+# march.mtd.h.n <- function(mtd,y){
+#   nki_0 <- array(0,c(mtd@y@K,mtd@y@K))
+#   for( k in 1:mtd@y@K ){
+#     for( i0 in 1:mtd@y@K){
+#       s <- 0
+#       for( i in 1:y@N ){
+#         ys <- march.dataset.h.extractSequence(y,i)
+#         for( t in march.h.seq(mtd@order+1,ys@N) ){
+#           if( ys@y[t]==i0 ){
+#             for( g in 1:mtd@order ){
+#               if( ys@y[t-g]==k)
+#                 s <- s+march.mtd.h.z(mtd,ys,t,g,n)
+#             }
+#           }      
+#         }
+#       }
+#       nki_0[k,i0] <- s
+#     }
+#   }
+#   nki_0
+# }
+
+#Matrices containing the estimations of the number of data used to compute each element of Q
+march.mtd.h.n <- function(mtd,y,is_mtdg){
+  
+  if(is_mtdg==FALSE){
+    nki_0 <- array(0,c(mtd@y@K,mtd@y@K))
+  }else{
+    nki_0 <- array(0,c(mtd@order,mtd@y@K,mtd@y@K))
+  }
+  numcov <- 0
+  if(y@Ncov>0){
+    numcov <- array(0,c(y@Ncov,max(y@Kcov),mtd@y@K))
+  }
+  
+  for(n in 1:y@N){
+    ys <- march.dataset.h.extractSequence(y,n)
+    for( t in march.h.seq(mtd@order+1,ys@N)){
+      tot <- march.mtd.h.z.tot(mtd,ys,t,g,n,is_mtdg)
+      for(ord in 1:mtd@order){
+        if(is_mtdg==FALSE){
+          nki_0[ys@y[t-ord],ys@y[t]] <- nki_0[ys@y[t-ord],ys@y[t]]+mtd@phi[ord]*mtd@Q[1,ys@y[t-ord],ys@y[t]]/tot
+        }else{
+          nki_0[ord,ys@y[t-ord],ys@y[t]] <- nki_0[ord,ys@y[t-ord],ys@y[t]]+mtd@phi[ord]*mtd@Q[ord,ys@y[t-ord],ys@y[t]]/tot
         }
       }
-      nki_0[k,i0] <- s
+      if(y@Ncov>0){
+        for(i in 1:y@Ncov){
+          numcov[i,y@cov[n,t,i],ys@y[t]] <- numcov[i,y@cov[n,t,i],ys@y[t]]+mtd@phi[mtd@order+i]*mtd@S[[i]][y@cov[n,t,i],ys@y[t]]/tot
+        }
+      }
     }
   }
-  nki_0
+  list(nki_0=nki_0,numcov=numcov)
 }
 
+march.mtd.h.z.tot <- function(mtd,ys,t,g,n,is_mtdg){
+  s <- 0
+  if(is_mtdg==FALSE){
+    for( k in 1:mtd@order ){
+      s <- s+mtd@phi[k]*mtd@Q[1,ys@y[t-k],ys@y[t]]
+    }
+  }else{
+    for( k in 1:mtd@order ){
+      s <- s+mtd@phi[k]*mtd@Q[k,ys@y[t-k],ys@y[t]]
+    }
+  }
+  if(mtd@y@Ncov>0){
+    for(j in 1:mtd@y@Ncov)
+      s <- s+mtd@phi[mtd@order+j]*mtd@S[[j]][mtd@y@cov[n,t,j],ys@y[t]]
+  }
+  s
+}
 
 march.indep.bailey <- function( indep, alpha ){
   n <- sum(indep@dsL)
