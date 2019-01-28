@@ -5,7 +5,8 @@
 \title{Construct a Mixture Transition Distribution (MTD) model.}
 \usage{
 march.mtd.construct(y, order, maxOrder = order, mtdg = FALSE,
-  init = "best", deltaStop = 1e-04, llStop = 0.01, maxIter = 0)
+  MCovar = 0, init = "best", deltaStop = 1e-04, llStop = 0.01,
+  maxIter = 0)
 }
 \arguments{
 \item{y}{the dataset (\code{\link{march.Dataset}}) from which to construct the model.}
@@ -15,6 +16,8 @@ march.mtd.construct(y, order, maxOrder = order, mtdg = FALSE,
 \item{maxOrder}{the maximum visible order among the set of Markovian models to compare.}
 
 \item{mtdg}{flag indicating whether the constructed model should be a MTDg using a different transition matrix for each lag (value: \emph{TRUE} or \emph{FALSE}).}
+
+\item{MCovar}{vector of the size Ncov indicating which covariables are used (0: no, 1:yes)}
 
 \item{init}{the init method, to choose among \emph{best}, \emph{random} and \emph{weighted}.}
 

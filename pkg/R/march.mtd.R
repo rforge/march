@@ -488,6 +488,7 @@ OptimizeS <-function(order,k,kcov,ncov,S,Tr,phi,pcol,ll,pd_s,delta,delta_stop,n_
 #' @param order the order of the constructed model.
 #' @param maxOrder the maximum visible order among the set of Markovian models to compare.
 #' @param mtdg flag indicating whether the constructed model should be a MTDg using a different transition matrix for each lag (value: \emph{TRUE} or \emph{FALSE}).
+#' @param MCovar vector of the size Ncov indicating which covariables are used (0: no, 1:yes)
 #' @param init the init method, to choose among \emph{best}, \emph{random} and \emph{weighted}.
 #' @param deltaStop the delta below which the optimization phases of phi and Q stop.
 #' @param llStop the ll increase below which the EM algorithm stop.
@@ -497,7 +498,7 @@ OptimizeS <-function(order,k,kcov,ncov,S,Tr,phi,pcol,ll,pd_s,delta,delta_stop,n_
 #' @example tests/examples/march.mtd.construct.example.R
 #' @seealso \code{\link{march.Mtd-class}}, \code{\link{march.Model-class}}, \code{\link{march.Dataset-class}}.
 #' @export
-march.mtd.construct <- function(y,order,maxOrder=order,mtdg=FALSE,init="best", deltaStop=0.0001, llStop=0.01, maxIter=0){
+march.mtd.construct <- function(y,order,maxOrder=order,mtdg=FALSE,MCovar=0,init="best", deltaStop=0.0001, llStop=0.01, maxIter=0){
   order <- march.h.paramAsInteger(order)
   if(order<1){
     stop('Order should be greater or equal than 1')
@@ -511,6 +512,18 @@ march.mtd.construct <- function(y,order,maxOrder=order,mtdg=FALSE,init="best", d
   ySave <- y
   y <- march.dataset.h.filtrateShortSeq(y,maxOrder+1)
   y <- march.dataset.h.cut(y,maxOrder-order)
+  
+  if(sum(MCovar)>0){
+    placeCovar <- which(MCovar==1)
+    y@cov <- y@cov[,,placeCovar,drop=FALSE]
+    y@Ncov <- as.integer(sum(MCovar))
+    y@Kcov <- y@Kcov[placeCovar]
+  }else{
+    y@cov <- array(0,c(1,1))
+    y@Ncov <- as.integer(0)
+    y@Kcov <- 0
+  }
+  
   is_constrained <- TRUE # if FALSE the model is unconstrained and the constraints given by Eq. 4 are activated instead of those given by Eq. 3 (Berchtold, 2001, p. 380)
   is_mtdg <- mtdg
   init_method <- init
