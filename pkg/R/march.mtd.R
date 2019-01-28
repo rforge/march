@@ -613,5 +613,5 @@ march.mtd.construct <- function(y,order,maxOrder=order,mtdg=FALSE,MCovar=0,init=
   nbZeros <- length(which(q==0))+length(which(phi==0))
   ll <- as.numeric(ll)
   # construct and return the final object.
-  new("march.Mtd",order=order,Q=q,phi=phi,S=S,ll=ll,y=ySave,dsL=sum(y@T-order),nbZeros=nbZeros)
+  new("march.Mtd",order=order,Q=q,phi=phi,S=S,MCovar=MCovar,ll=ll,y=ySave,dsL=sum(y@T-order),nbZeros=nbZeros)
 }

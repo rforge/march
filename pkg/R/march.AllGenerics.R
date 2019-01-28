@@ -177,7 +177,28 @@ march.indep.nbParams <- function(object){
 
 # nbParams method for mtd object
 march.mtd.nbParams <- function(object){
-  dim(object@Q)[1]*object@y@K*(object@y@K-1) + object@order-1-object@nbZeros+length(which(rowSums(object@Q)==0)); 
+  nparam <- 0
+  placeCovar <- which(object@MCovar==1)
+  
+  #Number of parameters of the matrix Q
+  for(i in 1:dim(object@Q)[1]){
+    if(object@phi[i]>0){
+      nparam <- nparam+object@y@K*(object@y@K-1)+sum(rowSums(object@Q[i,,])==0)-sum(object@Q[i,,]==0)
+    }
+  }
+  
+  #Number of parameters in the vector of lags
+  nparam <- nparam+length(object@phi)-1-sum(object@phi==0)
+  
+  #Number of parameters of the covariates transition matrices
+  if(sum(object@MCovar)>0){
+    for(i in 1:sum(object@MCovar)){
+      if(object@phi[object@order+i]>0){
+        nparam <- nparam+object@y@Kcov[placeCovar[i]]*(object@y@K-1)-sum(object@S[[i]]==0)+sum(rowSums(object@S[[i]])==0)
+      }
+    }
+  }
+  nparam
 }
 
 # nbParams method for dcmm object
@@ -322,7 +343,7 @@ setMethod(f="march.nbParams",signature="march.Dcmm",definition=march.dcmm.nbPara
 #' @param alpha the significance level among : 0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.025, 0.02, 0.01, 0.005, 0.001, 0.0005, 0.0001.
 #' 
 #' @return A list of half-length confidence intervals for each probability distribution of the considered model.
-#' @author Ogier Maitre
+#' @author Ogier Maitre, Kevin Emery
 #' @example tests/examples/march.thompson.example.R
 #' @export 
 march.thompson <- function(object,alpha){}

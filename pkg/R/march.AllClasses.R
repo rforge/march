@@ -121,7 +121,7 @@ setClass("march.Mc",contains="march.Model",representation(RC="array",order="inte
 #'    
 #' @seealso \code{\link{march.mtd.construct}}, \code{\link{march.Model-class}}.
 setClass("march.Mtd",contains="march.Model",
-         representation(Q="array",phi="vector",S="list",order="integer"))
+         representation(Q="array",phi="vector",S="list",order="integer",MCovar="vector"))
 
 
 #' A Double Chain Markov Model (DCMM).
