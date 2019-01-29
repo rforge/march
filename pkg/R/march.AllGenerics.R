@@ -71,6 +71,8 @@ march.mc.show <- function(object){
 
 # show method for mtd object
 march.mtd.show <- function(object){
+  placeCovar <- which(object@MCovar==1)
+  
   cat(march.name(object))
   cat("\n")
   if( dim(object@Q)[1]==1 ){
@@ -91,10 +93,10 @@ march.mtd.show <- function(object){
     }
   }
   cat("\n")
-  if(length(object@S)>0){
-    for(g in 1:length(object@S)){
+  if(sum(object@MCovar)>0){
+    for(g in 1:sum(object@MCovar)){
       cat(sprintf("S%d : \n",g))
-      for(i in 1:object@y@Kcov[g]){
+      for(i in 1:object@y@Kcov[placeCovar[g]]){
         cat(sprintf("%.4f", object@S[[g]][i,]))
         cat("\n")
       }
@@ -327,7 +329,7 @@ setMethod(f="march.nbParams",signature="march.Dcmm",definition=march.dcmm.nbPara
 
 
 ###############################################################################
-# thompson allows to compute confidence intervals according to a given model,
+# Thompson allows to compute confidence intervals according to a given model,
 # using thompson's confidence interval method describe into: Thompson, S.K. (1987) 
 # "Sample size for estimating multinomial proportions," American Statistician, 41, 42-46.
 # Adaptation to markov models is described into : Berchtold, "Confidence Intervals for Markovian Models"
@@ -409,9 +411,10 @@ march.mtd.thompson <- function(object, alpha){
   }
   
   dS <- list()
-  if(object@y@Ncov>0){
-    for(i in 1:object@y@Ncov){
-      dS[[i]] <- d2n/rowSums(l$numcov[i,,])
+  if(sum(object@MCovar)>0){
+    placeCovar <- which(object@MCovar==1)
+    for(i in 1:sum(object@MCovar)){
+      dS[[i]] <- d2n/rowSums(l$numcov[i,1:object@y@Kcov[placeCovar[i]],])
     }
   }
   list(phi=dphi,Q=dQ,S=dS)

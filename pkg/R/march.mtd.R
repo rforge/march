@@ -610,8 +610,17 @@ march.mtd.construct <- function(y,order,maxOrder=order,mtdg=FALSE,MCovar=0,init=
     
     if (new_ll - ll < ll_stop){ break }
   }
+  
+  #Computation of the number of zeros
+  nbZeros <- 0
   nbZeros <- length(which(q==0))+length(which(phi==0))
+  if(sum(MCovar)>0){
+    for(i in 1:sum(MCovar)){
+      nbZeros <- nbZeros+length(which(S[[i]]==0))
+    }
+  }
   ll <- as.numeric(ll)
-  # construct and return the final object.
+  
+  #Return the final model
   new("march.Mtd",order=order,Q=q,phi=phi,S=S,MCovar=MCovar,ll=ll,y=ySave,dsL=sum(y@T-order),nbZeros=nbZeros)
 }

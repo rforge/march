@@ -95,19 +95,23 @@ march.ci.h.d2n <- function(alpha){
 #Matrices containing the estimations of the number of data used to compute each element of Q
 march.mtd.h.n <- function(mtd,y,is_mtdg){
   
+  #Initialization
   if(is_mtdg==FALSE){
     nki_0 <- array(0,c(mtd@y@K,mtd@y@K))
   }else{
     nki_0 <- array(0,c(mtd@order,mtd@y@K,mtd@y@K))
   }
   numcov <- 0
-  if(y@Ncov>0){
-    numcov <- array(0,c(y@Ncov,max(y@Kcov),mtd@y@K))
+  if(sum(mtd@MCovar)>0){
+    placeCovar <- which(mtd@MCovar==1)
+    numcov <- array(0,c(sum(mtd@MCovar),max(y@Kcov[placeCovar]),mtd@y@K))
   }
   
+  #Computation of the matrices
   for(n in 1:y@N){
     ys <- march.dataset.h.extractSequence(y,n)
     for( t in march.h.seq(mtd@order+1,ys@N)){
+      #Computation of the denominator (see p.9 Confidence Intervals for Markovian Models, Berchtold)
       tot <- march.mtd.h.z.tot(mtd,ys,t,n,is_mtdg)
       for(ord in 1:mtd@order){
         if(is_mtdg==FALSE){
@@ -116,9 +120,9 @@ march.mtd.h.n <- function(mtd,y,is_mtdg){
           nki_0[ord,ys@y[t-ord],ys@y[t]] <- nki_0[ord,ys@y[t-ord],ys@y[t]]+mtd@phi[ord]*mtd@Q[ord,ys@y[t-ord],ys@y[t]]/tot
         }
       }
-      if(y@Ncov>0){
-        for(i in 1:y@Ncov){
-          numcov[i,y@cov[n,t,i],ys@y[t]] <- numcov[i,y@cov[n,t,i],ys@y[t]]+mtd@phi[mtd@order+i]*mtd@S[[i]][y@cov[n,t,i],ys@y[t]]/tot
+      if(sum(mtd@MCovar)>0){
+        for(i in 1:sum(mtd@MCovar)){
+          numcov[i,y@cov[n,t,placeCovar[i]],ys@y[t]] <- numcov[i,y@cov[n,t,placeCovar[i]],ys@y[t]]+mtd@phi[mtd@order+i]*mtd@S[[i]][y@cov[n,t,placeCovar[i]],ys@y[t]]/tot
         }
       }
     }
@@ -127,7 +131,10 @@ march.mtd.h.n <- function(mtd,y,is_mtdg){
 }
 
 march.mtd.h.z.tot <- function(mtd,ys,t,n,is_mtdg){
+  
   s <- 0
+  placeCovar <- which(mtd@MCovar==1)
+  
   if(is_mtdg==FALSE){
     for( k in 1:mtd@order ){
       s <- s+mtd@phi[k]*mtd@Q[1,ys@y[t-k],ys@y[t]]
@@ -137,9 +144,10 @@ march.mtd.h.z.tot <- function(mtd,ys,t,n,is_mtdg){
       s <- s+mtd@phi[k]*mtd@Q[k,ys@y[t-k],ys@y[t]]
     }
   }
-  if(mtd@y@Ncov>0){
-    for(j in 1:mtd@y@Ncov)
-      s <- s+mtd@phi[mtd@order+j]*mtd@S[[j]][mtd@y@cov[n,t,j],ys@y[t]]
+  
+  if(sum(mtd@MCovar)>0){
+    for(j in 1:sum(mtd@MCovar))
+      s <- s+mtd@phi[mtd@order+j]*mtd@S[[j]][mtd@y@cov[n,t,placeCovar[j]],ys@y[t]]
   }
   s
 }
