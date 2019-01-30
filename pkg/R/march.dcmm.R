@@ -21,6 +21,7 @@
 #' @param Cmodel the modeling of the visible transition matrix (mtd, mtdg or complete)
 #' @param AMCovar vector of the size Ncov indicating which covariables are used into the hidden process (0: no, 1:yes)
 #' @param CMCovar vector of the size Ncov indicating which covariables are used into the visible process (0: no, 1:yes)
+#' @param AConst diagonal constraint on the hidden transition matrix
 #' @param pMut mutation probability for the evolutionary algorithm
 #' @param pCross crossover probability for the evolutionary algorithm
 #'
@@ -31,7 +32,7 @@
 #' @seealso \code{\link{march.Dcmm-class}}, \code{\link{march.Model-class}}, \code{\link{march.Dataset-class}}.
 #'
 #' @export
-march.dcmm.construct <- function(y,orderHC,orderVC,M=2,gen=5,popSize=4,maxOrder=orderVC,seedModel=NULL,iterBw=2,stopBw=0.1,Amodel="mtd",Cmodel="mtd",AMCovar=0,CMCovar=0, pMut=0.05, pCross=0.5){
+march.dcmm.construct <- function(y,orderHC,orderVC,M=2,gen=5,popSize=4,maxOrder=orderVC,seedModel=NULL,iterBw=2,stopBw=0.1,Amodel="mtd",Cmodel="mtd",AMCovar=0,CMCovar=0, AConst=FALSE, pMut=0.05, pCross=0.5){
 	
   if( is.null(seedModel) ){
     if(Amodel!="complete" & Amodel!="mtd" & Amodel!="mtdg"){
@@ -50,6 +51,9 @@ march.dcmm.construct <- function(y,orderHC,orderVC,M=2,gen=5,popSize=4,maxOrder=
 		  stop("CMCovar should have his length equal to the number of covariates in y")
 	  }	
 	
+    if(AConst==TRUE & (Amodel=="mtd" | Amodel=="mtdg"|sum(AMCovar)>0)){
+      stop("When the hidden transition matrix is constraint to the identity matrix, no mtd modeling can be used, nor covariates and the hidden order must be one")
+    }
 	
 	  #Checking
 	  if(M==1){
@@ -110,8 +114,8 @@ march.dcmm.construct <- function(y,orderHC,orderVC,M=2,gen=5,popSize=4,maxOrder=
   	m
   }else{
     ep <- new("march.dcmm.cov.ea.EvalParameters", ds=y, fct=march.dcmm.cov.ea.evaluation)
-    ip <- new("march.dcmm.cov.ea.InitParameters",AConst=FALSE,y=y,orderVC=orderVC,orderHC=orderHC,M=M,Amodel=Amodel,Cmodel=Cmodel,AMCovar=AMCovar,CMCovar=CMCovar,fct=march.dcmm.cov.ea.initialization)
-    mp <- new("march.dcmm.cov.ea.MutationParameters",pMut=pMut,fct=march.dcmm.cov.ea.mutation)
+    ip <- new("march.dcmm.cov.ea.InitParameters",AConst=AConst,y=y,orderVC=orderVC,orderHC=orderHC,M=M,Amodel=Amodel,Cmodel=Cmodel,AMCovar=AMCovar,CMCovar=CMCovar,fct=march.dcmm.cov.ea.initialization)
+    mp <- new("march.dcmm.cov.ea.MutationParameters",pMut=pMut,AConst=AConst,fct=march.dcmm.cov.ea.mutation)
     cp <- new("march.ea.cov.CrossoverParameters",fct=march.dcmm.cov.ea.crossover)
     
     op <- new("march.dcmm.cov.ea.OptimizingParameters",fct=march.dcmm.cov.ea.optimizing,ds=y,stopBw=stopBw,iterBw=iterBw)

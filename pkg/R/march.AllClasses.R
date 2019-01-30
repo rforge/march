@@ -236,7 +236,7 @@ setClass("march.dcmm.ea.MutationParameters",contains="march.ea.MutationParameter
 )
 
 setClass("march.dcmm.cov.ea.MutationParameters",contains="march.ea.cov.MutationParameters",
-         representation(pMut="numeric")
+         representation(pMut="numeric",AConst="logical")
 )
 
 setClass("march.dcmm.ea.OptimizingParameters",contains="march.ea.OptimizingParameters",

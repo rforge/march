@@ -7,7 +7,7 @@
 march.dcmm.construct(y, orderHC, orderVC, M = 2, gen = 5,
   popSize = 4, maxOrder = orderVC, seedModel = NULL, iterBw = 2,
   stopBw = 0.1, Amodel = "mtd", Cmodel = "mtd", AMCovar = 0,
-  CMCovar = 0, pMut = 0.05, pCross = 0.5)
+  CMCovar = 0, AConst = FALSE, pMut = 0.05, pCross = 0.5)
 }
 \arguments{
 \item{y}{the dataset from which the Dcmm will be constructed \code{\link{march.Dataset}}.}
@@ -37,6 +37,8 @@ march.dcmm.construct(y, orderHC, orderVC, M = 2, gen = 5,
 \item{AMCovar}{vector of the size Ncov indicating which covariables are used into the hidden process (0: no, 1:yes)}
 
 \item{CMCovar}{vector of the size Ncov indicating which covariables are used into the visible process (0: no, 1:yes)}
+
+\item{AConst}{diagonal constraint on the hidden transition matrix}
 
 \item{pMut}{mutation probability for the evolutionary algorithm}
 

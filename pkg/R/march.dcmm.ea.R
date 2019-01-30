@@ -21,7 +21,7 @@ march.loop.cov <- function(p){
 			
 			# Do we need to crossover
 			if( runif(1)<p@crossoverProb ){	
-				children <- p@crossoverParameters@fct(population[[sel1]],population[[sel2]])
+				children <- p@crossoverParameters@fct(population[[sel1]],population[[sel2]],p@initParameters@AConst)
 				child1 <- children$c1
 				child2 <- children$c2
 			}
@@ -91,6 +91,7 @@ march.dcmm.cov.ea.initialization <- function(p){
   	Cmodel <- p@Cmodel
   	K <- p@y@K
   	y <- p@y
+  	AConst <- p@AConst
   
   	d <- march.dcmm.cov.constructEmptyDcmm(p@M,p@y,p@orderVC,p@orderHC,p@AMCovar,p@CMCovar,p@Amodel,p@Cmodel)
    
@@ -110,83 +111,92 @@ march.dcmm.cov.ea.initialization <- function(p){
       		CtmCovar <- CtmCovar*KCovar[placeCCovar[i]]
     	}
   	}
-  
-  	#Initialisation of all the things involved in the hidden process
-  	if(Amodel=="complete"){
-  	
-		#Random initialisation of the full transition matrix between hidden states
-    	if(M>1){
-    		AQ <- 0.1+array(runif(M^max(orderHC,1)*M),c(1,M^max(orderHC,1),M))
-    		AQ[1,,] <- AQ[1,,]/rowSums(AQ[1,,])
-    		
-    		if(orderHC==0){
-    			for(m in 2:M){
-    				AQ[1,m,] <- AQ[1,1,]
-    			}
-    		}
-    	}else{
-    		AQ <- array(1,c(1,1,1))
-    	}
-    	
-    	#Random initialisation of the vector of lag Phi, size 1+NbAMCovar
-    	APhi <- 0.1+array(runif(1+NbAMCovar),c(1,1+NbAMCovar))
-    	APhi <- APhi/sum(APhi)
     
-    	#Random initialisation of the matrices of transition between covariates and hidden states
-    	ATCovar <- list()
-    	if(NbAMCovar>0){
-    		for(i in 1:NbAMCovar){
+  	#Initialisation of all the things involved in the hidden process
+  	if(AConst==TRUE){
+  	  AQ <- array(diag(M),c(1,M,M))
+  	  A <- diag(M)
+  	  ATCovar <- list()
+  	  APhi <- array(1,c(1,1))
+  	  mccov <- march.mccov.sk(M,1,AtmCovar,KCovar,placeACovar,NbAMCovar,matrix(AQ[1,,],M,M),ATCovar)
+  	  AProbT <- mccov$ProbT
+  	  
+  	}else{
+  	  if(Amodel=="complete"){
+  	
+		  #Random initialisation of the full transition matrix between hidden states
+      	if(M>1){
+    	  	AQ <- 0.1+array(runif(M^max(orderHC,1)*M),c(1,M^max(orderHC,1),M))
+    	  	AQ[1,,] <- AQ[1,,]/rowSums(AQ[1,,])
+    		
+    	  	if(orderHC==0){
+    		  	for(m in 2:M){
+    			  	AQ[1,m,] <- AQ[1,1,]
+    			  }
+    		  }
+      	}else{
+    	  	AQ <- array(1,c(1,1,1))
+    	  }
+    	
+    	  #Random initialisation of the vector of lag Phi, size 1+NbAMCovar
+    	  APhi <- 0.1+array(runif(1+NbAMCovar),c(1,1+NbAMCovar))
+    	  APhi <- APhi/sum(APhi)
+    
+    	  #Random initialisation of the matrices of transition between covariates and hidden states
+    	  ATCovar <- list()
+    	  if(NbAMCovar>0){
+    		  for(i in 1:NbAMCovar){
       			ATCovar[[i]] <- 0.1+array(runif(KCovar[placeACovar[i]]*M),c(KCovar[placeACovar[i]],M))
       			ATCovar[[i]] <- ATCovar[[i]]/rowSums(ATCovar[[i]])
-    		}
-    	}
+    	  	}
+    	  }
     
     
-      mccov <- march.mccov.sk(M,max(orderHC,1),AtmCovar,KCovar,placeACovar,NbAMCovar,matrix(AQ[1,,],M^max(orderHC,1),M),ATCovar)
-    	AProbT <- mccov$ProbT
+        mccov <- march.mccov.sk(M,max(orderHC,1),AtmCovar,KCovar,placeACovar,NbAMCovar,matrix(AQ[1,,],M^max(orderHC,1),M),ATCovar)
+    	  AProbT <- mccov$ProbT
     
-    	l <- GMTD_tm_cov(max(orderHC,1),M,APhi,AProbT)
-    	A <- l$HOQ
-    	RA <- l$CRHOQ
+    	  l <- GMTD_tm_cov(max(orderHC,1),M,APhi,AProbT)
+    	  A <- l$HOQ
+    	  #RA <- l$CRHOQ
     	
-  	}else{
-    	A <- array(0,c(M^orderHC*AtmCovar,M^orderHC))
+  	  }else{
+    	  A <- array(0,c(M^orderHC*AtmCovar,M^orderHC))
     
-    	#Random initialisation of AQ
-    	if(Amodel=="mtd"){
+    	  #Random initialisation of AQ
+    	  if(Amodel=="mtd"){
       		AQ <- 0.1 + array(runif(M*M),c(1,M,M))
       		AQ[1,,] <- AQ[1,,]/rowSums(AQ[1,,])
-    	}else{
+    	  }else{
       		AQ <- 0.1+array(runif(M*M*orderHC),c(orderHC,M,M))
       		for(i in 1:orderHC){
         		AQ[i,,] <- AQ[i,,]/rowSums(AQ[i,,])
       		}
-    	}
+    	  }
     
-    	#Random initialisation of APhi
-    	APhi <- 0.1+array(runif(orderHC+NbAMCovar),c(1,orderHC+NbAMCovar))
-    	APhi <- APhi/sum(APhi)
+    	  #Random initialisation of APhi
+    	  APhi <- 0.1+array(runif(orderHC+NbAMCovar),c(1,orderHC+NbAMCovar))
+    	  APhi <- APhi/sum(APhi)
     
-    	ANSS <- matrix(0,M^(orderHC+1)*AtmCovar,1)
-    	AValT <- BuildArrayCombinations(M,orderHC,KCovar[placeACovar],NbAMCovar)
+    	  ANSS <- matrix(0,M^(orderHC+1)*AtmCovar,1)
+    	  AValT <- BuildArrayCombinations(M,orderHC,KCovar[placeACovar],NbAMCovar)
     
-    	#Random initialisation of ATCovar
-    	ATCovar <- list()
-    	if(NbAMCovar>0){
+    	  #Random initialisation of ATCovar
+    	  ATCovar <- list()
+    	  if(NbAMCovar>0){
       		for(i in 1:NbAMCovar){
         		ATCovar[[i]] <- 0.1+array(runif(KCovar[placeACovar[i]]*M),c(KCovar[placeACovar[i]],M))
         		ATCovar[[i]] <- ATCovar[[i]]/rowSums(ATCovar[[i]])
       		}
-    	}
+    	  }
     	
-    	#The function BuildArray Q is in march.mtd.R
-    	AProbT <- BuildArrayQ(M,l=orderHC,i0_il=AValT,n_i0_il = ANSS,q=AQ,kcov=KCovar[placeACovar],ncov=NbAMCovar,S=ATCovar)
-    	l <- GMTD_tm_cov(orderHC,M,APhi,matrix(AProbT,M^(orderHC+1)*AtmCovar,orderHC+NbAMCovar))
+    	  #The function BuildArray Q is in march.mtd.R
+    	  AProbT <- BuildArrayQ(M,l=orderHC,i0_il=AValT,n_i0_il = ANSS,q=AQ,kcov=KCovar[placeACovar],ncov=NbAMCovar,S=ATCovar)
+    	  l <- GMTD_tm_cov(orderHC,M,APhi,matrix(AProbT,M^(orderHC+1)*AtmCovar,orderHC+NbAMCovar))
 
-    	A <- l$HOQ
-    	RA <- l$CRHOQ  
-    }
-  
+    	  A <- l$HOQ
+    	  #RA <- l$CRHOQ  
+      }
+  	}
   	#Initialisation of all the things involved in the visible process
   	if(Cmodel=="complete"){
   	
@@ -445,9 +455,9 @@ march.dcmm.h.cov.computeLL <- function(d,y){
    	placeACovar <- which(d@AMCovar==1)
    	AtmCovar <- 1
    	if(sum(d@AMCovar)>0){
-		for (i in 1:sum(d@AMCovar)){
+		  for (i in 1:sum(d@AMCovar)){
       		AtmCovar <- AtmCovar*y@Kcov[placeACovar[i]]
-		}
+		  }
   	}
   
   	placeCCovar <- which(d@CMCovar==1)
@@ -472,25 +482,25 @@ march.dcmm.h.cov.computeLL <- function(d,y){
 
 march.dcmm.cov.ea.mutation <- function(d,p){
   
-	NbAMCovar <- sum(d@AMCovar)
-  	NbCMCovar <- sum(d@CMCovar) 
+  NbAMCovar <- sum(d@AMCovar)
+  NbCMCovar <- sum(d@CMCovar) 
   	
-  	placeACovar <- which(d@AMCovar==1)
-  	placeCCovar <- which(d@CMCovar==1)
+  placeACovar <- which(d@AMCovar==1)
+  placeCCovar <- which(d@CMCovar==1)
   	
-  	AtmCovar <- 1
+  AtmCovar <- 1
  	if(NbAMCovar>0){
-  		for (i in 1:NbAMCovar){
-      		AtmCovar <- AtmCovar*d@y@Kcov[placeACovar[i]]
-      	}
-  	}
+    for (i in 1:NbAMCovar){
+      AtmCovar <- AtmCovar*d@y@Kcov[placeACovar[i]]
+    }
+  }
   	
-  	CtmCovar <-1
-  	if(NbCMCovar>0){
-  		for(i in 1:NbCMCovar){
-  			CtmCovar <- CtmCovar*d@y@Kcov[placeCCovar[i]]	
-  		}
+  CtmCovar <-1
+  if(NbCMCovar>0){
+  	for(i in 1:NbCMCovar){
+  		CtmCovar <- CtmCovar*d@y@Kcov[placeCCovar[i]]	
   	}
+  }
 
 	#Mutation of APhi
 	Adim<-dim(d@APhi)[2]
@@ -520,32 +530,34 @@ march.dcmm.cov.ea.mutation <- function(d,p){
   
   if(sum(d@CMCovar>0)){
   	for (i in 1:sum(d@CMCovar)){
-  		for ( j in 1:d@y@Kcov[placeCCovar[i]]){
-			for (k in 1:d@M){
-				d@CTCovar[[i]][j,,k]<-d@CTCovar[[i]][j,,k]+(runif(d@y@K)<p@pMut)*rnorm(d@y@K)
-				d@CTCovar[[i]][j,,k]<-march.ea.checkBounds(v=d@CTCovar[[i]][j,,k],lb=0,ub=1)
-				d@CTCovar[[i]][j,,k]<-march.dcmm.ea.h.scale(d@CTCovar[[i]][j,,k],d@y@K)
-  		}
+  		for (j in 1:d@y@Kcov[placeCCovar[i]]){
+			  for (k in 1:d@M){
+				  d@CTCovar[[i]][j,,k]<-d@CTCovar[[i]][j,,k]+(runif(d@y@K)<p@pMut)*rnorm(d@y@K)
+				  d@CTCovar[[i]][j,,k]<-march.ea.checkBounds(v=d@CTCovar[[i]][j,,k],lb=0,ub=1)
+				  d@CTCovar[[i]][j,,k]<-march.dcmm.ea.h.scale(d@CTCovar[[i]][j,,k],d@y@K)
+  		  }
   	  }
   	}
   }
-  
-  	if(d@orderHC>0){
-		for(i in 1:dim(d@AQ)[1]){
-  			for(j in 1:dim(d@AQ)[2]){
-  				d@AQ[i,j,]<-d@AQ[i,j,]+(runif(d@M)<p@pMut)*rnorm(d@M)
+    
+  if(p@AConst==FALSE){
+    if(d@orderHC>0){
+		  for(i in 1:dim(d@AQ)[1]){
+  		  for(j in 1:dim(d@AQ)[2]){
+  			  d@AQ[i,j,]<-d@AQ[i,j,]+(runif(d@M)<p@pMut)*rnorm(d@M)
   				d@AQ[i,j,]<-march.ea.checkBounds(v=d@AQ[i,j,],lb=0,ub=1)
   				d@AQ[i,j,]<-march.dcmm.ea.h.scale(d@AQ[i,j,],d@M)
-  			}
-  		}
-  	}else{
-  		d@AQ[1,1,] <- d@AQ[1,1,]+(runif(d@M)<p@pMut)*rnorm(d@M)
+        }
+      }
+    }else{
+  	  d@AQ[1,1,] <- d@AQ[1,1,]+(runif(d@M)<p@pMut)*rnorm(d@M)
   		d@AQ[1,1,]<-march.ea.checkBounds(v=d@AQ[1,1,],lb=0,ub=1)
   		d@AQ[1,1,]<-march.dcmm.ea.h.scale(d@AQ[1,1,],d@M)
   		for(i in 1:d@M){
   			d@AQ[1,i,] <-d@AQ[1,1,]
   		}
-  	}
+    }
+  }
   
   for( i in 1:dim(d@CQ)[1]){
   	for(j in 1:dim(d@CQ)[2]){
@@ -569,63 +581,63 @@ march.dcmm.cov.ea.mutation <- function(d,p){
   
 	if(d@Amodel=="complete"){
 		mccov <- march.mccov.sk(d@M,max(d@orderHC,1),AtmCovar,d@y@Kcov,placeACovar,NbAMCovar,matrix(d@AQ[1,,],d@M^max(d@orderHC,1),d@M),d@ATCovar)
-    	d@AProbT <- mccov$ProbT
+    d@AProbT <- mccov$ProbT
     
-    	l <- GMTD_tm_cov(max(d@orderHC,1),d@M,d@APhi,d@AProbT)
-    	d@A <- l$HOQ
+    l <- GMTD_tm_cov(max(d@orderHC,1),d@M,d@APhi,d@AProbT)
+    d@A <- l$HOQ
 	}else{
 		ANSS<-matrix(0,d@M^(d@orderHC+1)*AtmCovar,1)
 		AValT<-BuildArrayCombinations(d@M,d@orderHC,d@y@Kcov[placeACovar],NbAMCovar)
 
-    	d@AProbT <- BuildArrayQ(d@M,l=d@orderHC,i0_il=AValT,n_i0_il = ANSS,q=d@AQ,kcov=d@y@Kcov[placeACovar],ncov=NbAMCovar,S=d@ATCovar)
-    	l<-GMTD_tm_cov(d@orderHC,d@M,d@APhi,array(d@AProbT,c(d@M^(d@orderHC+1)*AtmCovar,d@orderHC+NbAMCovar)))
-    	d@A<-l$HOQ
-    }
+    d@AProbT <- BuildArrayQ(d@M,l=d@orderHC,i0_il=AValT,n_i0_il = ANSS,q=d@AQ,kcov=d@y@Kcov[placeACovar],ncov=NbAMCovar,S=d@ATCovar)
+    l<-GMTD_tm_cov(d@orderHC,d@M,d@APhi,array(d@AProbT,c(d@M^(d@orderHC+1)*AtmCovar,d@orderHC+NbAMCovar)))
+    d@A<-l$HOQ
+  }
     
-    #VISIBLE LEVEL
-    if(d@Cmodel=="complete"){
+  #VISIBLE LEVEL
+  if(d@Cmodel=="complete"){
 		for(state in 1:d@M){
 			CTCovartmp <- list()
 			if(NbCMCovar>0){
-      			for(i in 1:NbCMCovar){
-        			CTCovartmp[[i]] <- d@CTCovar[[i]][,,state]
-        		}
-      		}
-
-        	mccov <- march.mccov.sk(d@y@K,d@orderVC,CtmCovar,d@y@Kcov,placeCCovar,NbCMCovar,matrix(d@CQ[1,,,state],d@y@K^d@orderVC,d@y@K),CTCovartmp)
-        	d@CProbT[,,state] <- mccov$ProbT
-        	d@RB[,,state] <- GMTD_tm_cov(d@orderVC,d@y@K,t(d@CPhi[1,,state]),matrix(d@CProbT[,,state],d@y@K^(d@orderVC+1)*CtmCovar,1+NbCMCovar))$CRHOQ
+        for(i in 1:NbCMCovar){
+          CTCovartmp[[i]] <- d@CTCovar[[i]][,,state]
         }
-	}else{
-    	d@CProbT <- array(0,c(d@y@K^(d@orderVC+1)*CtmCovar,d@orderVC+NbCMCovar,d@M))
-    	CValT <- BuildArrayCombinations(d@y@K,d@orderVC,d@y@Kcov[placeCCovar],NbCMCovar)
-    	CNSS <- BuildArrayNumberOfSequencesDCMM(d@y,d@orderVC,d@CMCovar,NbCMCovar,placeCCovar)
-    	
-    	if(d@Cmodel=="mtd"){
-    		t <- array(d@CQ[,,,1],c(1,d@y@K,d@y@K))
-    	}else{
-      		t <- array(d@CQ[,,,1],c(d@orderVC,d@y@K,d@y@K))
-    	}
-    	q_i0_il <- array(0,c(d@y@K^(d@orderVC+1)*CtmCovar,d@orderVC+NbCMCovar))
-    	
-    	
-    	for(state in 1:d@M){
-      		CTCovartmp <- list()
-      		if(NbCMCovar>0){
-      			for(i in 1:NbCMCovar){
-      				CTCovartmp[[i]] <- d@CTCovar[[i]][,,state]
-      			}
-      		}
-      		d@CProbT[,,state] <- BuildArrayQ(d@y@K,l=d@orderVC,i0_il=CValT,n_i0_il = CNSS,q=t,kcov=d@y@Kcov[placeCCovar],NbCMCovar,S=CTCovartmp)
-      		tm <- GMTD_tm_cov(d@orderVC,d@y@K,as.matrix(t(d@CPhi[,,state])),array(d@CProbT[,,state],c(d@y@K^(d@orderVC+1)*CtmCovar,d@orderVC+NbCMCovar)))
-      		d@RB[,,state] <- tm$CRHOQ
-      	}
+      }
+
+      mccov <- march.mccov.sk(d@y@K,d@orderVC,CtmCovar,d@y@Kcov,placeCCovar,NbCMCovar,matrix(d@CQ[1,,,state],d@y@K^d@orderVC,d@y@K),CTCovartmp)
+      d@CProbT[,,state] <- mccov$ProbT
+      d@RB[,,state] <- GMTD_tm_cov(d@orderVC,d@y@K,t(d@CPhi[1,,state]),matrix(d@CProbT[,,state],d@y@K^(d@orderVC+1)*CtmCovar,1+NbCMCovar))$CRHOQ
     }
-    d@ll <- march.dcmm.h.cov.computeLL(d,d@y)
-    d
+	}else{
+    d@CProbT <- array(0,c(d@y@K^(d@orderVC+1)*CtmCovar,d@orderVC+NbCMCovar,d@M))
+    CValT <- BuildArrayCombinations(d@y@K,d@orderVC,d@y@Kcov[placeCCovar],NbCMCovar)
+    CNSS <- BuildArrayNumberOfSequencesDCMM(d@y,d@orderVC,d@CMCovar,NbCMCovar,placeCCovar)
+    	
+    if(d@Cmodel=="mtd"){
+    	t <- array(d@CQ[,,,1],c(1,d@y@K,d@y@K))
+    }else{
+      t <- array(d@CQ[,,,1],c(d@orderVC,d@y@K,d@y@K))
+    }
+    q_i0_il <- array(0,c(d@y@K^(d@orderVC+1)*CtmCovar,d@orderVC+NbCMCovar))
+    	
+    	
+    for(state in 1:d@M){
+      CTCovartmp <- list()
+      if(NbCMCovar>0){
+      	for(i in 1:NbCMCovar){
+      		CTCovartmp[[i]] <- d@CTCovar[[i]][,,state]
+      	}
+      }
+      d@CProbT[,,state] <- BuildArrayQ(d@y@K,l=d@orderVC,i0_il=CValT,n_i0_il = CNSS,q=t,kcov=d@y@Kcov[placeCCovar],NbCMCovar,S=CTCovartmp)
+      tm <- GMTD_tm_cov(d@orderVC,d@y@K,as.matrix(t(d@CPhi[,,state])),array(d@CProbT[,,state],c(d@y@K^(d@orderVC+1)*CtmCovar,d@orderVC+NbCMCovar)))
+      d@RB[,,state] <- tm$CRHOQ
+    }
+  }
+  d@ll <- march.dcmm.h.cov.computeLL(d,d@y)
+  d
 }
 
-march.dcmm.cov.ea.crossover <- function(d1, d2){
+march.dcmm.cov.ea.crossover <- function(d1, d2, AConst){
   
 	  NbAMCovar <- sum(d1@AMCovar)
  	  NbCMCovar <- sum(d1@CMCovar)
@@ -643,31 +655,35 @@ march.dcmm.cov.ea.crossover <- function(d1, d2){
   
   	c1 <- march.dcmm.cov.constructEmptyDcmm(d1@M,d1@y,d1@orderVC,d1@orderHC,d1@AMCovar,d1@CMCovar,d1@Amodel,d1@Cmodel)			
   	c2 <- march.dcmm.cov.constructEmptyDcmm(d1@M,d1@y,d1@orderVC,d1@orderHC,d1@AMCovar,d1@CMCovar,d1@Amodel,d1@Cmodel)
-    
-  	if(d1@Amodel=="mtdg"){
-  		for(i in 1:d1@orderHC){
-  			for(j in 1:d1@M){
-  				r <- march.ea.h.sbx(d1@AQ[i,j,],d2@AQ[i,j,],2)
-  				c1@AQ[i,j,] <- r$c1
-  				c2@AQ[i,j,] <- r$c2
-  			}
-  		}
-  	}else{
-  		if(d1@orderHC>0){
-  			for(i in 1:dim(d1@AQ)[2]){
-  				r <- march.ea.h.sbx(d1@AQ[1,i,],d2@AQ[1,i,],2)
-  				c1@AQ[1,i,] <- r$c1
-  				c2@AQ[1,i,] <- r$c2
-  			}
-		}else{
-			r <- march.ea.h.sbx(d1@AQ[1,1,],d2@AQ[1,1,],2)
-			for(i in 1:d1@M){
-				c1@AQ[1,i,] <- r$c1
-				c2@AQ[1,i,] <- r$c2
-			}
-		}
- 	} 
- 	
+  	
+    if(AConst==FALSE){
+  	  if(d1@Amodel=="mtdg"){
+  		  for(i in 1:d1@orderHC){
+  			  for(j in 1:d1@M){
+  				  r <- march.ea.h.sbx(d1@AQ[i,j,],d2@AQ[i,j,],2)
+  				  c1@AQ[i,j,] <- r$c1
+  				  c2@AQ[i,j,] <- r$c2
+  			  }
+  		  }
+  	  }else{
+  		  if(d1@orderHC>0){
+  			  for(i in 1:dim(d1@AQ)[2]){
+  				  r <- march.ea.h.sbx(d1@AQ[1,i,],d2@AQ[1,i,],2)
+  				  c1@AQ[1,i,] <- r$c1
+  				  c2@AQ[1,i,] <- r$c2
+  			  }
+		    }else{
+			    r <- march.ea.h.sbx(d1@AQ[1,1,],d2@AQ[1,1,],2)
+			    for(i in 1:d1@M){
+				    c1@AQ[1,i,] <- r$c1
+				    c2@AQ[1,i,] <- r$c2
+			    }
+		    }
+ 	    } 
+    }else{
+      c1@AQ <- array(diag(M),c(1,M,M))
+      c2@AQ <- array(diag(M),c(1,M,M))
+    }
  	
   	if(d1@Cmodel=="mtdg"){
   		for(i in 1:d1@orderVC){
