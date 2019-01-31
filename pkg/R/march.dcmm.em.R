@@ -46,6 +46,7 @@ march.dcmm.cov.em <- function(d,AMDelta,CMDelta,ConstAPhi,ConstCPhi){
 		Epsilon[,,1:d@y@T[n]-1,n] <- march.dcmm.eps.cov(d,s,d@y@cov[n,,],a$SAlpha,b$SBeta,a$SAlog,b$SBlog,a$LLAlpha,AtmCovar,CtmCovar)
 		Gamma[,1:d@y@T[n],n] <- march.dcmm.gam.cov(d,s,d@y@cov[n,,],a$SAlpha,b$SBeta,a$SAlog,b$SBlog,a$LLAlpha,AtmCovar,CtmCovar)
 	}
+
 	#Computation of the log-likelihood
 	d@ll <- sum(LLAlpha)
 	
@@ -1103,7 +1104,7 @@ GMTD.op.dcmm.A<-function(d,NSS,SDip,Delta,Stop,Constraint,AtmCovar,CtmCovar){
 			for(n in 1:d@y@N){
 				s <- march.dataset.h.extractSequence(d@y,n)
 
-				l <- march.dcmm.fp.cov(dtmp,s,dtmp@y@cov[n,,],AtmCovar,CtmCovar)
+				l <- march.dcmm.fp.cov(dtmp,s,dtmp@y@cov[n,,],AtmCovar,CtmCovar)$LLAlpha
 				tLL <- tLL+l$LLAlpha
 			}
 			dtmp@ll <- tLL
