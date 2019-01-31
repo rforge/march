@@ -116,6 +116,7 @@ march.dcmm.cov.ea.initialization <- function(p){
   	if(AConst==TRUE){
   	  AQ <- array(diag(M),c(1,M,M))
   	  A <- diag(M)
+  	  RA <- diag(M)
   	  ATCovar <- list()
   	  APhi <- array(1,c(1,1))
   	  mccov <- march.mccov.sk(M,1,AtmCovar,KCovar,placeACovar,NbAMCovar,matrix(AQ[1,,],M,M),ATCovar)
@@ -157,7 +158,7 @@ march.dcmm.cov.ea.initialization <- function(p){
     
     	  l <- GMTD_tm_cov(max(orderHC,1),M,APhi,AProbT)
     	  A <- l$HOQ
-    	  #RA <- l$CRHOQ
+    	  RA <- l$CRHOQ
     	
   	  }else{
     	  A <- array(0,c(M^orderHC*AtmCovar,M^orderHC))
@@ -194,7 +195,7 @@ march.dcmm.cov.ea.initialization <- function(p){
     	  l <- GMTD_tm_cov(orderHC,M,APhi,matrix(AProbT,M^(orderHC+1)*AtmCovar,orderHC+NbAMCovar))
 
     	  A <- l$HOQ
-    	  #RA <- l$CRHOQ  
+    	  RA <- l$CRHOQ  
       }
   	}
   	#Initialisation of all the things involved in the visible process
@@ -681,8 +682,8 @@ march.dcmm.cov.ea.crossover <- function(d1, d2, AConst){
 		    }
  	    } 
     }else{
-      c1@AQ <- array(diag(M),c(1,M,M))
-      c2@AQ <- array(diag(M),c(1,M,M))
+      c1@AQ <- array(diag(d1@M),c(1,d1@M,d1@M))
+      c2@AQ <- array(diag(d1@M),c(1,d1@M,d1@M))
     }
  	
   	if(d1@Cmodel=="mtdg"){

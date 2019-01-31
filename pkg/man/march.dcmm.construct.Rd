@@ -38,7 +38,7 @@ march.dcmm.construct(y, orderHC, orderVC, M = 2, gen = 5,
 
 \item{CMCovar}{vector of the size Ncov indicating which covariables are used into the visible process (0: no, 1:yes)}
 
-\item{AConst}{diagonal constraint on the hidden transition matrix}
+\item{AConst}{logical, indicating whether or not the hidden transition matrix is diagonal constraint}
 
 \item{pMut}{mutation probability for the evolutionary algorithm}
 

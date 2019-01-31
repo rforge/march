@@ -75,38 +75,42 @@ march.mtd.show <- function(object){
   
   cat(march.name(object))
   cat("\n")
-  if( dim(object@Q)[1]==1 ){
-    
-    cat("Q : \n")
-    for( i in 1:object@y@K ){
-      cat(sprintf("%.4f", object@Q[1,i,]))
-      cat("\n")
-    }
-  }
-  else{
-    for( g in 1:dim(object@Q)[1]){
-      cat(sprintf("Q%d : \n",g))
-      for( i in 1:object@y@K ){
-        cat(sprintf("%.4f", object@Q[g,i,]))
-        cat("\n")
-      }    
-    }
-  }
+  cat("Transition matrix : \n")
+  s <- march.cov.h.mc.printableMatrix(object@RA,object@order,object@y@K,object@y@Kcov[placeCovar],sum(object@MCovar))
+  print(s)
   cat("\n")
-  if(sum(object@MCovar)>0){
-    for(g in 1:sum(object@MCovar)){
-      cat(sprintf("S%d : \n",g))
-      for(i in 1:object@y@Kcov[placeCovar[g]]){
-        cat(sprintf("%.4f", object@S[[g]][i,]))
-        cat("\n")
-      }
-    }
-  }
-  cat("\n")
-  cat("phi : ")
-  cat(sprintf("%.4f",object@phi))
-  cat("\n\n")
-  cat("order : ",object@order,"\n")
+  # if( dim(object@Q)[1]==1 ){
+  #   
+  #   cat("Q : \n")
+  #   for( i in 1:object@y@K ){
+  #     cat(sprintf("%.4f", object@Q[1,i,]))
+  #     cat("\n")
+  #   }
+  # }
+  # else{
+  #   for( g in 1:dim(object@Q)[1]){
+  #     cat(sprintf("Q%d : \n",g))
+  #     for( i in 1:object@y@K ){
+  #       cat(sprintf("%.4f", object@Q[g,i,]))
+  #       cat("\n")
+  #     }    
+  #   }
+  # }
+  # cat("\n")
+  # if(sum(object@MCovar)>0){
+  #   for(g in 1:sum(object@MCovar)){
+  #     cat(sprintf("S%d : \n",g))
+  #     for(i in 1:object@y@Kcov[placeCovar[g]]){
+  #       cat(sprintf("%.4f", object@S[[g]][i,]))
+  #       cat("\n")
+  #     }
+  #   }
+  # }
+  # cat("\n")
+  # cat("phi : ")
+  # cat(sprintf("%.4f",object@phi))
+  # cat("\n\n")
+  # cat("order : ",object@order,"\n")
   march.model.show(object)
 }
 
@@ -149,12 +153,25 @@ march.dcmm.show <- function(object){
   	march.model.show(object)
 }
 
+march.AIC.show <- function(object){
+  cat("Number of parameters : ",object@nbParams,"\n")
+  cat("AIC: ",object@AIC,"\n")
+}
+
+march.BIC.show <- function(object){
+  cat("Number of parameters : ",object@nbParams,"\n")
+  cat("BIC: ",object@BIC,"\n")
+}
+
 # this part describes how a call to show method (print) should be 
 # redirected to the rigth method, depending on the object considered.
 setMethod(f="show",signature="march.Indep",definition=march.indep.show)
 setMethod(f="show",signature="march.Mc",definition=march.mc.show)
 setMethod(f="show",signature="march.Mtd",definition=march.mtd.show)
 setMethod(f="show",signature="march.Dcmm",definition=march.dcmm.show)
+setMethod(f="show",signature="march.AIC",definition=march.AIC.show)
+setMethod(f="show",signature="march.BIC",definition=march.BIC.show)
+
 
 ###############################################################################
 # nbParams methods here, are the implementation of generic methods to obtain
@@ -378,17 +395,6 @@ march.indep.thompson <- function(object,alpha){
 # TODO : Handle multi-sequences by computing the number of data
 #  	 influencing each distribution and summing this number.
 #
-# march.mtd.thompson <- function(object, alpha){
-#   d2n <- march.ci.h.d2n(alpha)
-#   
-#   s <- 0
-#   for( i in 1:object@order ){
-#     s<-s+march.mtd.h.l(object,object@y,i)
-#   }
-#   
-#   list(phi=sqrt(d2n/s),Q=sqrt(d2n/rowSums(march.mtd.h.n(object,object@y))))
-# }
-
 march.mtd.thompson <- function(object, alpha){
   d2n <- march.ci.h.d2n(alpha)
   

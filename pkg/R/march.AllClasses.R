@@ -121,7 +121,7 @@ setClass("march.Mc",contains="march.Model",representation(RC="array",order="inte
 #'    
 #' @seealso \code{\link{march.mtd.construct}}, \code{\link{march.Model-class}}.
 setClass("march.Mtd",contains="march.Model",
-         representation(Q="array",phi="vector",S="list",order="integer",MCovar="vector"))
+         representation(RA="matrix",Q="array",phi="vector",S="list",order="integer",MCovar="vector"))
 
 
 #' A Double Chain Markov Model (DCMM).
@@ -246,4 +246,7 @@ setClass("march.dcmm.ea.OptimizingParameters",contains="march.ea.OptimizingParam
 setClass("march.dcmm.cov.ea.OptimizingParameters",contains="march.ea.cov.OptimizingParameters",
          representation(ds="march.Dataset",iterBw="integer",stopBw="numeric")
 )
+
+setClass("march.AIC",representation(nbParams="numeric",AIC="numeric"))
+setClass("march.BIC",representation(nbParams="numeric",BIC="numeric"))
 

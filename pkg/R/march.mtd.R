@@ -1,10 +1,10 @@
 
-march.mtd.h.constructEmptyMtd <- function(order,k){
-  Q <- array(0,c(k^order,k^order))
-  phi <- array(0,c(order))
-
-  new("march.Mtd",Q=Q,phi=phi,K=k,order=order)
-}
+# march.mtd.h.constructEmptyMtd <- function(order,k){
+#   Q <- array(0,c(k^order,k^order))
+#   phi <- array(0,c(order))
+# 
+#   new("march.Mtd",Q=Q,phi=phi,K=k,order=order)
+# }
 
 # Construct nt vector, holding the number of data items per sequence (lenght of data series)
 BuildArrayNumberOfDataItems <- function(x){
@@ -598,13 +598,13 @@ march.mtd.construct <- function(y,order,maxOrder=order,mtdg=FALSE,MCovar=0,init=
       tot=0
       for (i in 1:y@Ncov){
         tot=tot+1
-    pd_s<-PartialDerivativesS(CCov=order+i,ColVT=order+i+1,k=y@K,kcov=y@Kcov[i],n_i0_il=n_i0_il,q_i0_il=q_i0_il,i0_il=i0_il,phi)
-    for (g in 1:y@Kcov[i]){
-    res_opt_S<-OptimizeS(order,y@K,y@Kcov,y@Ncov,S,g,phi,order+i,new_ll,pd_s[g,],delta[1+y@K+(tot-1)*maxkcov+g],delta_stop,n_i0_il,i0_il,q_i0_il,q,i)
-    new_ll<-res_opt_S$ll
-    S<-res_opt_S$S
-    delta[1+y@K+(tot-1)*maxkcov+g]<-res_opt_S$delta
-    }
+        pd_s<-PartialDerivativesS(CCov=order+i,ColVT=order+i+1,k=y@K,kcov=y@Kcov[i],n_i0_il=n_i0_il,q_i0_il=q_i0_il,i0_il=i0_il,phi)
+        for (g in 1:y@Kcov[i]){
+          res_opt_S<-OptimizeS(order,y@K,y@Kcov,y@Ncov,S,g,phi,order+i,new_ll,pd_s[g,],delta[1+y@K+(tot-1)*maxkcov+g],delta_stop,n_i0_il,i0_il,q_i0_il,q,i)
+          new_ll<-res_opt_S$ll
+          S<-res_opt_S$S
+          delta[1+y@K+(tot-1)*maxkcov+g]<-res_opt_S$delta
+        }
       }
     }
     
@@ -621,6 +621,22 @@ march.mtd.construct <- function(y,order,maxOrder=order,mtdg=FALSE,MCovar=0,init=
   }
   ll <- as.numeric(ll)
   
+  #Computation of the full transition matrix
+  #Remind that y is the dataset whithout the unused covariates. We put at the beginning
+  #y in ySave
+  tmCovar <- 1
+  if(y@Ncov>0){
+    for (i in 1:y@Ncov){
+      tmCovar <- tmCovar*y@Kcov[i]
+    }
+  }
+  NSS <- matrix(0,y@K^(order+1)*tmCovar,1)
+  ValT <- BuildArrayCombinations(y@K,order,y@Kcov,y@Ncov)
+  ProbT <- BuildArrayQ(y@K,order,ValT,NSS,q,y@Kcov,y@Ncov,S)
+  l <- GMTD_tm_cov(order,y@K,phi,matrix(ProbT,y@K^(order+1)*tmCovar,order+y@Ncov))
+  
+  RA <- l$CRHOQ  
+  
   #Return the final model
-  new("march.Mtd",order=order,Q=q,phi=phi,S=S,MCovar=MCovar,ll=ll,y=ySave,dsL=sum(y@T-order),nbZeros=nbZeros)
+  new("march.Mtd",RA=RA,order=order,Q=q,phi=phi,S=S,MCovar=MCovar,ll=ll,y=ySave,dsL=sum(y@T-order),nbZeros=nbZeros)
 }

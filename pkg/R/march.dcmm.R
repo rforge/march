@@ -21,7 +21,7 @@
 #' @param Cmodel the modeling of the visible transition matrix (mtd, mtdg or complete)
 #' @param AMCovar vector of the size Ncov indicating which covariables are used into the hidden process (0: no, 1:yes)
 #' @param CMCovar vector of the size Ncov indicating which covariables are used into the visible process (0: no, 1:yes)
-#' @param AConst diagonal constraint on the hidden transition matrix
+#' @param AConst logical, indicating whether or not the hidden transition matrix is diagonal constraint
 #' @param pMut mutation probability for the evolutionary algorithm
 #' @param pCross crossover probability for the evolutionary algorithm
 #'
@@ -34,6 +34,10 @@
 #' @export
 march.dcmm.construct <- function(y,orderHC,orderVC,M=2,gen=5,popSize=4,maxOrder=orderVC,seedModel=NULL,iterBw=2,stopBw=0.1,Amodel="mtd",Cmodel="mtd",AMCovar=0,CMCovar=0, AConst=FALSE, pMut=0.05, pCross=0.5){
 	
+  if(is.logical(AConst)==FALSE){
+    stop("AConst should be a logical")
+  }
+  
   if( is.null(seedModel) ){
     if(Amodel!="complete" & Amodel!="mtd" & Amodel!="mtdg"){
 		  stop("Amodel should be equal to complete, mtd or mtdg")
