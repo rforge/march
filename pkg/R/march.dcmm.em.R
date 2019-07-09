@@ -1103,9 +1103,7 @@ GMTD.op.dcmm.A<-function(d,NSS,SDip,Delta,Stop,Constraint,AtmCovar,CtmCovar){
 			tLL <- 0
 			for(n in 1:d@y@N){
 				s <- march.dataset.h.extractSequence(d@y,n)
-
-				l <- march.dcmm.fp.cov(dtmp,s,dtmp@y@cov[n,,],AtmCovar,CtmCovar)$LLAlpha
-				tLL <- tLL+l$LLAlpha
+				tLL <- tLL+march.dcmm.fp.cov(dtmp,s,dtmp@y@cov[n,,],AtmCovar,CtmCovar)$LLAlpha
 			}
 			dtmp@ll <- tLL
 		}
