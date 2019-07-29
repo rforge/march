@@ -9,7 +9,7 @@ march.mtd.construct(y, order, maxOrder = order, mtdg = FALSE,
   maxIter = 0)
 }
 \arguments{
-\item{y}{the dataset (\code{\link{march.Dataset}}) from which to construct the model.}
+\item{y}{the dataset (\code{\link{march.Dataset-class}}) from which to construct the model.}
 
 \item{order}{the order of the constructed model.}
 
@@ -28,8 +28,8 @@ march.mtd.construct(y, order, maxOrder = order, mtdg = FALSE,
 \item{maxIter}{the maximal number of iterations of the optimisation algorithm (zero for no maximal number).}
 }
 \description{
-A Mixture Transition Distribution model (\code{\link{march.Mtd}}) object of order \emph{order} is constructed
-according to a given \code{\link{march.Dataset}} \emph{y}. The first \emph{maxOrder}-\emph{order}
+A Mixture Transition Distribution model (\code{\link{march.Mtd-class}}) object of order \emph{order} is constructed
+according to a given \code{\link{march.Dataset-class}} \emph{y}. The first \emph{maxOrder}-\emph{order}
 elements of each sequence are truncated in order to return a model
 which can be compared with other Markovian models of visible order maxOrder.
 }
