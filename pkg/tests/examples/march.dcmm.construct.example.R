@@ -22,6 +22,6 @@ models[[length(models)+1]] <- march.dcmm.construct(y=pewee,seedModel=models[[2]]
 
 # Construct a three hidden states, first-order HMM (hence OrderVC=0) for the sleep data.
 # By setting gen=1 and popSize=1, the estimation procedure uses only the Baum-Welch algorithm.
-HMM <- march.dcmm.construct(pewee,orderHC=1,orderVC=0,M=2,gen=1,popSize=1,iterBw=10,stopBw=0.0001)
+\dontrun{HMM <- march.dcmm.construct(pewee,orderHC=1,orderVC=0,M=2,gen=1,popSize=1,iterBw=10,stopBw=0.0001)}
 
 
