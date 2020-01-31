@@ -13,8 +13,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 #
-# Copyrigth 2014, Ogier Maitre, Andre Berchtold 
-# ogier.maitre@epfl.ch andre.berchtold@unil.ch 
+# Copyrigth 2014-2020, Ogier Maitre, Kevin Emery, André Berchtold 
+# andre.berchtold@unil.ch 
 #
 
 
@@ -26,25 +26,24 @@
 
 # show method for model (abstract) object
 march.model.show <- function(object){
-  cat("ll : ",object@ll,"\n")
-  cat("dsL: ",object@dsL,"\n")
+  cat("Log-likelihood : ",object@ll,"\n")
+  cat("Number of data : ",object@dsL,"\n")
 }
 
 # show method for indep object
 march.indep.show <- function(object){
   cat(march.name(object))
-  cat("\n")
+  cat("\n\nProbability distribution :\n")
   
   s <- array(0,c(1,length(object@indP)))
   colnames(s) <- 1:object@y@K
   
   s[1,] <- object@indP
-  rownames(s) <- c("indP")
   print(s)
-  cat("\n")
+  
+  cat("\nFrequency distribution :\n")
   
   s[1,] <- object@indC
-  rownames(s) <- c("indC")
   print(s)
   cat("\n")
   
@@ -54,18 +53,17 @@ march.indep.show <- function(object){
 # show method for mc object
 march.mc.show <- function(object){
   cat(march.name(object))
-  cat("\nRC : \n")
+  cat("\n\nTransition matrix of order", object@order, ": \n")
   
   s <- march.h.mc.printableMatrix(object@RC,object@order,object@y@K)
   print(s)
   cat("\n")
   
-  cat("RT : \n")
+  cat("Crosstable : \n")
   s <- march.h.mc.printableMatrix(object@RT,object@order,object@y@K)
   print(s)
   cat("\n")
-  cat("order : ",object@order,"\n")
-  
+
   march.model.show(object)
 }
 
@@ -74,82 +72,175 @@ march.mtd.show <- function(object){
   placeCovar <- which(object@MCovar==1)
   
   cat(march.name(object))
-  cat("\n")
-  cat("Transition matrix : \n")
+  cat("\n\n")
+  cat("High-order transition matrix : \n")
   s <- march.cov.h.mc.printableMatrix(object@RA,object@order,object@y@K,object@y@Kcov[placeCovar],sum(object@MCovar))
   print(s)
   cat("\n")
-  # if( dim(object@Q)[1]==1 ){
-  #   
-  #   cat("Q : \n")
-  #   for( i in 1:object@y@K ){
-  #     cat(sprintf("%.4f", object@Q[1,i,]))
-  #     cat("\n")
-  #   }
-  # }
-  # else{
-  #   for( g in 1:dim(object@Q)[1]){
-  #     cat(sprintf("Q%d : \n",g))
-  #     for( i in 1:object@y@K ){
-  #       cat(sprintf("%.4f", object@Q[g,i,]))
-  #       cat("\n")
-  #     }    
-  #   }
-  # }
-  # cat("\n")
-  # if(sum(object@MCovar)>0){
-  #   for(g in 1:sum(object@MCovar)){
-  #     cat(sprintf("S%d : \n",g))
-  #     for(i in 1:object@y@Kcov[placeCovar[g]]){
-  #       cat(sprintf("%.4f", object@S[[g]][i,]))
-  #       cat("\n")
-  #     }
-  #   }
-  # }
-  # cat("\n")
-  # cat("phi : ")
-  # cat(sprintf("%.4f",object@phi))
-  # cat("\n\n")
-  # cat("order : ",object@order,"\n")
+  
+  # MTD model
+  cat("Vector of weights : \n")
+  print(object@phi)
+  cat("\n")
+  
+  for (i in 1:(dim(object@Q)[1])){
+    if (i==1){
+      if (dim(object@Q)[1]==1){
+        cat("Transition matrix : \n")
+      } else {
+        cat("Transition matrix, lag",i,": \n")        
+      }
+    } else {
+      cat("Transition matrix, lag",i,": \n")        
+    }
+    print(object@Q[i,,])
+    cat("\n")    
+  }
+  
+  if (length(object@phi)>object@order){
+    for (i in 1:sum(object@MCovar)){
+      cat("Transition matrix for covariate",i,": \n")        
+      print(object@S[i])
+    }
+  }
+  
   march.model.show(object)
 }
 
 march.dcmm.show <- function(object){
 	  placeACovar <- which(object@AMCovar==1)
 	  placeCCovar <- which(object@CMCovar==1)
+	  
 	  AtmCovar <- 1
   	if(sum(object@AMCovar>0)){
   		AtmCovar <-prod(object@y@Kcov[placeACovar])
   	}
-	
-  	cat(march.name(object))
-  	cat("\nRA : \n")
-  	if(object@orderHC==0){
-  		s <- march.cov.h.mc.printableMatrix(object@A[1:AtmCovar,,drop=FALSE],0,object@M,object@y@Kcov[placeACovar],sum(object@AMCovar))
+
+	  CtmCovar <- 1
+	  if(sum(object@CMCovar>0)){
+	    CtmCovar <-prod(object@y@Kcov[placeCCovar])
+	  }
+	  
+  	cat(march.name(object),"\n\n")
+  	
+  	if (object@M==1 & sum(object@AMCovar)==0){
+  	  cat("No hidden level \n\n")
   	}else{
-  		s <- march.cov.h.mc.printableMatrix(march.dcmm.cov.h.compactA(object),object@orderHC,object@M,object@y@Kcov[placeACovar],sum(object@AMCovar))
+  	  cat("Hidden level: \n")
+  	  cat("=============  \n\n")
+  	  
+  	  for( i in 1:object@orderHC){
+  	    cat("Distribution of hidden state",i,": \n")
+  	    for( j in 1:(AtmCovar*object@M^(i-1))){
+  	      cat(object@Pi[j,,i])
+  	      cat("\n")
+  	    }
+  	    cat("\n")
+  	  }
+  	  
+  	  cat("Hidden transition matrix : \n")
+  	  if(object@orderHC==0){
+  	    s <- march.cov.h.mc.printableMatrix(object@A[1:AtmCovar,,drop=FALSE],0,object@M,object@y@Kcov[placeACovar],sum(object@AMCovar))
+  	  }else{
+  	    s <- march.cov.h.mc.printableMatrix(march.dcmm.cov.h.compactA(object),object@orderHC,object@M,object@y@Kcov[placeACovar],sum(object@AMCovar))
+  	  }
+  	  print(s)
+  	  cat("\n") 	  
+  	  
+  	  
+  	  if(sum(object@AMCovar)>0 | (object@Amodel=="mtd" & object@orderHC>1) | (object@Amodel=="mtdg" & object@orderHC>1)){
+  	    # Display the modeling of the hidden transition matrix
+  	    # Rem: Covariates are allowed at the hidden level only when the hidden order is >0
+  	    #      and there are at least two hidden states
+  	    
+  	    cat("Modeling of the hidden transition matrix : \n\n")
+  	    
+  	    cat("Vector of weights : \n")
+  	    print(object@APhi)
+  	    cat("\n")
+  	    
+  	    for (i in 1:(dim(object@AQ)[1])){
+  	      if (i==1){
+  	        if (dim(object@AQ)[1]==1){
+  	          cat("Transition matrix : \n")
+  	        } else {
+  	          cat("Transition matrix, lag",i,": \n")        
+  	        }
+  	      } else {
+  	        cat("Transition matrix, lag",i,": \n")        
+  	      }
+  	      print(object@AQ[i,,])
+  	      cat("\n")    
+  	    }
+  	    
+  	    if (sum(object@AMCovar)>0){
+  	      for (i in 1:sum(object@AMCovar)){
+  	        cat("Transition matrix for covariate",i,": \n")        
+  	        print(object@ATCovar[i])
+  	        cat("\n")  
+  	      }
+  	    }
+  	    
+  	  }
+  	  
+  	  
   	}
-  	print(s)
-  	cat("\n")
-  
-  	cat("RB : \n")
+  	
+  	cat("Visible level : \n")
+  	cat("=============== \n\n")
+  	
    	for( i in 1:object@M ){
-     	cat(i,":\n");
+   	  if (object@M>1){
+   	    cat("Model corresponding to hidden state", i, ":\n")
+   	    cat("------------------------------------- \n\n")
+   	  }
+   	  
    	  if(object@orderVC==0){
-   	    s <- march.cov.h.mc.printableMatrix.orderVC0(matrix(object@RB[,,i],AtmCovar,object@y@K),object@y@K,object@y@Kcov[placeCCovar],sum(object@CMCovar))
+   	    s <- march.cov.h.mc.printableMatrix.orderVC0(matrix(object@RB[,,i],CtmCovar,object@y@K),object@y@K,object@y@Kcov[placeCCovar],sum(object@CMCovar))
    	  }else{
         s <- march.cov.h.mc.printableMatrix(object@RB[,,i],object@orderVC,object@y@K,object@y@Kcov[placeCCovar],sum(object@CMCovar))
    	  }
    	  print(s)
-    }  
-  	cat("\nPi : \n")
-  	for( i in 1:object@orderHC){
-    	for( j in 1:(AtmCovar*object@M^(i-1))){
-      		cat(sprintf("%.4f",object@Pi[j,,i]))
-    		cat("\n")
-    	}
-    	cat("\n")
-	}
+   	  cat("\n")
+   	  
+   	  if(sum(object@CMCovar)>0 | (object@Cmodel=="mtd" & object@orderVC>1) | (object@Cmodel=="mtdg" & object@orderVC>1)){
+   	    # Display the modeling of the visible transition matrix
+
+   	    cat("Modeling of the visible transition matrix : \n\n")
+   	    
+   	    cat("Vector of weights : \n")
+   	    print(object@CPhi[1,,i])
+   	    cat("\n")
+   	    
+   	    for (j in 1:(dim(object@CQ)[1])){
+   	      if (j==1){
+   	        if (dim(object@CQ)[1]==1){
+   	          cat("Transition matrix : \n")
+   	        } else {
+   	          cat("Transition matrix, lag",j,": \n")        
+   	        }
+   	      } else {
+   	        cat("Transition matrix, lag",j,": \n")        
+   	      }
+   	      print(object@CQ[j,,,i])
+   	      cat("\n")    
+   	    }
+   	    
+   	    if (sum(object@CMCovar)>0){
+   	      for (j in 1:sum(object@CMCovar)){
+   	        cat("Transition matrix for covariate",j,": \n")  
+   	        tmpcov <- as.array(object@CTCovar[[j]])
+   	        print(tmpcov[,,i])
+   	        cat("\n")  
+   	      }
+   	    }
+   	    
+   	  }
+   	  
+   	  
+   	} 
+  	
+
   	march.model.show(object)
 }
 
@@ -345,128 +436,6 @@ setMethod(f="march.nbParams",signature="march.Mtd",definition=march.mtd.nbParams
 setMethod(f="march.nbParams",signature="march.Dcmm",definition=march.dcmm.nbParams)
 
 
-###############################################################################
-# Thompson allows to compute confidence intervals according to a given model,
-# using thompson's confidence interval method describe into: Thompson, S.K. (1987) 
-# "Sample size for estimating multinomial proportions," American Statistician, 41, 42-46.
-# Adaptation to markov models is described into : Berchtold, "Confidence Intervals for Markovian Models"
-###############################################################################
-
-#' Thompson Confidence Intervals for a march.Model.
-#' 
-#' Compute the confidence intervals using Thompson's formula on a march.Model
-#' object. See Thompson SK (1987) Sample size for estimating multinomial proportions,
-#' American Statistician 41:42-46, for details.
-#' 
-#' @param object the march.Model object on which compute the confidence intervals.
-#' @param alpha the significance level among : 0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.025, 0.02, 0.01, 0.005, 0.001, 0.0005, 0.0001.
-#' 
-#' @return A list of half-length confidence intervals for each probability distribution of the considered model.
-#' @author Ogier Maitre, Kevin Emery
-#' @example tests/examples/march.thompson.example.R
-#' @export 
-march.thompson <- function(object,alpha){}
-
-march.model.thompson <- function(object,alpha){
-  warning("Confidence interval with thompson formula cannot be computed for abstract class \"model\", check the parameters of the call to march.thompson")
-}
-
-march.mc.thompson <- function(object,alpha){
-  d2n <- march.ci.h.d2n(alpha)
-  d <- array(NA,object@y@K^object@order)
-  
-  for( i in 1:length(d)){
-    s <- sum(object@RT[i,])
-    if( s>0 ){
-      d[i]<-sqrt(d2n/s)
-    }
-    
-  }
-  d
-}
-
-march.indep.thompson <- function(object,alpha){
-  d2n <- march.ci.h.d2n(alpha)
-  
-  sqrt(d2n/object@dsL)
-}
-
-#
-# TODO : Handle multi-sequences by computing the number of data
-#  	 influencing each distribution and summing this number.
-#
-march.mtd.thompson <- function(object, alpha){
-  d2n <- march.ci.h.d2n(alpha)
-  
-  dphi <- d2n/object@dsL
-  
-  if(dim(object@Q)[1]>1){
-    is_mtdg <- TRUE
-  }else{
-    is_mtdg <- FALSE
-  }
-  l <- march.mtd.h.n(object,object@y,is_mtdg)
-  
-  dQ <- list()
-  if(is_mtdg==FALSE){
-    dQ[[1]] <- d2n/rowSums(l$nki_0)
-  }else{
-    for(ord in 1:object@order){
-      dQ[[ord]] <- d2n/rowSums(l$nki_0[ord,,])
-    }
-  }
-  
-  dS <- list()
-  if(sum(object@MCovar)>0){
-    placeCovar <- which(object@MCovar==1)
-    for(i in 1:sum(object@MCovar)){
-      dS[[i]] <- d2n/rowSums(l$numcov[i,1:object@y@Kcov[placeCovar[i]],])
-    }
-  }
-  list(phi=dphi,Q=dQ,S=dS)
-}
-
-march.dcmm.thompson <- function(object,alpha){
-  
-  stop("This part is not yet implemented")
-  # ys <- march.dataset.h.extractSequence(object@y,1)
-  # alpha<-march.dcmm.forward(object,ys)
-  # beta<-march.dcmm.backward(object,ys)
-  # 
-  # C
-} 
-
-
-#This part create the generic method and describe how a call to this generic
-#has to be redirected to the rigth method, according to the considered object.
-setGeneric(name="march.thompson",def=function(object,alpha)march.model.thompson(object,alpha))
-
-#' This method is called with the object "march.Indep" and the aplha "numeric" and
-#' provides it to the march.thompson function.
-#' @param object contains the name of the model.
-#' @param alpha contains the Type I error
-setMethod(f="march.thompson",signature=signature(object="march.Indep",alpha="numeric"),definition=march.indep.thompson)
-
-#' This method is called with the object "march.Mc" and the aplha "numeric" and
-#' provides it to the march.thompson function.
-#'
-#' @param object contains the name of the model.
-#' @param alpha contains the Type I error
-setMethod(f="march.thompson",signature=signature("march.Mc",alpha="numeric"),definition=march.mc.thompson)
-
-#' This method is called with the object "march.Mtd" and the aplha "numeric" and
-#' provides it to the march.thompson function.
-#'
-#' @param object contains the name of the model.
-#' @param alpha contains the Type I error
-setMethod(f="march.thompson",signature=signature("march.Mtd",alpha="numeric"),definition=march.mtd.thompson)
-
-#' This method is called with the object "march.Dcmm" and the aplha "numeric" and
-#' provides it to the march.thompson function.
-#'
-#' @param object contains the name of the model.
-#' @param alpha contains the Type I error
-setMethod(f="march.thompson",signature=signature("march.Dcmm",alpha="numeric"),definition=march.dcmm.thompson)
 
 #' march.Model name.
 #' 
@@ -500,29 +469,9 @@ march.dcmm.name <- function(object){
 #This part create the generic method and describe how a call to this generic
 #has to be redirected to the right method, according to the considered object.
 setGeneric(name="march.name",def=function(object)march.model.name(object))
-
-#' This method is called with the object "march.Indep" and provides it 
-#' to the march.name function.
-#'
-#' @param object contains the name of the model.
 setMethod(f="march.name",signature=signature(object="march.Indep"),definition=march.indep.name)
-
-#' This method is called with the object "march.MC" and provides it 
-#' to the march.name function.
-#'
-#' @param object contains the name of the model.
 setMethod(f="march.name",signature=signature(object="march.Mc"),definition=march.mc.name)
-
-#' This method is called with the object "march.Mtd" and provides it 
-#' to the march.name function.
-#'
-#' @param object contains the name of the model.
 setMethod(f="march.name",signature=signature(object="march.Mtd"),definition=march.mtd.name)
-
-#' This method is called with the object "march.Dcmm" and provides it 
-#' to the march.name function.
-#'
-#' @param object contains the name of the model.
 setMethod(f="march.name",signature=signature(object="march.Dcmm"),definition=march.dcmm.name)
 
 #quote=FALSE,digits = getOption("digits")

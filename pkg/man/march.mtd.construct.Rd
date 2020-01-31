@@ -4,9 +4,17 @@
 \alias{march.mtd.construct}
 \title{Construct a Mixture Transition Distribution (MTD) model.}
 \usage{
-march.mtd.construct(y, order, maxOrder = order, mtdg = FALSE,
-  MCovar = 0, init = "best", deltaStop = 1e-04, llStop = 0.01,
-  maxIter = 0)
+march.mtd.construct(
+  y,
+  order,
+  maxOrder = order,
+  mtdg = FALSE,
+  MCovar = 0,
+  init = "best",
+  deltaStop = 1e-04,
+  llStop = 0.01,
+  maxIter = 0
+)
 }
 \arguments{
 \item{y}{the dataset (\code{\link{march.Dataset-class}}) from which to construct the model.}

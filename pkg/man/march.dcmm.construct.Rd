@@ -4,10 +4,25 @@
 \alias{march.dcmm.construct}
 \title{Construct a double chain Markov model (DCMM).}
 \usage{
-march.dcmm.construct(y, orderHC, orderVC, M = 2, gen = 5,
-  popSize = 4, maxOrder = orderVC, seedModel = NULL, iterBw = 2,
-  stopBw = 0.1, Amodel = "mtd", Cmodel = "mtd", AMCovar = 0,
-  CMCovar = 0, AConst = FALSE, pMut = 0.05, pCross = 0.5)
+march.dcmm.construct(
+  y,
+  orderHC,
+  orderVC,
+  M = 2,
+  gen = 5,
+  popSize = 4,
+  maxOrder = orderVC,
+  seedModel = NULL,
+  iterBw = 2,
+  stopBw = 0.1,
+  Amodel = "mtd",
+  Cmodel = "mtd",
+  AMCovar = 0,
+  CMCovar = 0,
+  AConst = FALSE,
+  pMut = 0.05,
+  pCross = 0.5
+)
 }
 \arguments{
 \item{y}{the dataset from which the Dcmm will be constructed \code{\link{march.Dataset-class}}.}
