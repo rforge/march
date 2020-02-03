@@ -29,7 +29,7 @@ print(Indep)
 march.bailey(Indep,alpha=0.05)
 
 # Compute a second-order MTDg model for the pewee data.
-MTD2g <- march.mtd.construct(pewee,2,mtdg=T)
+MTD2g <- march.mtd.construct(pewee,2,mtdg=TRUE)
 # Display the model
 print(MTD2g)
 # Compute the half-length 95\% confidence interval for all parameters
