@@ -22,7 +22,6 @@
 # Thompson allows to compute confidence intervals according to a given model,
 # using thompson's confidence interval method describe into: Thompson, S.K. (1987) 
 # "Sample size for estimating multinomial proportions," American Statistician, 41, 42-46.
-# Adaptation to markov models is described into : Berchtold, "Confidence Intervals for Markovian Models"
 ###############################################################################
 
 #' Thompson Confidence Intervals for a march.Model.
