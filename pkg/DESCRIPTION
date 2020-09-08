@@ -3,8 +3,8 @@ Title: Markov Chains
 Description: Computation of various Markovian models for categorical data
     including homogeneous Markov chains of any order, MTD models, Hidden Markov
     models, and Double Chain Markov Models.
-Version: 3.2.3
-Date: 2020-01-28
+Version: 3.2.4
+Date: 2020-08-18
 Author: Ogier Maitre and Kevin Emery, with contributions from Oliver Buschor and Andre Berchtold 
 Maintainer: Andre Berchtold <andre.berchtold@unil.ch>
 Depends:
