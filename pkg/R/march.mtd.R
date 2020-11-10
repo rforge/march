@@ -663,7 +663,17 @@ march.mtd.construct <- function(y,order,maxOrder=order,mtdg=FALSE,MCovar=0,init=
     if (new_ll - ll < ll_stop){ break }
   }
   
-
+  # Rounding of near-zero probabilities
+  # The goal is to avoid to keep infinitesimal probabilities that are counted
+  # as parameters without reasons.
+  # In a next version, an option could be added to choose whether performing this action or not.  
+  phi <- round(phi,10)
+  q <- round(q,10)
+  if(sum(MCovar)>0){
+      for(i in 1:sum(MCovar)){
+		S[[i]] <- round(S[[i]], 10)
+	  }
+  }
   
   #Computation of the number of zeros
   nbZeros <- 0
