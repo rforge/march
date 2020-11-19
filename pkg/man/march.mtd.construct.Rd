@@ -13,7 +13,8 @@ march.mtd.construct(
   init = "best",
   deltaStop = 1e-04,
   llStop = 0.01,
-  maxIter = 0
+  maxIter = 0,
+  seedModel = NULL
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ march.mtd.construct(
 \item{llStop}{the ll increase below which the EM algorithm stop.}
 
 \item{maxIter}{the maximal number of iterations of the optimisation algorithm (zero for no maximal number).}
+
+\item{seedModel}{an object containing a MTD or a DCMM model used to initialize the parameters of the MTD model.}
 }
 \description{
 A Mixture Transition Distribution model (\code{\link{march.Mtd-class}}) object of order \emph{order} is constructed
