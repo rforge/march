@@ -4,11 +4,12 @@ Description: Computation of various Markovian models for categorical data
     including homogeneous Markov chains of any order, MTD models, Hidden Markov
     models, and Double Chain Markov Models.
 Version: 3.3
-Date: 2020-11-19
+Date: 2020-11-20
 Author: Ogier Maitre and Kevin Emery, with contributions from Oliver Buschor and Andre Berchtold 
 Maintainer: Andre Berchtold <andre.berchtold@unil.ch>
 Depends:
-    R (>= 3.0.2),
+    R (>= 3.0.2)
+Imports:
     methods
 License: GPL-2
 LazyData: true
