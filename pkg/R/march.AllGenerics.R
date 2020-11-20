@@ -518,6 +518,8 @@ march.summary <- function(object,...){
 #' @author Ogier Maitre, Kevin Emery
 #' @example tests/examples/march.thompson.example.R
 #' @export 
+#' @docType methods
+#' @rdname march.thompson-methods
 march.thompson <- function(object,alpha){}
 
 march.model.thompson <- function(object,alpha){
@@ -685,7 +687,11 @@ march.dcmm.thompson <- function(object,alpha){
 #This part create the generic method and describe how a call to this generic
 #has to be redirected to the rigth method, according to the considered object.
 setGeneric(name="march.thompson",def=function(object,alpha)march.model.thompson(object,alpha))
+#' @rdname march.thompson-methods
+#' @aliases march.thompson
 setMethod(f="march.thompson",signature=signature(object="march.Indep",alpha="numeric"),definition=march.indep.thompson)
+#' @rdname march.thompson-methods
+#' @aliases march.thompson,numeric-method
 setMethod(f="march.thompson",signature=signature(object="march.Mc",alpha="numeric"),definition=march.mc.thompson)
 setMethod(f="march.thompson",signature=signature(object="march.Mtd",alpha="numeric"),definition=march.mtd.thompson)
 setMethod(f="march.thompson",signature=signature(object="march.Dcmm",alpha="numeric"),definition=march.dcmm.thompson)
