@@ -444,7 +444,6 @@ setMethod(f="march.nbParams",signature="march.Dcmm",definition=march.dcmm.nbPara
 #' @param object contains the name of the model(Independence model, MTD,...). 
 #' @author Ogier Maitre & Andre Berchtold
 #' @example tests/examples/march.name.example.R
-#' @export
 march.name <- function(object){}
 
 march.model.name <- function(object){ "abstract model" } # should never be called
@@ -459,6 +458,9 @@ march.mtd.name <- function(object){
   }
   
 }
+
+# REM: @export a ete supprime de la fonction ci-dessus
+
 
 march.dcmm.name <- function(object){
   if( object@orderVC==0 ){ sprintf("Hmm(%d)",object@orderHC) }
@@ -493,7 +495,12 @@ setMethod(f="march.name",signature=signature(object="march.Mtd"),definition=marc
 #'
 #' @param object contains the name of the model.
 setMethod(f="march.name",signature=signature(object="march.Dcmm"),definition=march.dcmm.name)
+
+
 #quote=FALSE,digits = getOption("digits")
+
+
+
 
 #' march.Model Summary.
 #'
@@ -518,31 +525,240 @@ march.summary <- function(object,...){
 # setMethod(f="Summary",signature=signature(object="march.Dcmm"),definition=march.summary)
 
 
+#' ###############################################################################
+#' # Thompson allows to compute confidence intervals according to a given model,
+#' # using thompson's confidence interval method describe into: Thompson, S.K. (1987) 
+#' # "Sample size for estimating multinomial proportions," American Statistician, 41, 42-46.
+#' ###############################################################################
+#' 
+#' #' Thompson Confidence Intervals for a march.Model.
+#' #' 
+#' #' Compute the confidence intervals using Thompson's formula on a march.Model
+#' #' object. See Thompson SK (1987) Sample size for estimating multinomial proportions,
+#' #' American Statistician 41:42-46, for details.
+#' #' 
+#' #' @param object the march.Model object on which compute the confidence intervals.
+#' #' @param alpha the significance level among : 0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.025, 0.02, 0.01, 0.005, 0.001, 0.0005, 0.0001.
+#' #' 
+#' #' @return A list of half-length confidence intervals for each probability distribution of the considered model.
+#' #' @author Ogier Maitre, Kevin Emery
+#' #' @example tests/examples/march.thompson.example.R
+#' #' @export 
+#' march.thompson <- function(object,alpha){}
+#' 
+#' march.model.thompson <- function(object,alpha){
+#'   warning("Confidence interval with thompson formula cannot be computed for abstract class \"model\", check the parameters of the call to march.thompson")
+#' }
+#' 
+#' march.indep.thompson <- function(object,alpha){
+#'   d2n <- march.ci.h.d2n(alpha)
+#'   
+#'   d <- sqrt(d2n/object@dsL)
+#'   
+#'   # Display
+#'   cat("\nHalf CI for the independence model :\n")
+#'   cat("------------------------------------\n")
+#'   print(d)
+#'   cat("\n")
+#' }
+#' 
+#' march.mc.thompson <- function(object,alpha){
+#'   d2n <- march.ci.h.d2n(alpha)
+#'   d <- array(NA,object@y@K^object@order)
+#'   
+#'   for( i in 1:length(d)){
+#'     s <- sum(object@RT[i,])
+#'     if( s>0 ){
+#'       d[i]<-sqrt(d2n/s)
+#'     }
+#'   }
+#'   
+#'   # Display
+#'   cat("\nHalf CI for each row of the transition matrix :\n")
+#'   cat("-----------------------------------------------\n")
+#'   print(d)
+#'   cat("\n") 
+#'   
+#' }
+#' 
+#' 
+#' march.mtd.thompson <- function(object, alpha){
+#'   # TO DO: CI for the high-order matrix
+#'   
+#'   d2n <- march.ci.h.d2n(alpha)
+#'   
+#'   dphi <- d2n/object@dsL
+#'   
+#'   if(dim(object@Q)[1]>1){
+#'     is_mtdg <- TRUE
+#'   }else{
+#'     is_mtdg <- FALSE
+#'   }
+#'   l <- march.mtd.h.n(object,object@y,is_mtdg)
+#'   
+#'   dQ <- list()
+#'   if(is_mtdg==FALSE){
+#'     dQ[[1]] <- d2n/rowSums(l$nki_0)
+#'   }else{
+#'     for(ord in 1:object@order){
+#'       dQ[[ord]] <- d2n/rowSums(l$nki_0[ord,,])
+#'     }
+#'   }
+#'   
+#'   # Covariates
+#'   dS <- list()
+#'   if(sum(object@MCovar)>0){
+#'     placeCovar <- which(object@MCovar==1)
+#'     for(i in 1:sum(object@MCovar)){
+#'       dS[[i]] <- d2n/rowSums(l$numcov[i,1:object@y@Kcov[placeCovar[i]],])
+#'     }
+#'   }
+#'   
+#'   # High-order transition matrix
+#'   CQ <- l$nki_0
+#'   
+#'   if(is_mtdg==FALSE){
+#'     # MTD model
+#'     
+#'     # Matrix of index
+#'     INDEX <- BuildArrayCombinations(ncol(CQ),(object@order-1),0,0)
+#'     
+#'     # Matrix of number of data
+#'     NHO <- matrix(0,nrow=(ncol(CQ)^object@order),ncol=ncol(CQ))
+#'     
+#'     for (i in 1:(ncol(CQ)^object@order)){
+#'       for (j in 1:ncol(CQ)){
+#'         for (k in 1:object@order){
+#'           NHO[i,j] <- NHO[i,j]+object@phi[k]*CQ[INDEX[i,k],j]
+#'         } 
+#'       }
+#'     }    
+#'     
+#'   }else{
+#'     # MTDg model
+#'     
+#'     # Matrix of index
+#'     INDEX <- BuildArrayCombinations(ncol(CQ[1,,]),(object@order-1),0,0)
+#'     
+#'     # Matrix of number of data
+#'     NHO <- matrix(0,nrow=(ncol(CQ[1,,])^object@order),ncol=ncol(CQ))
+#'     
+#'     for (i in 1:(ncol(CQ[1,,])^object@order)){
+#'       for (j in 1:ncol(CQ[1,,])){
+#'         for (k in 1:object@order){
+#'           NHO[i,j] <- NHO[i,j]+object@phi[k]*CQ[ord,INDEX[i,k],j]
+#'         } 
+#'       }
+#'     }  
+#'   }
+#'   
+#'   # CI for the high-order transition matrix
+#'   dNHO <- d2n/rowSums(NHO)
+#'   
+#'   
+#'   # Display
+#'   cat("\nHalf CI for the vector of weights :\n")
+#'   cat("-----------------------------------\n")
+#'   print(dphi)
+#'   cat("\n")
+#'   
+#'   if (dim(object@Q)[1]==1){
+#'     # MTD
+#'     cat("Half CI for each row of the transition matrix :\n")
+#'     cat("---------------------------------------------\n")
+#'     print(dQ[[1]])
+#'     cat("\n")
+#'   } else {
+#'     # MTDg
+#'     for (ord in 1:dim(object@Q)[1]){
+#'       cat("Half CI for each row of the transition matrix of lag",ord,":\n")
+#'       cat("  ------------------------------------------------------\n")
+#'       print(dQ[[ord]])
+#'       cat("\n")
+#'     }
+#'   }
+#'   
+#'   if(sum(object@MCovar)>0){
+#'     # Covariates
+#'     for (cov in 1:sum(object@MCovar)){
+#'       cat("Half CI for each row of the transition matrix of covariate",cov,":\n")
+#'       cat("  ---------------------------------------------------------\n")
+#'       print(dS[[cov]])
+#'       cat("\n")
+#'     }    
+#'   }
+#'   
+#'   
+#'   cat("Half CI for each row of the high-order transition matrix :\n")
+#'   cat("----------------------------------------------------------\n")
+#'   print(dNHO)
+#'   cat("\n")
+#'   
+#' }
+#' 
+#' 
+#' march.dcmm.thompson <- function(object,alpha){
+#'   
+#'   stop("This part is not yet implemented")
+#'   # ys <- march.dataset.h.extractSequence(object@y,1)
+#'   # alpha<-march.dcmm.forward(object,ys)
+#'   # beta<-march.dcmm.backward(object,ys)
+#'   # 
+#'   # C
+#' } 
+#' 
+#' 
+#' #This part create the generic method and describe how a call to this generic
+#' #has to be redirected to the rigth method, according to the considered object.
+#' setGeneric(name="march.thompson",def=function(object,alpha)march.model.thompson(object,alpha))
+#' 
+#' #' This method is called with the object "march.Indep" and the alpha "numeric" and
+#' #' provides it to the march.thompson function.
+#' #' @param object contains the name of the model.
+#' #' @param alpha contains the Type I error
+#' setMethod(f="march.thompson",signature=signature(object="march.Indep",alpha="numeric"),definition=march.indep.thompson)
+#' 
+#' #' This method is called with the object "march.Mc" and the alpha "numeric" and
+#' #' provides it to the march.thompson function.
+#' #'
+#' #' @param object contains the name of the model.
+#' #' @param alpha contains the Type I error
+#' setMethod(f="march.thompson",signature=signature(object="march.Mc",alpha="numeric"),definition=march.mc.thompson)
+#' 
+#' #' This method is called with the object "march.Mtd" and the alpha "numeric" and
+#' #' provides it to the march.thompson function.
+#' #'
+#' #' @param object contains the name of the model.
+#' #' @param alpha contains the Type I error
+#' setMethod(f="march.thompson",signature=signature(object="march.Mtd",alpha="numeric"),definition=march.mtd.thompson)
+#' 
+#' #' This method is called with the object "march.Dcmm" and the alpha "numeric" and
+#' #' provides it to the march.thompson function.
+#' #'
+#' #' @param object contains the name of the model.
+#' #' @param alpha contains the Type I error
+#' setMethod(f="march.thompson",signature=signature(object="march.Dcmm",alpha="numeric"),definition=march.dcmm.thompson)
+
+
 ###############################################################################
 # Thompson allows to compute confidence intervals according to a given model,
 # using thompson's confidence interval method describe into: Thompson, S.K. (1987) 
 # "Sample size for estimating multinomial proportions," American Statistician, 41, 42-46.
 ###############################################################################
 
-#' Thompson Confidence Intervals for a march.Model.
+#' Thompson Confidence Intervals for an Independence model.
 #' 
-#' Compute the confidence intervals using Thompson's formula on a march.Model
+#' Compute the confidence intervals using Thompson's formula on a march.Indep
 #' object. See Thompson SK (1987) Sample size for estimating multinomial proportions,
 #' American Statistician 41:42-46, for details.
 #' 
 #' @param object the march.Model object on which compute the confidence intervals.
 #' @param alpha the significance level among : 0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.025, 0.02, 0.01, 0.005, 0.001, 0.0005, 0.0001.
 #' 
-#' @return A list of half-length confidence intervals for each probability distribution of the considered model.
+#' @return A list of half-length confidence intervals for each probability of the independence model.
 #' @author Ogier Maitre, Kevin Emery
 #' @example tests/examples/march.thompson.example.R
 #' @export 
-march.thompson <- function(object,alpha){}
-
-march.model.thompson <- function(object,alpha){
-  warning("Confidence interval with thompson formula cannot be computed for abstract class \"model\", check the parameters of the call to march.thompson")
-}
-
 march.indep.thompson <- function(object,alpha){
   d2n <- march.ci.h.d2n(alpha)
   
@@ -555,6 +771,20 @@ march.indep.thompson <- function(object,alpha){
   cat("\n")
 }
 
+
+#' Thompson Confidence Intervals for a Markov chain model.
+#' 
+#' Compute the confidence intervals using Thompson's formula on a march.Mc
+#' object. See Thompson SK (1987) Sample size for estimating multinomial proportions,
+#' American Statistician 41:42-46, for details.
+#' 
+#' @param object the march.Model object on which compute the confidence intervals.
+#' @param alpha the significance level among : 0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.025, 0.02, 0.01, 0.005, 0.001, 0.0005, 0.0001.
+#' 
+#' @return A list of half-length confidence intervals for each probability distribution of the Markov chain.
+#' @author Ogier Maitre, Kevin Emery
+#' @example tests/examples/march.thompson.example.R
+#' @export 
 march.mc.thompson <- function(object,alpha){
   d2n <- march.ci.h.d2n(alpha)
   d <- array(NA,object@y@K^object@order)
@@ -575,9 +805,21 @@ march.mc.thompson <- function(object,alpha){
 }
 
 
+#' Thompson Confidence Intervals for a MTD model.
+#' 
+#' Compute the confidence intervals using Thompson's formula on a march.Mtd
+#' object. See Thompson SK (1987) Sample size for estimating multinomial proportions,
+#' American Statistician 41:42-46, for details.
+#' 
+#' @param object the march.Model object on which compute the confidence intervals.
+#' @param alpha the significance level among : 0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.025, 0.02, 0.01, 0.005, 0.001, 0.0005, 0.0001.
+#' 
+#' @return A list of half-length confidence intervals for each probability distribution of the MTD model.
+#' @author Ogier Maitre, Kevin Emery
+#' @example tests/examples/march.thompson.example.R
+#' @export 
 march.mtd.thompson <- function(object, alpha){
-  # TO DO: CI for the high-order matrix
-  
+
   d2n <- march.ci.h.d2n(alpha)
   
   dphi <- d2n/object@dsL
@@ -690,47 +932,8 @@ march.mtd.thompson <- function(object, alpha){
 }
 
 
-march.dcmm.thompson <- function(object,alpha){
-  
-  stop("This part is not yet implemented")
-  # ys <- march.dataset.h.extractSequence(object@y,1)
-  # alpha<-march.dcmm.forward(object,ys)
-  # beta<-march.dcmm.backward(object,ys)
-  # 
-  # C
-} 
 
 
-#This part create the generic method and describe how a call to this generic
-#has to be redirected to the rigth method, according to the considered object.
-setGeneric(name="march.thompson",def=function(object,alpha)march.model.thompson(object,alpha))
-
-#' This method is called with the object "march.Indep" and the alpha "numeric" and
-#' provides it to the march.thompson function.
-#' @param object contains the name of the model.
-#' @param alpha contains the Type I error
-setMethod(f="march.thompson",signature=signature(object="march.Indep",alpha="numeric"),definition=march.indep.thompson)
-
-#' This method is called with the object "march.Mc" and the alpha "numeric" and
-#' provides it to the march.thompson function.
-#'
-#' @param object contains the name of the model.
-#' @param alpha contains the Type I error
-setMethod(f="march.thompson",signature=signature(object="march.Mc",alpha="numeric"),definition=march.mc.thompson)
-
-#' This method is called with the object "march.Mtd" and the alpha "numeric" and
-#' provides it to the march.thompson function.
-#'
-#' @param object contains the name of the model.
-#' @param alpha contains the Type I error
-setMethod(f="march.thompson",signature=signature(object="march.Mtd",alpha="numeric"),definition=march.mtd.thompson)
-
-#' This method is called with the object "march.Dcmm" and the alpha "numeric" and
-#' provides it to the march.thompson function.
-#'
-#' @param object contains the name of the model.
-#' @param alpha contains the Type I error
-setMethod(f="march.thompson",signature=signature(object="march.Dcmm",alpha="numeric"),definition=march.dcmm.thompson)
 
 
 ###############################################################################
