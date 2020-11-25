@@ -3,7 +3,7 @@ Indep <- march.indep.construct(pewee)
 # Display the model
 print(Indep)
 # Compute the half-length 95% confidence interval for each element of the distribution.
-march.bailey(Indep,alpha=0.05)
+march.indep.bailey(Indep,alpha=0.05)
 
 # Compute a second-order MTDg model for the pewee data.
 MTD2g <- march.mtd.construct(pewee,2,mtdg=TRUE)
@@ -11,4 +11,4 @@ MTD2g <- march.mtd.construct(pewee,2,mtdg=TRUE)
 print(MTD2g)
 # Compute the half-length 95% confidence interval for all parameters
 # of the MTD2g model.
-march.bailey(MTD2g,alpha=0.05)
+march.mtd.bailey(MTD2g,alpha=0.05)

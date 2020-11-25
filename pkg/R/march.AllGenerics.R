@@ -936,6 +936,252 @@ march.mtd.thompson <- function(object, alpha){
 
 
 
+#' ###############################################################################
+#' # Bailey allows to compute confidence intervals according to a given model,
+#' # using Bailey's confidence interval method describe in: Bailey, B.J.R. (1980) 
+#' # "Large sample simultaneous confidence intervals for the multinomial probabilities based on
+#' # transformation of the cell frequencies." Technometrics 1980, 22, 583–589.
+#' # Adaptation to Markov models is described into : Berchtold, "Confidence Intervals for Markovian Models"
+#' ###############################################################################
+#' 
+#' #' Bailey Confidence Intervals for a march.Model.
+#' #' 
+#' #' Compute the confidence intervals using Bailey's formula on a march.Model
+#' #' object. See Bailey BJR (1980) Large sample simultaneous confidence intervals
+#' #' for the multinomial probabilities based ontransformation of the cell frequencies,
+#' #' Technometrics 22:583–589, for details.
+#' #' 
+#' #' @param object the march.Model object on which compute the confidence intervals.
+#' #' @param alpha the significance level.
+#' #' 
+#' #' @return A list of half-length confidence intervals for each probability distribution of the considered model.
+#' #' @author Berchtold André
+#' #' @example tests/examples/march.bailey.example.R
+#' #' @export 
+#' march.bailey <- function(object,alpha){}
+#' 
+#' march.model.bailey <- function(object,alpha){
+#'   warning("Confidence interval with Bailey formula cannot be computed for abstract class \"model\", check the parameters of the call to march.bailey")
+#' }
+#' 
+#' 
+#' march.indep.bailey <- function(object,alpha){
+#'   n <- sum(object@dsL)
+#'   
+#'   p <- array(NA,c(2,object@y@K))
+#'   colnames(p) <- object@y@dictionary
+#'   rownames(p) <- c("p-","p+")
+#'   for( i in 1:object@y@K){
+#'     ni <- object@indC[i]
+#'     A <- march.ci.h.A(n,ni)
+#'     B <- march.ci.h.B(n,ni)	
+#'     C <- march.ci.h.C(alpha,object@y@K,n)
+#'     
+#'     p["p-",i] = (sqrt(A)-sqrt(C*(C+1-A)))^2/(C+1)^2
+#'     p["p+",i] = (sqrt(B)+sqrt(C*(C+1-B)))^2/(C+1)^2
+#'   }
+#'   
+#'   # Display
+#'   cat("\nCI for the independence model :\n")
+#'   cat("-------------------------------\n")
+#'   cat("Lower bound :")
+#'   prmatrix(t(p["p-",]),collab=rep("",object@y@K))
+#'   cat("\nUpper bound :")
+#'   prmatrix(t(p["p+",]),collab=rep("",object@y@K))
+#'   cat("\n")
+#'   
+#' }
+#' 
+#' 
+#' march.mc.bailey <- function(object,alpha){
+#'   
+#'   NHO <- object@RT
+#'   rNHO <- rowSums(NHO)  
+#'   
+#'   NHO.l <- matrix(NA,nrow=nrow(NHO),ncol=ncol(NHO))
+#'   NHO.u <- matrix(NA,nrow=nrow(NHO),ncol=ncol(NHO))
+#'   for (i in 1:nrow(NHO)){
+#'     for (j in 1:ncol(NHO)){
+#'       res <- march.bailey.ci(NHO[i,j],rNHO[i],alpha,ncol(NHO))
+#'       NHO.l[i,j] <- res[[1]]
+#'       NHO.u[i,j] <- res[[2]]
+#'     }
+#'   }
+#'   
+#'   # Display
+#'   cat("\nCI for the transition matrix :\n")
+#'   cat("------------------------------\n")
+#'   cat("Lower bound :")
+#'   prmatrix(NHO.l,collab=rep("",object@y@K))
+#'   cat("\nUpper bound :")
+#'   prmatrix(NHO.u,collab=rep("",object@y@K))
+#'   cat("\n") 
+#' }
+#' 
+#' 
+#' march.mtd.bailey <- function(object,alpha){
+#'   
+#'   # lag weights
+#'   N <- object@dsL
+#'   ni <- N*object@phi
+#'   
+#'   phi.l <- matrix(NA,nrow=1,ncol=object@order)
+#'   phi.u <- matrix(NA,nrow=1,ncol=object@order)
+#'   for (i in 1:object@order){
+#'     res <- march.bailey.ci(ni[i],N,alpha,object@order)
+#'     phi.l[i] <- res[[1]]
+#'     phi.u[i] <- res[[2]]
+#'   }
+#'   
+#'   # transition probabilities
+#'   
+#'   if (dim(object@Q)[1]==1){
+#'     
+#'     # A. MTD model
+#'     CQ <- march.mtd.h.n(object,object@y,is_mtdg=F)
+#'     CQ <- CQ$`nki_0`
+#'     rCQ <- rowSums(CQ)
+#'     
+#'     Q.l <- matrix(NA,nrow=nrow(CQ),ncol=ncol(CQ))
+#'     Q.u <- matrix(NA,nrow=nrow(CQ),ncol=ncol(CQ))
+#'     for (i in 1:nrow(CQ)){
+#'       for (j in 1:ncol(CQ)){
+#'         res <- march.bailey.ci(CQ[i,j],rCQ[i],alpha,ncol(CQ))
+#'         Q.l[i,j] <- res[[1]]
+#'         Q.u[i,j] <- res[[2]]
+#'       }
+#'     }
+#'     
+#'     # High-order matrix
+#'     
+#'     # Matrix of index
+#'     INDEX <- BuildArrayCombinations(ncol(CQ),(object@order-1),0,0)
+#'     
+#'     # Matrix of number of data
+#'     NHO <- matrix(0,nrow=(ncol(CQ)^object@order),ncol=ncol(CQ))
+#'     
+#'     for (i in 1:(ncol(CQ)^object@order)){
+#'       for (j in 1:ncol(CQ)){
+#'         for (k in 1:object@order){
+#'           NHO[i,j] <- NHO[i,j]+object@phi[k]*CQ[INDEX[i,k],j]
+#'         } 
+#'       }
+#'     }    
+#'   } else {
+#'     
+#'     # B. MTDg model
+#'     Q.l <- array(NA,dim=c(object@order,object@y@K,object@y@K))
+#'     Q.u <- array(NA,dim=c(object@order,object@y@K,object@y@K))
+#'     
+#'     CQ <- march.mtd.h.n(object,object@y,is_mtdg=T)
+#'     CQ <- CQ$`nki_0`
+#'     
+#'     for (ord in 1:object@order){
+#'       QCQ <- CQ[ord,,]
+#'       rQCQ <- rowSums(QCQ)
+#'       
+#'       for (i in 1:nrow(QCQ)){
+#'         for (j in 1:ncol(QCQ)){
+#'           res <- march.bailey.ci(QCQ[i,j],rQCQ[i],alpha,ncol(QCQ))
+#'           Q.l[ord,i,j] <- res[[1]]
+#'           Q.u[ord,i,j] <- res[[2]]
+#'         }
+#'       }
+#'     }
+#'     
+#'     # High-order matrix
+#'     
+#'     # Matrix of index
+#'     INDEX <- BuildArrayCombinations(ncol(QCQ),(object@order-1),0,0)
+#'     
+#'     # Matrix of number of data
+#'     NHO <- matrix(0,nrow=(ncol(QCQ)^object@order),ncol=ncol(QCQ))
+#'     
+#'     for (i in 1:(ncol(QCQ)^object@order)){
+#'       for (j in 1:ncol(QCQ)){
+#'         for (k in 1:object@order){
+#'           NHO[i,j] <- NHO[i,j]+object@phi[k]*CQ[k,INDEX[i,k],j]
+#'         } 
+#'       }
+#'     }    
+#'   }
+#'   
+#'   # CI for the high-order transition matrix
+#'   rNHO <- rowSums(NHO)  
+#'   
+#'   NHO.l <- matrix(NA,nrow=nrow(NHO),ncol=ncol(NHO))
+#'   NHO.u <- matrix(NA,nrow=nrow(NHO),ncol=ncol(NHO))
+#'   for (i in 1:nrow(NHO)){
+#'     for (j in 1:ncol(NHO)){
+#'       res <- march.bailey.ci(NHO[i,j],rNHO[i],alpha,ncol(NHO))
+#'       NHO.l[i,j] <- res[[1]]
+#'       NHO.u[i,j] <- res[[2]]
+#'     }
+#'   }
+#'   
+#'   # Display
+#'   cat("\nCI for the vector of weights :\n")
+#'   cat("------------------------------\n")
+#'   cat("Lower bound :\n")
+#'   print(phi.l[1,])
+#'   cat("\nUpper bound :\n")
+#'   print(phi.u[1,])
+#'   cat("\n")
+#'   
+#'   if (dim(object@Q)[1]==1){
+#'     # MTD
+#'     cat("CI for the transition matrix :\n")
+#'     cat("------------------------------\n")
+#'     cat("Lower bound :")
+#'     prmatrix(Q.l,collab=rep("",object@y@K))
+#'     cat("\nUpper bound :")
+#'     prmatrix(Q.u,collab=rep("",object@y@K))
+#'     cat("\n")
+#'   } else {
+#'     # MTDg
+#'     for (ord in 1:dim(object@Q)[1]){
+#'       cat("CI for the transition matrix of lag",ord,":\n")
+#'       cat("---------------------------------------\n")
+#'       cat("Lower bound :")
+#'       prmatrix(Q.l[ord,,],collab=rep("",object@y@K))
+#'       cat("\nUpper bound :")
+#'       prmatrix(Q.u[ord,,],collab=rep("",object@y@K))
+#'       cat("\n")
+#'     }
+#'   }
+#'   
+#'   cat("CI for the high-order transition matrix :\n")
+#'   cat("-----------------------------------------\n")
+#'   cat("Lower bound :")
+#'   prmatrix(NHO.l,collab=rep("",object@y@K))
+#'   cat("\nUpper bound :")
+#'   prmatrix(NHO.u,collab=rep("",object@y@K))
+#'   cat("\n")
+#'   
+#'   #list(phi.l,phi.u,Q.l,Q.u,NHO.l,NHO.u)
+#' }
+#' 
+#' 
+#' march.dcmm.bailey <- function(object,alpha){
+#'   
+#'   stop("This part is not yet implemented")
+#'   # ys <- march.dataset.h.extractSequence(object@y,1)
+#'   # alpha<-march.dcmm.forward(object,ys)
+#'   # beta<-march.dcmm.backward(object,ys)
+#'   # 
+#'   # C
+#' } 
+#' 
+#' 
+#' #This part create the generic method and describe how a call to this generic
+#' #has to be redirected to the rigth method, according to the considered object.
+#' setGeneric(name="march.bailey",def=function(object,alpha)march.model.bailey(object,alpha))
+#' setMethod(f="march.bailey",signature=signature("march.Indep",alpha="numeric"),definition=march.indep.bailey)
+#' setMethod(f="march.bailey",signature=signature("march.Mc",alpha="numeric"),definition=march.mc.bailey)
+#' setMethod(f="march.bailey",signature=signature("march.Mtd",alpha="numeric"),definition=march.mtd.bailey)
+#' setMethod(f="march.bailey",signature=signature("march.Dcmm",alpha="numeric"),definition=march.dcmm.bailey)
+
+
 ###############################################################################
 # Bailey allows to compute confidence intervals according to a given model,
 # using Bailey's confidence interval method describe in: Bailey, B.J.R. (1980) 
@@ -944,9 +1190,9 @@ march.mtd.thompson <- function(object, alpha){
 # Adaptation to Markov models is described into : Berchtold, "Confidence Intervals for Markovian Models"
 ###############################################################################
 
-#' Bailey Confidence Intervals for a march.Model.
+#' Bailey Confidence Intervals for an Independence model.
 #' 
-#' Compute the confidence intervals using Bailey's formula on a march.Model
+#' Compute the confidence intervals using Bailey's formula on a march.Indep
 #' object. See Bailey BJR (1980) Large sample simultaneous confidence intervals
 #' for the multinomial probabilities based ontransformation of the cell frequencies,
 #' Technometrics 22:583–589, for details.
@@ -954,17 +1200,10 @@ march.mtd.thompson <- function(object, alpha){
 #' @param object the march.Model object on which compute the confidence intervals.
 #' @param alpha the significance level.
 #' 
-#' @return A list of half-length confidence intervals for each probability distribution of the considered model.
+#' @return A list of half-length confidence intervals for each probability of the independence model.
 #' @author Berchtold André
 #' @example tests/examples/march.bailey.example.R
 #' @export 
-march.bailey <- function(object,alpha){}
-
-march.model.bailey <- function(object,alpha){
-  warning("Confidence interval with Bailey formula cannot be computed for abstract class \"model\", check the parameters of the call to march.bailey")
-}
-
-
 march.indep.bailey <- function(object,alpha){
   n <- sum(object@dsL)
   
@@ -993,6 +1232,20 @@ march.indep.bailey <- function(object,alpha){
 }
 
 
+#' Bailey Confidence Intervals for a Markov chain.
+#' 
+#' Compute the confidence intervals using Bailey's formula on a march.Mc
+#' object. See Bailey BJR (1980) Large sample simultaneous confidence intervals
+#' for the multinomial probabilities based ontransformation of the cell frequencies,
+#' Technometrics 22:583–589, for details.
+#' 
+#' @param object the march.Model object on which compute the confidence intervals.
+#' @param alpha the significance level.
+#' 
+#' @return A list of half-length confidence intervals for each probability distribution of the Markov chain.
+#' @author Berchtold André
+#' @example tests/examples/march.bailey.example.R
+#' @export 
 march.mc.bailey <- function(object,alpha){
   
   NHO <- object@RT
@@ -1019,6 +1272,20 @@ march.mc.bailey <- function(object,alpha){
 }
 
 
+#' Bailey Confidence Intervals for a MTD model.
+#' 
+#' Compute the confidence intervals using Bailey's formula on a march.Mtd
+#' object. See Bailey BJR (1980) Large sample simultaneous confidence intervals
+#' for the multinomial probabilities based ontransformation of the cell frequencies,
+#' Technometrics 22:583–589, for details.
+#' 
+#' @param object the march.Model object on which compute the confidence intervals.
+#' @param alpha the significance level.
+#' 
+#' @return A list of half-length confidence intervals for each probability distribution of the MTD model.
+#' @author Berchtold André
+#' @example tests/examples/march.bailey.example.R
+#' @export 
 march.mtd.bailey <- function(object,alpha){
   
   # lag weights
@@ -1162,22 +1429,5 @@ march.mtd.bailey <- function(object,alpha){
 }
 
 
-march.dcmm.bailey <- function(object,alpha){
-  
-  stop("This part is not yet implemented")
-  # ys <- march.dataset.h.extractSequence(object@y,1)
-  # alpha<-march.dcmm.forward(object,ys)
-  # beta<-march.dcmm.backward(object,ys)
-  # 
-  # C
-} 
 
-
-#This part create the generic method and describe how a call to this generic
-#has to be redirected to the rigth method, according to the considered object.
-setGeneric(name="march.bailey",def=function(object,alpha)march.model.bailey(object,alpha))
-setMethod(f="march.bailey",signature=signature("march.Indep",alpha="numeric"),definition=march.indep.bailey)
-setMethod(f="march.bailey",signature=signature("march.Mc",alpha="numeric"),definition=march.mc.bailey)
-setMethod(f="march.bailey",signature=signature("march.Mtd",alpha="numeric"),definition=march.mtd.bailey)
-setMethod(f="march.bailey",signature=signature("march.Dcmm",alpha="numeric"),definition=march.dcmm.bailey)
 
