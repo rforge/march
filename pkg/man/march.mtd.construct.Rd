@@ -58,5 +58,5 @@ print(model)
 \code{\link{march.Mtd-class}}, \code{\link{march.Model-class}}, \code{\link{march.Dataset-class}}.
 }
 \author{
-Ogier Maitre, Kevin Emery
+Ogier Maitre, Kevin Emery, Andre Berchtold
 }

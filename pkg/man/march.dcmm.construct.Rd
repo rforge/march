@@ -31,17 +31,17 @@ march.dcmm.construct(
 
 \item{orderVC}{the order of the visible chain of the constructed Dcmm (0 for a HMM).}
 
-\item{M}{the number of hidden state of the Dcmm.}
+\item{M}{the number of hidden states of the Dcmm.}
 
-\item{gen}{the number of generation performed by the EA.}
+\item{gen}{the number of generations performed by the EA.}
 
-\item{popSize}{the number of individual stored into the population.}
+\item{popSize}{the number of individuals stored into the population.}
 
 \item{maxOrder}{the maximum visible order among the set of Markovian models to compare.}
 
 \item{seedModel}{a model to optimize using Baum-Welch algorithm.}
 
-\item{iterBw}{the number of iteration performed by the Baum-Welch algorithm.}
+\item{iterBw}{the number of iterations performed by the Baum-Welch algorithm.}
 
 \item{stopBw}{the minimum increase in quality (log-likelihood) authorized in the Baum-Welch algorithm.}
 
@@ -53,7 +53,7 @@ march.dcmm.construct(
 
 \item{CMCovar}{vector of the size Ncov indicating which covariables are used into the visible process (0: no, 1:yes)}
 
-\item{AConst}{logical, indicating whether or not the hidden transition matrix is diagonal constraint}
+\item{AConst}{logical, indicating whether or not the hidden transition matrix has the identity (diagonal) constraint}
 
 \item{pMut}{mutation probability for the evolutionary algorithm}
 
@@ -68,7 +68,7 @@ The first \emph{maxOrder}-\emph{orderVC} elements of each sequence are truncated
 which can be compared with other Markovian model of visible order maxOrder. The construction is performed either by an evolutionary algorithm (EA) or by improving an existing DCMM.
 The EA performs \emph{gen} generations on a population of \emph{popSize} individuals. The EA behaves as a Lamarckian evolutionary algorithm, using a Baum-Welch algorithm as
 optimization step, running until log-likelihood improvement is less than \emph{stopBw} or for \emph{iterBw} iterations. Finally only the best individual from the population is returned as solution.
-If a seedModel is provided, the only step executed is the optimization step, parameters related to the EA does not apply in this case.
+If a seedModel is provided, the only step executed is the optimization step, parameters related to the EA do not apply in this case.
 }
 \examples{
 # Construct a 2 hidden states DCMM for the pewee data
