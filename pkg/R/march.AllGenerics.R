@@ -685,9 +685,32 @@ march.dcmm.thompson <- function(object,alpha){
 #This part create the generic method and describe how a call to this generic
 #has to be redirected to the rigth method, according to the considered object.
 setGeneric(name="march.thompson",def=function(object,alpha)march.model.thompson(object,alpha))
+
+#' This method is called with the object "march.Indep" and the alpha "numeric" and
+#' provides it to the march.thompson function.
+#' @param object contains the name of the model.
+#' @param alpha contains the Type I error
 setMethod(f="march.thompson",signature=signature(object="march.Indep",alpha="numeric"),definition=march.indep.thompson)
+
+#' This method is called with the object "march.Mc" and the alpha "numeric" and
+#' provides it to the march.thompson function.
+#'
+#' @param object contains the name of the model.
+#' @param alpha contains the Type I error
 setMethod(f="march.thompson",signature=signature(object="march.Mc",alpha="numeric"),definition=march.mc.thompson)
+
+#' This method is called with the object "march.Mtd" and the alpha "numeric" and
+#' provides it to the march.thompson function.
+#'
+#' @param object contains the name of the model.
+#' @param alpha contains the Type I error
 setMethod(f="march.thompson",signature=signature(object="march.Mtd",alpha="numeric"),definition=march.mtd.thompson)
+
+#' This method is called with the object "march.Dcmm" and the alpha "numeric" and
+#' provides it to the march.thompson function.
+#'
+#' @param object contains the name of the model.
+#' @param alpha contains the Type I error
 setMethod(f="march.thompson",signature=signature(object="march.Dcmm",alpha="numeric"),definition=march.dcmm.thompson)
 
 
