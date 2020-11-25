@@ -469,11 +469,30 @@ march.dcmm.name <- function(object){
 #This part create the generic method and describe how a call to this generic
 #has to be redirected to the right method, according to the considered object.
 setGeneric(name="march.name",def=function(object)march.model.name(object))
-setMethod(f="march.name",signature=signature(object="march.Indep"),definition=march.indep.name)
-setMethod(f="march.name",signature=signature(object="march.Mc"),definition=march.mc.name)
-setMethod(f="march.name",signature=signature(object="march.Mtd"),definition=march.mtd.name)
-setMethod(f="march.name",signature=signature(object="march.Dcmm"),definition=march.dcmm.name)
 
+#' This method is called with the object "march.Indep" and provides it 
+#' to the march.name function.
+#'
+#' @param object contains the name of the model.
+setMethod(f="march.name",signature=signature(object="march.Indep"),definition=march.indep.name)
+
+#' This method is called with the object "march.MC" and provides it 
+#' to the march.name function.
+#'
+#' @param object contains the name of the model.
+setMethod(f="march.name",signature=signature(object="march.Mc"),definition=march.mc.name)
+
+#' This method is called with the object "march.Mtd" and provides it 
+#' to the march.name function.
+#'
+#' @param object contains the name of the model.
+setMethod(f="march.name",signature=signature(object="march.Mtd"),definition=march.mtd.name)
+
+#' This method is called with the object "march.Dcmm" and provides it 
+#' to the march.name function.
+#'
+#' @param object contains the name of the model.
+setMethod(f="march.name",signature=signature(object="march.Dcmm"),definition=march.dcmm.name)
 #quote=FALSE,digits = getOption("digits")
 
 #' march.Model Summary.
