@@ -485,7 +485,7 @@ march.summary <- function(object,...){
   v <- array(NA,c(1,4))
   rownames(v) <- march.name(object)
   colnames(v) <- c(gettext("ll"),gettext("param"),gettext("BIC"),gettext("AIC"))
-  v[1,]<-c(object@ll,march.nbParams(object),march.BIC(object),march.AIC(object))
+  v[1,]<-c(object@ll,march.nbParams(object),march.BIC(object)@BIC,march.AIC(object)@AIC)
   
   v
 }
