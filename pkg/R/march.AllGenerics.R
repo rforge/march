@@ -436,8 +436,14 @@ setMethod(f="march.nbParams",signature="march.Mtd",definition=march.mtd.nbParams
 setMethod(f="march.nbParams",signature="march.Dcmm",definition=march.dcmm.nbParams)
 
 
+#####################################################################################
+# name methods generate a name for a march model contained in a march.model object, #
+# These methods are implemented for all models (indep, mc, mtd, dcmm).              #
+#####################################################################################
 
-# march.model.name
+march.name <- function(object){}
+
+march.model.name <- function(object){ "abstract model" } # should never be called
 march.indep.name <- function(object){ "Independence" }
 march.mc.name <- function(object){ sprintf("MC(%d)",object@order) }
 march.mtd.name <- function(object){
@@ -449,12 +455,22 @@ march.mtd.name <- function(object){
   }
   
 }
+
 march.dcmm.name <- function(object){
   if( object@orderVC==0 ){ sprintf("Hmm(%d)",object@orderHC) }
   else{ sprintf("Dcmm(%d,%d)",object@orderHC,object@orderVC) }
 }
 
-# REM: @export a ete supprime des fonctions ci-dessus
+
+#This part create the generic method and describe how a call to this generic
+#has to be redirected to the right method, according to the considered object.
+setGeneric(name="march.name",def=function(object)march.model.name(object))
+setMethod(f="march.name",signature=signature(object="march.Indep"),definition=march.indep.name)
+setMethod(f="march.name",signature=signature(object="march.Mc"),definition=march.mc.name)
+setMethod(f="march.name",signature=signature(object="march.Mtd"),definition=march.mtd.name)
+setMethod(f="march.name",signature=signature(object="march.Dcmm"),definition=march.dcmm.name)
+
+#quote=FALSE,digits = getOption("digits")
 
 
 #' march.Model Summary.
